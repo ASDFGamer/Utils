@@ -1,4 +1,4 @@
-package config;
+package org.asdfgamer.utils.config;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

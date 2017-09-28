@@ -1,6 +1,6 @@
-package config;
+package org.asdfgamer.utils.config;
 
-import other.Utils;
+import org.asdfgamer.utils.other.Utils;
 
 import java.io.*;
 import java.util.Map;

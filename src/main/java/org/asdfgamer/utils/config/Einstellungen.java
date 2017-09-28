@@ -1,4 +1,4 @@
-package config;
+package org.asdfgamer.utils.config;
 
 import java.util.logging.Logger;
 

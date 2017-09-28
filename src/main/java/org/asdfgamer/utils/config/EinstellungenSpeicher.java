@@ -1,4 +1,4 @@
-package config;
+package org.asdfgamer.utils.config;
 
 /**
  * Dieses Interface wird dafür verwendet, dass verschiedene Speichermöglichkeiten für die Einstellungen verwendet werden können.

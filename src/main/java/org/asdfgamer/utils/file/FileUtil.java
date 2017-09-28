@@ -1,6 +1,6 @@
-package file;
+package org.asdfgamer.utils.file;
 
-import other.OSValidator;
+import org.asdfgamer.utils.other.OSValidator;
 
 import java.io.File;
 import java.io.FileWriter;

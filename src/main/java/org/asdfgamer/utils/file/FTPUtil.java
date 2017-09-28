@@ -1,4 +1,4 @@
-package file;
+package org.asdfgamer.utils.file;
 
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
@@ -358,6 +358,7 @@ public class FTPUtil
      * @return true, falls es erfolgreich war, sonst false.
      * @deprecated Nicht benutzen, da client.changeWorkingDirectory(directory) ziemlich das gleiche macht, aber auf jeden fall ohne Bug ist.
      */
+    @Deprecated
     public static boolean changeToDir(String directory, FTPClient client) //noch nicht getestet
     {
 
@@ -403,6 +404,7 @@ public class FTPUtil
      * @return true, falls es erfolgreich war, sonst false.
      * @deprecated Nicht benutzen, da client.changeWorkingDirectory(directory) ziemlich das gleiche macht, aber auf jeden fall ohne Bug ist.
      */
+    @Deprecated
     public static boolean changeToDirROOT(String directory, FTPClient client)
     {
 

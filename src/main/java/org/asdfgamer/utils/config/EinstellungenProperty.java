@@ -1,8 +1,8 @@
-package config;
+package org.asdfgamer.utils.config;
 
 import javafx.beans.property.SimpleStringProperty;
-import other.Convertible;
-import other.Utils;
+import org.asdfgamer.utils.other.Convertible;
+import org.asdfgamer.utils.other.Utils;
 
 import java.util.logging.Logger;
 
@@ -27,7 +27,7 @@ public class EinstellungenProperty extends SimpleStringProperty
     /**
      * Der benutzte Logger
      */
-    private static final Logger LOG = Logger.getLogger(config.EinstellungenProperty.class.getName());
+    private static final Logger LOG = Logger.getLogger(EinstellungenProperty.class.getName());
 
     /**
      * Dies gibt an, dass irgendeine Einstellung geändert wurde. TODO anpassen, so dass es auf eine Klasse beschränkt wird.

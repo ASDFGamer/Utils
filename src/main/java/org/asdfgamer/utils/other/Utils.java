@@ -1,4 +1,4 @@
-package other;
+package org.asdfgamer.utils.other;
 
 import java.io.File;
 import java.io.IOException;

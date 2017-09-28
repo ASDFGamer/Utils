@@ -1,4 +1,4 @@
-package other;
+package org.asdfgamer.utils.other;
 
 /**
  * Hiermit wird das Betriebssystem erkannt.

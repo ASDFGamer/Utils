@@ -1,4 +1,4 @@
-package other;
+package org.asdfgamer.utils.other;
 
 /**
  * Hirmit kann überprüft werden ob ein String in einen anderen Typ umwandelbar ist.
