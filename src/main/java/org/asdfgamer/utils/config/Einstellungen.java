@@ -21,22 +21,31 @@ public class Einstellungen
 
     private final EinstellungenSpeicher SPEICHER;
 
-    public Einstellungen(String programmname)
-    {
+    /**
+     * Hiermit wird ein neues Einstellungsobjekt erzeugt welches zum Laden und speichern der Einstellungen benutzt werden kann.
+     * Als Speicher wird an dieser Stelle eine Properties Datei gewählt.
+     *
+     * @param programmname Der Name des Programms das die Einstellungen erzeugt.
+     */
+    public Einstellungen(String programmname) {
 
         this.NAME = programmname;
         this.SPEICHER = new PropertiesSpeicher(programmname);
     }
 
-    public Einstellungen(String programmname, EinstellungenSpeicher speicher)
-    {
+    /**
+     * Hiermit wird ein neues Einstellungsobjekt erzeugt welches zum Laden und speichern der Einstellungen beutzt werden kann.
+     * @param programmname Der Name des Programms das die Einstellungen erzeugt.
+     * @param speicher Die Speichermethode, die die Einstellungen persistent speichert.
+     */
+    public Einstellungen(String programmname, EinstellungenSpeicher speicher) {
 
         this.NAME = programmname;
         this.SPEICHER = speicher;
     }
 
     /**
-     * Hiermit wird eine einfache Einstellungsproperty erstellt, falls keine zusätzlichen infos angegeben werden.
+     * Hiermit wird eine einfache Einstellungsproperty erstellt, falls keine zusätzlichen Infos angegeben werden.
      */
     public static EinstellungenProperty neueEinstellung()
     {
@@ -47,7 +56,7 @@ public class Einstellungen
     }
 
     /**
-     * Der Konstruktor für Einstellungen aus Strings.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem String als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
      */
@@ -61,7 +70,7 @@ public class Einstellungen
 //
 
     /**
-     * Der Konstruktor für Einstellungen aus Integern.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem Integer als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
      */
@@ -75,7 +84,8 @@ public class Einstellungen
 //
 
     /**
-     * Der Konstruktor für Einstellungen aus Integern.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem Integer als Standardwert.
+     * Außerdem wird der Bereich angegeben in dem die Einstellung liegen darf.
      *
      * @param standardwert Der Standardwert der Einstellung.
      * @param minimalwert  Der niedrigste erlaubte Wert.
@@ -93,7 +103,7 @@ public class Einstellungen
 //
 
     /**
-     * Der Konstruktor für Einstellungen aus boolschen Wahrheitswerten.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem boolschen Wahrheitswert als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
      */
@@ -107,7 +117,7 @@ public class Einstellungen
     }
 
     /**
-     * Der Konstruktor für Einstellungen aus double Zahlen.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem double als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
      */
@@ -121,7 +131,8 @@ public class Einstellungen
     }
 
     /**
-     * Der Konstruktor für Einstellungen aus double Zahlen.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem Integer als Standardwert.
+     * Außerdem wird der Bereich angegeben in dem die Einstellung liegen darf.
      *
      * @param standardwert Der Standardwert der Einstellung.
      * @param minimalwert  Der niedrigste erlaubte Wert.
@@ -137,10 +148,10 @@ public class Einstellungen
         return property;
     }
 
-    //Interne Konstruktoren
+    //Interne Einstelungen
 
     /**
-     * Der Konstruktor für Einstellungen aus Strings.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem String als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
      * @param intern       Dies gibt an ob die Einstellung nur intern sein soll
@@ -155,7 +166,7 @@ public class Einstellungen
     }
 
     /**
-     * Der Konstruktor für Einstellungen aus Integern.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem Integer als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
      * @param intern       Dies gibt an ob die Einstellung nur intern sein soll
@@ -170,7 +181,7 @@ public class Einstellungen
     }
 
     /**
-     * Der Konstruktor für Einstellungen aus boolschen Wahrheitswerten.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem boolschen Wahrheitswert als Standarwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
      * @param intern       Dies gibt an ob die Einstellung nur intern sein soll
@@ -186,30 +197,37 @@ public class Einstellungen
     }
 
     /**
-     * Der Konstruktor für Einstellungen aus double Zahlen.
+     * Hiermit wird eine Einstllungsproperty erstellt mit einem Double als Standartwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
      * @param intern       Dies gibt an ob die Einstellung nur intern sein soll
      *                     oder auch in der Einstellungsdatei gespeichert werden
      *                     soll.
      */
-    public static EinstellungenProperty neueEinstellung(double standardwert, boolean intern)
-    {
+    public static EinstellungenProperty neueEinstellung(double standardwert, boolean intern) {
 
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert), intern);
         property.setDouble(standardwert);
         return property;
     }
 
-    public boolean lade(IEinstellungen einstellungen)
-    {
+    /**
+     * Mit dieser Methode werden die Einstellungen aus dem angegebenen Speicher geladen.
+     * @param einstellungen Dies ist die Klasse in der die Einstellungen definiert sind.
+     * @return true, falls das Laden der Einstellungen erfolgreich war, ansonsten false.
+     */
+    public boolean lade(IEinstellungen einstellungen) {
 //        List<EinstellungenProperty> properties = Utils.getFields(einstellungen);
 
         return SPEICHER.getEinstellungen(einstellungen);
     }
 
-    public boolean speicher(IEinstellungen einstellungen)
-    {
+    /**
+     * Mit dieser Methode werden die Einstellungen aus der Klasse die angegeben wurde gespeichert.
+     * @param einstellungen Dies ist die KLasse in der die Einstellungen gespeichert sind.
+     * @return true, falls das Speichern erfolgreich war, ansonsten false.
+     */
+    public boolean speicher(IEinstellungen einstellungen) {
 
         return SPEICHER.speichern(einstellungen);
     }
