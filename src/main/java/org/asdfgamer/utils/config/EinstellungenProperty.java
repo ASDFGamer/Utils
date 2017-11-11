@@ -249,7 +249,7 @@ public class EinstellungenProperty extends SimpleStringProperty
             {
                 newValue = this.maximalwert.intValue();
             }
-            if (this.minimalwert != null && this.minimalwert < newValue)
+            else if (this.minimalwert != null && this.minimalwert > newValue)
             {
                 newValue = this.minimalwert.intValue();
             }
@@ -278,7 +278,7 @@ public class EinstellungenProperty extends SimpleStringProperty
             {
                 newValue = this.maximalwert;
             }
-            if (this.minimalwert != null && this.minimalwert < newValue)
+            else if (this.minimalwert != null && this.minimalwert > newValue)
             {
                 newValue = this.minimalwert;
             }
@@ -406,7 +406,7 @@ public class EinstellungenProperty extends SimpleStringProperty
         {
             if (Convertible.toInt(newValue))
             {
-                this.wertInteger = Integer.parseInt(newValue);
+                setInteger(Integer.parseInt(newValue));
             } else
             {
                 throw new IllegalArgumentException("Der Wert " + newValue + " konnte nicht zu Integer umgewandelt werden, obwohl die Einstellung vom Typ Integer ist.");
@@ -417,7 +417,7 @@ public class EinstellungenProperty extends SimpleStringProperty
         {
             if (Convertible.toDouble(newValue))
             {
-                this.wertDouble = Double.valueOf(newValue);
+                setDouble(Double.valueOf(newValue));
             } else
             {
                 throw new IllegalArgumentException("Der Wert " + newValue + " konnte nicht zu Double umgewandelt werden, obwohl die Einstellung vom Typ Double ist.");

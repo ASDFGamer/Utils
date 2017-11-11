@@ -1,8 +1,17 @@
-apply plugin: 'java'
-apply plugin: 'maven'
+//apply plugin: 'java'
+//apply plugin: 'maven'
+//apply plugin: 'application'
+//apply plugin:  'idea'
+plugins {
+    id "java"
+//  id "eclipse"
+    id "idea"
+    id "maven"
+}
 
 group = 'org.asdfgamer.utils'
-version = '1.0-SNAPSHOT'
+version = '1.0'
+ext.moduleName= 'org.asdfgamer.utils'
 
 description = "Dies sind verschiedene Utility-Klassen die ich brauche."
 
@@ -18,4 +27,48 @@ repositories {
 dependencies {
     compile group: 'org.apache.commons', name: 'commons-lang3', version:'3.6'
     compile group: 'commons-net', name: 'commons-net', version:'3.6'
+
+    // JUnit and Mockito
+    testCompile "junit:junit:4.12"
+    //test
 }
+
+//Aenderungen fuer Jingsaw
+
+
+compileJava {
+    inputs.property("moduleName", moduleName)
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+        ]
+        classpath = files()
+    }
+}
+
+compileTestJava {
+    inputs.property("moduleName", moduleName)
+    doFirst {
+        options.compilerArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'junit',
+                '--add-reads', "$moduleName=junit",
+                '--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
+        ]
+        classpath = files()
+    }
+}
+
+test {
+    inputs.property("moduleName", moduleName)
+    doFirst {
+        jvmArgs = [
+                '--module-path', classpath.asPath,
+                '--add-modules', 'ALL-MODULE-PATH',
+                '--add-reads', "$moduleName=junit",
+                '--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath
+        ]
+        classpath = files()
+    }
+}
+//Ende der Aenderungen fuer Jingsaw
