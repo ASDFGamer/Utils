@@ -8,60 +8,89 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+/**
+ * Hiermit können Einstellungen in einer Properties-Datei gespeichert werden.
+ * Diese Datei liegt dann in dem Betriebssystem-abhänigen Configordner. Unter Windows ist dies
+ * %AppData%\\Roaming\\"PROGRAMM_NAME", unter Linux .config/"PROGRAMM_NAME" und unter anderen
+ * Betriesbssystemen wird direkt ein Ordner im Benutzerverzeichnis erstellt.
+ *
+ */
 public class PropertiesSpeicher implements EinstellungenSpeicher
 {
 
+    /**
+     * Dies ist der benutzte Logger.
+     */
     private static final Logger LOG = Logger.getLogger(PropertiesSpeicher.class.getName());
 
-    private final String PROGRAMM_NAME;
+    /**
+     * Dies ist die Standardmäßeige Dateiendungen falls keine Endung angegeben wurde.
+     */
+    private static final String STD_EXTENSION = ".cfg";
 
+    /**
+     * Dies ist der Name des Programmes welches die Einstellugen speichert.
+     */
+    private static String PROGRAMM_NAME = null;
+
+    /**
+     * Dies ist der Name der Datei in der die Einstellungen gespeichert werden sollen.
+     */
+    private final String DATEI_NAME;
+
+    /**
+     * Dies ist der Pfad zu der Datei, wird nur lokal berechnet
+     */
     private String pfad = null;
 
+    /**
+     * Hiermit wird der Programmname gesetzt und somit der Ordner festgelegt in dem die Einstellungen gespeichert werden.
+     * @param programmname Dies ist der Programmname
+     * @return true, falls das ändern geklappt hat, ansonsten false.
+     */
+    public static boolean setProgrammName(String programmname)
+    {
+        if (PROGRAMM_NAME != null)
+        {
+            LOG.warning("Der Programmname wurde schon gesetzt und darf nicht geändert werden.");
+            return false;
+        }
+        PROGRAMM_NAME = programmname;
+        return true;
+    }
+
+    /**
+     * Hiermit wir ein neuer Einstellungsspeicher erzeugt für die Datei mit dem angegebenen Namen.
+     * @param name Der Name der Datei
+     */
     public PropertiesSpeicher(String name)
     {
 
-        PROGRAMM_NAME = name;
+        DATEI_NAME = name;
     }
-
-    public PropertiesSpeicher(String name, String pfad)
-    {
-
-        PROGRAMM_NAME = name;
-        this.pfad = pfad;
-    }
-
-//    /**
-//     * Diese Methode wird dafür verwendet, dass einzelne Einstellungen zu Laden.
-//     *
-//     * @param name Dies ist der Name der Einstellung die geladen werden soll.
-//     * @return Dies ist der Wert der Einstellung
-//     */
-//    @Override
-//    public String getEinstellung(String name)
-//    {
-//
-//        return null;
-//    }
 
     /**
-     * Diese Methode lädt alle Einstellungen aus der angegbenen Klasse und updated sie auch gleich..
+     * Diese Methode lädt alle Einstellungen aus der angegbenen Klasse und updated sie auch gleich.
      *
-     * @return trud, falls es keinen Fehler beim Laden gab, ansonsten false.
+     * @return false, falls es einen Fehler beim Laden gab, ansonsten true.
      */
     @Override
     public boolean getEinstellungen(IEinstellungen einstellungenKlasse)
     {
 
-        if (pfad == null)
+        if (!pfadExists())
         {
-            pfad = Utils.getConfigFile(PROGRAMM_NAME, "config.txt");
+            return false;
         }
+
         boolean result = true;
         Properties properties = new Properties();
         InputStream configFile = null;
         boolean einstellungenNichtVollstaendig = false;//TODO damit was machen
+        //Einstellungen finden
         Map<String, EinstellungenProperty> einstellungenList = Utils.getFields(einstellungenKlasse);
 
+        //Change Listener entfernen
         for (Map.Entry<String, EinstellungenProperty> einstellung : einstellungenList.entrySet())
         {
             if (!einstellung.getValue().isInternerWert())
@@ -69,7 +98,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
                 einstellung.getValue().removeListener(EinstellungenListener.getEinstellungenAendern(einstellung.getValue()));//TODO testen
             }
         }
-
+        //Laden der Einstellungen
         try
         {
             configFile = new FileInputStream(pfad);
@@ -91,6 +120,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             result = false;
         } finally
         {
+            //Einstellungen schließen
             if (configFile != null)
             {
                 try
@@ -103,6 +133,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             }
         }
 
+        //Change Listener wieder hinzufügen
         for (Map.Entry<String, EinstellungenProperty> einstellung : einstellungenList.entrySet())
         {
             if (!einstellung.getValue().isInternerWert())
@@ -125,10 +156,11 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     public boolean speichern(IEinstellungen einstellungenKlasse)
     {
 
-        if (pfad == null)
+        if (!pfadExists())
         {
-            pfad = Utils.getConfigFile(PROGRAMM_NAME, "config.txt");
+            return false;
         }
+
         Map<String, EinstellungenProperty> einstellungen = Utils.getFields(einstellungenKlasse);
 //        LOG.info("PropertiesSpeicher.speichern Zeile 103");
 //        LOG.info(einstellungen.size() + "");
@@ -141,6 +173,15 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
 //        }
         Properties properties = new Properties();
         OutputStream configFile = null;
+
+        if(!Utils.isFile(pfad))
+        {
+            if (!Utils.createFile(pfad))
+            {
+                LOG.severe("Es konnte keine Configdatei in dem Ordner " + pfad + " erzeugt werden.");
+                return false;
+            }
+        }
 
         try
         {
@@ -155,7 +196,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
                 }
             }
 
-            properties.store(new OutputStreamWriter(configFile, "UTF-8"), "Dies sind die Einstellungen des Spiels '" + PROGRAMM_NAME + "'.");
+            properties.store(new OutputStreamWriter(configFile, "UTF-8"), "Dies sind die Einstellungen des Spiels '" + DATEI_NAME + "'.");
         } catch (IOException e)
         {
             LOG.log(Level.WARNING, "Es gab Probleme beim Öffnen der Datei zum Speichern der Einstellungen", e);
@@ -176,13 +217,31 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
         return result;
     }
 
-//    /**
-//     * Diese Methode sucht aus der angegebenen Klasse alle Einstellungen heraus und speichert diese in einem Array.
-//     *
-//     * @param einstellungenListe Dies ist die Klasse in der die Einstellungen sind.
-//     * @return Ein Array aus allen Einstellungen.
-//     */
-//    private EinstellungenProperty[] findeEinstellungen(IEinstellungen einstellungenListe) {
-//        return new EinstellungenProperty[]{};//TODO fertigstellen oder auslagen
-//    }
+    /**
+     * Diese Methode üerprüft ob ein Pfad existiert und versucht ansonstenen einen zu erstellen.
+     * Falls kein Programmname angegeben ist kann kein Pfad erzeugt werden und desshalb wird false zurückgegeben.
+     * Ansonsten wird ein neuer Pfad aus den bekannten Infos erstellt und true zurückgegeben
+     * @return Falls kein Pfad existert oder erstellt werden kann: false, ansonsten true.
+     */
+    private boolean pfadExists()
+    {
+        if (pfad == null)
+        {
+            if (PROGRAMM_NAME == null)
+            {
+                LOG.severe("Es ist kein Programmname festgelegt.");
+                return false;
+            }
+            if (DATEI_NAME.contains("."))
+            {
+                pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME);
+            }
+            else
+            {
+                pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME+STD_EXTENSION);
+            }
+        }
+        return true;
+    }
+
 }

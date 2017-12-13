@@ -1,13 +1,13 @@
-//apply plugin: 'java'
-//apply plugin: 'maven'
+apply plugin: 'java'
+apply plugin: 'maven'
 //apply plugin: 'application'
-//apply plugin:  'idea'
-plugins {
-    id "java"
+apply plugin:  'idea'
+//plugins {
+//    id "java"
 //  id "eclipse"
-    id "idea"
-    id "maven"
-}
+//    id "idea"
+//    id "maven"
+//}
 
 group = 'org.asdfgamer.utils'
 version = '1.0'

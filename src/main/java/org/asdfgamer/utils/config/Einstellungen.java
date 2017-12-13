@@ -13,7 +13,7 @@ public class Einstellungen
 {
 
     /**
-     * Der Logger den wir benutzen.
+     * Der benutzte Logger.
      */
     private final static Logger LOG = getLogger(Einstellungen.class.getName());
 
