@@ -300,6 +300,11 @@ public class Utils
             LOG.log(Level.INFO, "Der Ordner {0} existiert schon und muss nicht erstellt werden.", ordner.toString());
             return true;
         }
+        if (isFile(ordner))
+        {
+            LOG.warning("Am Pfad des Ordners existiert eine Datei mit gleichem Namen, deshalb kann kein Ordner erstellt werden: " + ordner.toString());
+            return false;
+        }
         if (ordner.getRoot() == null)
         {
             LOG.log(Level.WARNING, "Die angegebene Datei hat keine Root Komponente und kann deshalb nicht erstellt werden: {0}", ordner.toString());
