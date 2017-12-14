@@ -32,13 +32,17 @@ public class EinstellungenProperty extends SimpleStringProperty
     /**
      * Dies gibt an, dass irgendeine Einstellung geändert wurde. TODO anpassen, so dass es auf eine Klasse beschränkt wird.
      */
-    private static boolean irgendwasGeändert;
+    private static boolean irgendwasGeändert = false;
 
     /**
      * Dies ist der Standardwert der Einstellung als String.
      */
     private final String STANDARDWERT;
 
+
+    /**
+     * Dies gitb an, ob diese Einstellung nur für den internen gebrauch gedacht ist und desshalb z.B. beim speichern ausgelassen wird.
+     */
     private final boolean internerWert;
 
     /**
@@ -69,7 +73,7 @@ public class EinstellungenProperty extends SimpleStringProperty
     /**
      * Dies gibt an, dass diese Einstellung geändert wurde.
      */
-    private boolean geaendert;
+    private boolean geaendert = false;
 
     /**
      * Diesem Konstruktor wurde kein Wert übergeben, alles wird mit Standardwerten aufgefüllt.
@@ -248,8 +252,7 @@ public class EinstellungenProperty extends SimpleStringProperty
             if (this.maximalwert != null && this.maximalwert < newValue)
             {
                 newValue = this.maximalwert.intValue();
-            }
-            else if (this.minimalwert != null && this.minimalwert > newValue)
+            } else if (this.minimalwert != null && this.minimalwert > newValue)
             {
                 newValue = this.minimalwert.intValue();
             }
@@ -277,8 +280,7 @@ public class EinstellungenProperty extends SimpleStringProperty
             if (this.maximalwert != null && this.maximalwert < newValue)
             {
                 newValue = this.maximalwert;
-            }
-            else if (this.minimalwert != null && this.minimalwert > newValue)
+            } else if (this.minimalwert != null && this.minimalwert > newValue)
             {
                 newValue = this.minimalwert;
             }
@@ -550,6 +552,32 @@ public class EinstellungenProperty extends SimpleStringProperty
 
         geaendert = true;
         irgendwasGeändert = true;
+    }
+
+    /**
+     * Dies gibt an, ob diese Einstellung schon geändert wurde, während der ChangeListener aktiv war.
+     * Standardmäßig ist dieser immer aktiv, nur z.B. beim Laden von Einstellungen wird dieser kurzzeitig deaktiviert.
+     *
+     * @return true, falls dieser Einstellung geändert wurde, ansonsten false.
+     */
+    public boolean getEinstellungGeaendert()
+    {
+
+        return geaendert;
+    }
+
+    /**
+     * Dies gibt an, ob irgendeine Einstellung schon geändert wurde, während der ChangeListener aktiv war.
+     * Standardmäßig ist diesr immer aktiv, nur z.B. beim Laden von Einstellungen wird dieser kurzzeitig deaktiviert.
+     * <p>
+     * Hierbei ist zu beachten, dass alle Einstellungen berücksichtigt werden und nicht nur die aus einer Datei.
+     *
+     * @return true, falls dieser Einstellung geändert wurde, ansonsten false.
+     */
+    public static boolean getEineEinstellungGeaendert()
+    {
+
+        return irgendwasGeändert;
     }
 
 }

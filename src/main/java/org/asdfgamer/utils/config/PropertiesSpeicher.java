@@ -13,7 +13,6 @@ import java.util.logging.Logger;
  * Diese Datei liegt dann in dem Betriebssystem-abhänigen Configordner. Unter Windows ist dies
  * %AppData%\\Roaming\\"PROGRAMM_NAME", unter Linux .config/"PROGRAMM_NAME" und unter anderen
  * Betriesbssystemen wird direkt ein Ordner im Benutzerverzeichnis erstellt.
- *
  */
 public class PropertiesSpeicher implements EinstellungenSpeicher
 {
@@ -44,12 +43,20 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     private String pfad = null;
 
     /**
+     * Dies gibt an, ob die Einstellungen nach änderungen untersucht werden sollen und nur bei änderungen abgespeichert
+     * werden, oder ob immer alle Einstellungen gespeichert werden.
+     */
+    private boolean checkForChanges = false;
+
+    /**
      * Hiermit wird der Programmname gesetzt und somit der Ordner festgelegt in dem die Einstellungen gespeichert werden.
+     *
      * @param programmname Dies ist der Programmname
      * @return true, falls das ändern geklappt hat, ansonsten false.
      */
     public static boolean setProgrammName(String programmname)
     {
+
         if (PROGRAMM_NAME != null)
         {
             LOG.warning("Der Programmname wurde schon gesetzt und darf nicht geändert werden.");
@@ -61,12 +68,28 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
 
     /**
      * Hiermit wir ein neuer Einstellungsspeicher erzeugt für die Datei mit dem angegebenen Namen.
+     *
      * @param name Der Name der Datei
      */
     public PropertiesSpeicher(String name)
     {
 
         DATEI_NAME = name;
+    }
+
+
+    /**
+     * Hiermit wir ein neuer Einstellungsspeicher erzeugt für die Datei mit dem angegebenen Namen.
+     *
+     * @param name            Der Name der Datei
+     * @param checkForChanges Dies gibt an, ob die Einstellungen nur bei änderungen gespeichert werden sollen.
+     *                        Standardmäßig false.
+     */
+    public PropertiesSpeicher(String name, boolean checkForChanges)
+    {
+
+        DATEI_NAME = name;
+        this.checkForChanges = checkForChanges;
     }
 
     /**
@@ -86,7 +109,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
         boolean result = true;
         Properties properties = new Properties();
         InputStream configFile = null;
-        boolean einstellungenNichtVollstaendig = false;//TODO damit was machen
+        boolean einstellungenNichtVollstaendig = false;//TODO damit was machen, Dies gibt an, dass nicht alle einstellungen geladen werden konnten
         //Einstellungen finden
         Map<String, EinstellungenProperty> einstellungenList = Utils.getFields(einstellungenKlasse);
 
@@ -111,6 +134,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
                 if (properties.getProperty(einstellung.getKey()) == null && !einstellung.getValue().isInternerWert())
                 {
                     einstellungenNichtVollstaendig = true;
+                    LOG.warning("Für die Einstellung " + einstellung.getKey() + " konnte kein Wert geladen werden.");
                 }
                 einstellung.getValue().set(properties.getProperty(einstellung.getKey(), einstellung.getValue().getStandardwert()));
             }
@@ -162,19 +186,32 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
         }
 
         Map<String, EinstellungenProperty> einstellungen = Utils.getFields(einstellungenKlasse);
-//        LOG.info("PropertiesSpeicher.speichern Zeile 103");
-//        LOG.info(einstellungen.size() + "");
-//        LOG.info(einstellungen.get(1).getName());
+
         boolean result = true;
-//        if (!Einstellungen.einstellungenGeaendert && !einstellungenNichtVollstaendig)
-//        {
-//            LOG.info("Es wurde keine Einstellung geändert, deshalb muss nichts gespeichert werden.");
-//            return true;
-//        }
+
+        if (checkForChanges)
+        {
+            boolean einstellungGeaendert = false;
+
+            for (Map.Entry<String, EinstellungenProperty> entry : einstellungen.entrySet())
+            {
+                if (entry.getValue().getEinstellungGeaendert())
+                {
+                    einstellungGeaendert = true;
+                }
+            }
+
+            if (!einstellungGeaendert)
+            {
+                LOG.info("Es wurde keine Einstellung geändert, deshalb muss nichts gespeichert werden.");
+                return true;
+            }
+        }
+
         Properties properties = new Properties();
         OutputStream configFile = null;
 
-        if(!Utils.isFile(pfad))
+        if (!Utils.isFile(pfad))
         {
             if (!Utils.createFile(pfad))
             {
@@ -186,8 +223,6 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
         try
         {
             configFile = new FileOutputStream(pfad);
-//            einstellungen.forEach();
-//            for( int i = 0; i<einstellungen.size(); i++)
             for (Map.Entry<String, EinstellungenProperty> einstellung : einstellungen.entrySet())
             {
                 if (!einstellung.getValue().isInternerWert())
@@ -221,10 +256,12 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
      * Diese Methode üerprüft ob ein Pfad existiert und versucht ansonstenen einen zu erstellen.
      * Falls kein Programmname angegeben ist kann kein Pfad erzeugt werden und desshalb wird false zurückgegeben.
      * Ansonsten wird ein neuer Pfad aus den bekannten Infos erstellt und true zurückgegeben
+     *
      * @return Falls kein Pfad existert oder erstellt werden kann: false, ansonsten true.
      */
     private boolean pfadExists()
     {
+
         if (pfad == null)
         {
             if (PROGRAMM_NAME == null)
@@ -235,10 +272,9 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             if (DATEI_NAME.contains("."))
             {
                 pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME);
-            }
-            else
+            } else
             {
-                pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME+STD_EXTENSION);
+                pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME + STD_EXTENSION);
             }
         }
         return true;
