@@ -9,6 +9,8 @@ import static java.util.logging.Logger.getLogger;
 /**
  * In dieser Klasse sind verschiedene Infos hinterlegt die für eine gesamte Klasse/Enum mit Einstellungen gelten und
  * deshalb nicht in den Einstellungproperties gespeichert werden können.
+ *
+ * TODO diese Klasse sinnvoll nutzen. Hierfür muss ich die Klasse in der eine Einstellung erstellt wurde herausfinden.
  */
 public class EinstellungKlassenInfos
 {

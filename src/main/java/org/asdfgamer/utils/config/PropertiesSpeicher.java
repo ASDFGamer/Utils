@@ -3,6 +3,8 @@ package org.asdfgamer.utils.config;
 import org.asdfgamer.utils.other.Utils;
 
 import java.io.*;
+import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -49,6 +51,31 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     private boolean checkForChanges = false;
 
     /**
+     * Hiermit wir ein neuer Einstellungsspeicher erzeugt für die Datei mit dem angegebenen Namen.
+     *
+     * @param name Der Name der Datei
+     */
+    public PropertiesSpeicher(String name)
+    {
+
+        DATEI_NAME = name;
+    }
+
+    /**
+     * Hiermit wir ein neuer Einstellungsspeicher erzeugt für die Datei mit dem angegebenen Namen.
+     *
+     * @param name            Der Name der Datei
+     * @param checkForChanges Dies gibt an, ob die Einstellungen nur bei änderungen gespeichert werden sollen.
+     *                        Standardmäßig false.
+     */
+    public PropertiesSpeicher(String name, boolean checkForChanges)
+    {
+
+        DATEI_NAME = name;
+        this.checkForChanges = checkForChanges;
+    }
+
+    /**
      * Hiermit wird der Programmname gesetzt und somit der Ordner festgelegt in dem die Einstellungen gespeichert werden.
      *
      * @param programmname Dies ist der Programmname
@@ -67,38 +94,12 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     }
 
     /**
-     * Hiermit wir ein neuer Einstellungsspeicher erzeugt für die Datei mit dem angegebenen Namen.
-     *
-     * @param name Der Name der Datei
-     */
-    public PropertiesSpeicher(String name)
-    {
-
-        DATEI_NAME = name;
-    }
-
-
-    /**
-     * Hiermit wir ein neuer Einstellungsspeicher erzeugt für die Datei mit dem angegebenen Namen.
-     *
-     * @param name            Der Name der Datei
-     * @param checkForChanges Dies gibt an, ob die Einstellungen nur bei änderungen gespeichert werden sollen.
-     *                        Standardmäßig false.
-     */
-    public PropertiesSpeicher(String name, boolean checkForChanges)
-    {
-
-        DATEI_NAME = name;
-        this.checkForChanges = checkForChanges;
-    }
-
-    /**
      * Diese Methode lädt alle Einstellungen aus der angegbenen Klasse und updated sie auch gleich.
      *
      * @return false, falls es einen Fehler beim Laden gab, ansonsten true.
      */
     @Override
-    public boolean getEinstellungen(IEinstellungen einstellungenKlasse)
+    public boolean getEinstellungen(Object einstellungenKlasse)
     {
 
         if (!pfadExists())
@@ -177,79 +178,27 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
      * @return true, falls das speichern der Einstellungen erfolgreich war, ansonsten false.
      */
     @Override
-    public boolean speichern(IEinstellungen einstellungenKlasse)
+    public boolean speichern(Object einstellungenKlasse)
     {
+
+        if (!objectPasst(einstellungenKlasse))
+        {
+            return false;
+        }
 
         if (!pfadExists())
         {
             return false;
         }
 
-        Map<String, EinstellungenProperty> einstellungen = Utils.getFields(einstellungenKlasse);
-
-        boolean result = true;
-
-        if (checkForChanges)
+        if (isEnum(einstellungenKlasse))
         {
-            boolean einstellungGeaendert = false;
-
-            for (Map.Entry<String, EinstellungenProperty> entry : einstellungen.entrySet())
-            {
-                if (entry.getValue().getEinstellungGeaendert())
-                {
-                    einstellungGeaendert = true;
-                }
-            }
-
-            if (!einstellungGeaendert)
-            {
-                LOG.info("Es wurde keine Einstellung geändert, deshalb muss nichts gespeichert werden.");
-                return true;
-            }
+            return speicherEnum(einstellungenKlasse);
+        } else
+        {
+            return speicherEinstellungenPropertys(Utils.getFields(einstellungenKlasse));
         }
 
-        Properties properties = new Properties();
-        OutputStream configFile = null;
-
-        if (!Utils.isFile(pfad))
-        {
-            if (!Utils.createFile(pfad))
-            {
-                LOG.severe("Es konnte keine Configdatei in dem Ordner " + pfad + " erzeugt werden.");
-                return false;
-            }
-        }
-
-        try
-        {
-            configFile = new FileOutputStream(pfad);
-            for (Map.Entry<String, EinstellungenProperty> einstellung : einstellungen.entrySet())
-            {
-                if (!einstellung.getValue().isInternerWert())
-                {
-                    properties.setProperty(einstellung.getKey(), einstellung.getValue().get());
-                }
-            }
-
-            properties.store(new OutputStreamWriter(configFile, "UTF-8"), "Dies sind die Einstellungen des Spiels '" + DATEI_NAME + "'.");
-        } catch (IOException e)
-        {
-            LOG.log(Level.WARNING, "Es gab Probleme beim Öffnen der Datei zum Speichern der Einstellungen", e);
-            result = false;
-        } finally
-        {
-            if (configFile != null)
-            {
-                try
-                {
-                    configFile.close();
-                } catch (IOException e)
-                {
-                    LOG.log(Level.SEVERE, "Die Configfile konnte nicht geschlossen werden.", e);
-                }
-            }
-        }
-        return result;
     }
 
     /**
@@ -259,6 +208,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
      *
      * @return Falls kein Pfad existert oder erstellt werden kann: false, ansonsten true.
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean pfadExists()
     {
 
@@ -276,6 +226,148 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             {
                 pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME + STD_EXTENSION);
             }
+        }
+        return true;
+    }
+
+    /**
+     * Hiermit werden alle EinstellungsProperys aus der angegebenen Map abgespeichert.
+     *
+     * @param einstellungen Die Einstellungen die abgespeichert werden sollen.
+     * @return true, falls es keine Probleme beim speichern gab, ansonsten false.
+     */
+    private boolean speicherEinstellungenPropertys(Map<String, EinstellungenProperty> einstellungen)
+    {
+
+        if (checkForChanges)
+        {
+            if (keineAenderungen(einstellungen))
+            {
+                return true;
+            }
+        }
+
+        Properties properties = new Properties();
+        OutputStream configFile = null;
+
+        try
+        {
+            configFile = new FileOutputStream(pfad);
+            for (Map.Entry<String, EinstellungenProperty> einstellung : einstellungen.entrySet())
+            {
+                if (!einstellung.getValue().isInternerWert())
+                {
+                    properties.setProperty(einstellung.getKey(), einstellung.getValue().get());
+                }
+            }
+
+            properties.store(new OutputStreamWriter(configFile, "UTF-8"), "Dies sind die Einstellungen des Spiels '" + DATEI_NAME + "'.");
+        } catch (IOException e)
+        {
+            LOG.log(Level.WARNING, "Es gab Probleme beim Öffnen der Datei zum Speichern der Einstellungen", e);
+            return false;
+        } finally
+        {
+            if (configFile != null)
+            {
+                try
+                {
+                    configFile.close();
+                } catch (IOException e)
+                {
+                    LOG.log(Level.SEVERE, "Die Configfile konnte nicht geschlossen werden.", e);
+                }
+            }
+        }
+        return true;
+    }
+
+    private boolean keineAenderungen(Map<String, EinstellungenProperty> einstellungen)
+    {
+        boolean einstellungGeaendert = false;
+
+        for (Map.Entry<String, EinstellungenProperty> entry : einstellungen.entrySet())
+        {
+            if (entry.getValue().getEinstellungGeaendert())
+            {
+                einstellungGeaendert = true;
+            }
+        }
+
+        if (!einstellungGeaendert)
+        {
+            LOG.info("Es wurde keine Einstellung geändert, deshalb muss nichts gespeichert werden.");
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Dies verarbeitet ein Object bei dem es sich das Class-Object eines Enums handeln muss so, dass alle
+     * EinstellungenProperys des Enums angespeichert werden.
+     *
+     * @param einstellungenEnum Das Class-Objekt des Enums.
+     * @return true, falls das speichern geklappt hat, ansonsten false
+     */
+    private boolean speicherEnum(Object einstellungenEnum)
+    {
+        String enumName = ((Class) einstellungenEnum).getName();
+        Map<String, EinstellungenProperty> einstellungen = new HashMap<>();
+        try
+        {
+            Object[] enumConstants = Class.forName(enumName).getEnumConstants();
+            for (Object enumConstant : enumConstants)
+            {
+                if (enumConstant instanceof IEinstellungen)
+                {
+                    Method[] methods = enumConstant.getClass().getDeclaredMethods();
+                    for (Method method : methods)
+                    {
+                        if (method.getReturnType().equals(EinstellungenProperty.class))
+                        {
+                            try
+                            {
+                                einstellungen.putIfAbsent(((Enum) enumConstant).name(), (EinstellungenProperty) method.invoke(enumConstant));
+                            } catch (ReflectiveOperationException e)
+                            {
+                                LOG.warning("Es gab ein Problem beim abrufen einer Einstellung aus der Funktion: " + method.getName() + " \n Dies tritt z.B. auf, falls argumente gefordert sind.");
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e)
+        {
+            LOG.severe("Es gab ein Problem beim Wiederfinden der Klasse \"" + ((Class) einstellungenEnum).getName() + "\".");
+            e.printStackTrace();
+        }
+        return speicherEinstellungenPropertys(einstellungen);
+    }
+
+    /**
+     * Hiermit wird überprüft ob es sich bei dem übergebenen Objekt um ein Class-Objekt eines Enums handelt.
+     *
+     * @param einstellungenKlasse Das Objekt das überprüft werden soll.
+     * @return true, falls es ein Ennum ist, ansonsten false.
+     */
+    private boolean isEnum(Object einstellungenKlasse)
+    {
+        return (einstellungenKlasse instanceof Class) && (((Class) einstellungenKlasse).isEnum());
+    }
+
+    /**
+     * Hiermit wird überprüft ob es sich bei dem Objekt entweder um eine Instanz von IEinstellungen oder ein Enum handelt.
+     * Es wird genauer gesagt geprüft ob es sich um das Class-Objekt des Enums handelt.
+     *
+     * @param einstellungenKlasse Das Objekt das überprüft werden soll.
+     * @return true, falls es sich um einen weiter zu verarbeitetnen Typ handelt.
+     */
+    private boolean objectPasst(Object einstellungenKlasse)
+    {
+        if ((!(einstellungenKlasse instanceof IEinstellungen)) && (!isEnum(einstellungenKlasse)))
+        {
+            LOG.warning("Die angegebene Klasse muss entweder IEinstellungen implementieren oder ein Enum sein.");
+            return false;
         }
         return true;
     }

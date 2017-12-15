@@ -10,7 +10,7 @@ public interface EinstellungenSpeicher
      *
      * @return Eine Map mit allen Einstellungen
      */
-    boolean getEinstellungen(IEinstellungen einstellungen);
+    boolean getEinstellungen(Object einstellungen);
 
     /**
      * Mit dieser Methode können alle Einstellungen einer Klasse gespeichert werden.
@@ -18,6 +18,6 @@ public interface EinstellungenSpeicher
      * @param einstellungen Dies ist die Klasse in der die Einstellungen vorhanden sind.
      * @return true, falls das speichern der Einstellungen erfolgreich war, ansonsten false.
      */
-    boolean speichern(IEinstellungen einstellungen);
+    boolean speichern(Object einstellungen);
 
 }
