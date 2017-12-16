@@ -33,5 +33,8 @@ public class PropertiesSpeicherTest implements IEinstellungen
         EinstellungenSpeicher speicher = new PropertiesSpeicher("testenum");
         PropertiesSpeicher.setProgrammName("test");
         assertEquals(true,speicher.speichern(EinstellungEnum.class));
+        EinstellungEnum.test.EINSTELLUNGProperty().set("funktioniert nicht");
+        assertEquals(true, speicher.getEinstellungen(EinstellungEnum.class));
+        assertEquals("hallo",EinstellungEnum.test.EINSTELLUNGProperty().get());
     }
 }

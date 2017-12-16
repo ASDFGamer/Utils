@@ -110,10 +110,17 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
         boolean result = true;
         Properties properties = new Properties();
         InputStream configFile = null;
-        boolean einstellungenNichtVollstaendig = false;//TODO damit was machen, Dies gibt an, dass nicht alle einstellungen geladen werden konnten
+        boolean einstellungenNichtVollstaendig = false;//TODO damit was machen, Dies gibt an, dass nicht alle einstellungen geladen werden konnten, in EinstelllungKlassenInfos speichern
         //Einstellungen finden
-        Map<String, EinstellungenProperty> einstellungenList = Utils.getFields(einstellungenKlasse);
-
+        Map<String, EinstellungenProperty> einstellungenList;
+        if (isEnum(einstellungenKlasse))
+        {
+            einstellungenList = getEinstellungenFromEnum(einstellungenKlasse);
+        }
+        else
+        {
+            einstellungenList = Utils.getFields(einstellungenKlasse);
+        }
         //Change Listener entfernen
         for (Map.Entry<String, EinstellungenProperty> einstellung : einstellungenList.entrySet())
         {
@@ -130,6 +137,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
 
             for (Map.Entry<String, EinstellungenProperty> einstellung : einstellungenList.entrySet())
             {
+                //Enum kommt nicht hier her.
                 LOG.info("PropertiesSpeicher.getEinstellungen Zeile 79\n" + einstellung.getKey() + "\n" + properties.getProperty(einstellung.getKey()));
 
                 if (properties.getProperty(einstellung.getKey()) == null && !einstellung.getValue().isInternerWert())
@@ -170,6 +178,42 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
         return result;
     }
 
+    private Map<String, EinstellungenProperty> getEinstellungenFromEnum(Object einstellungenEnum)
+    {
+
+        String enumName = ((Class) einstellungenEnum).getName();
+        Map<String, EinstellungenProperty> einstellungen = new HashMap<>();
+        try
+        {
+            Object[] enumConstants = Class.forName(enumName).getEnumConstants();
+            for (Object enumConstant : enumConstants)
+            {
+                if (enumConstant instanceof IEinstellungen)
+                {
+                    Method[] methods = enumConstant.getClass().getDeclaredMethods();
+                    for (Method method : methods)
+                    {
+                        if (method.getReturnType().equals(EinstellungenProperty.class))
+                        {
+                            try
+                            {
+                                einstellungen.putIfAbsent(((Enum) enumConstant).name(), (EinstellungenProperty) method.invoke(enumConstant));
+                            } catch (ReflectiveOperationException e)
+                            {
+                                LOG.warning("Es gab ein Problem beim abrufen einer Einstellung aus der Funktion: " + method.getName() + " \n Dies tritt z.B. auf, falls argumente gefordert sind.");
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e)
+        {
+            LOG.severe("Es gab ein Problem beim Wiederfinden der Klasse \"" + ((Class) einstellungenEnum).getName() + "\".");
+            e.printStackTrace();
+        }
+        return einstellungen;
+    }
+
 
     /**
      * Mit dieser Methode können alle Einstellungen einer Klasse gespeichert werden.
@@ -193,7 +237,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
 
         if (isEnum(einstellungenKlasse))
         {
-            return speicherEnum(einstellungenKlasse);
+            return speicherEinstellungenPropertys(getEinstellungenFromEnum(einstellungenKlasse));
         } else
         {
             return speicherEinstellungenPropertys(Utils.getFields(einstellungenKlasse));
@@ -300,48 +344,6 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             return true;
         }
         return false;
-    }
-
-    /**
-     * Dies verarbeitet ein Object bei dem es sich das Class-Object eines Enums handeln muss so, dass alle
-     * EinstellungenProperys des Enums angespeichert werden.
-     *
-     * @param einstellungenEnum Das Class-Objekt des Enums.
-     * @return true, falls das speichern geklappt hat, ansonsten false
-     */
-    private boolean speicherEnum(Object einstellungenEnum)
-    {
-        String enumName = ((Class) einstellungenEnum).getName();
-        Map<String, EinstellungenProperty> einstellungen = new HashMap<>();
-        try
-        {
-            Object[] enumConstants = Class.forName(enumName).getEnumConstants();
-            for (Object enumConstant : enumConstants)
-            {
-                if (enumConstant instanceof IEinstellungen)
-                {
-                    Method[] methods = enumConstant.getClass().getDeclaredMethods();
-                    for (Method method : methods)
-                    {
-                        if (method.getReturnType().equals(EinstellungenProperty.class))
-                        {
-                            try
-                            {
-                                einstellungen.putIfAbsent(((Enum) enumConstant).name(), (EinstellungenProperty) method.invoke(enumConstant));
-                            } catch (ReflectiveOperationException e)
-                            {
-                                LOG.warning("Es gab ein Problem beim abrufen einer Einstellung aus der Funktion: " + method.getName() + " \n Dies tritt z.B. auf, falls argumente gefordert sind.");
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (ClassNotFoundException e)
-        {
-            LOG.severe("Es gab ein Problem beim Wiederfinden der Klasse \"" + ((Class) einstellungenEnum).getName() + "\".");
-            e.printStackTrace();
-        }
-        return speicherEinstellungenPropertys(einstellungen);
     }
 
     /**
