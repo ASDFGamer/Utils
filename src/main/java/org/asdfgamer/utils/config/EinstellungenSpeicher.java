@@ -10,6 +10,7 @@ public interface EinstellungenSpeicher
     /**
      * Diese Methode lädt alle Einstellungen aus einer Klasse und updated diese auch.
      *
+     * @param einstellungen Dies ist das Objekt von dem die Einstellungen gespeichert werden sollen (z.Z. IEinstellungen und Enum)
      * @return Eine Map mit allen Einstellungen
      */
     boolean getEinstellungen(Object einstellungen);

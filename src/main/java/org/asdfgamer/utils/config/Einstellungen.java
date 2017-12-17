@@ -58,6 +58,8 @@ public class Einstellungen
 
     /**
      * Hiermit wird eine einfache Einstellungsproperty erstellt, falls keine zusätzlichen Infos angegeben werden.
+     *
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung()
     {
@@ -72,6 +74,7 @@ public class Einstellungen
      * Durch die nicht vorhandene Typbindung fallen Fehler erst im Betrieb auf, aber dafür muss es z.B. in Enums nur einen Kontruktor geben.
      *
      * @param einstellungen Dies ist das Aray aus Objekten welches analysiert werden soll.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(Object[] einstellungen)
     {
@@ -183,6 +186,7 @@ public class Einstellungen
      * Hiermit wird eine Einstllungsproperty erstellt mit einem String als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(String standardwert)
     {
@@ -196,6 +200,7 @@ public class Einstellungen
      * Hiermit wird eine Einstllungsproperty erstellt mit einem Integer als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(int standardwert)
     {
@@ -211,6 +216,7 @@ public class Einstellungen
      * Hiermit wird eine Einstllungsproperty erstellt mit einem double als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(double standardwert)
     {
@@ -225,6 +231,7 @@ public class Einstellungen
      * Hiermit wird eine Einstllungsproperty erstellt mit einem boolschen Wahrheitswert als Standardwert.
      *
      * @param standardwert Der Standardwert der Einstellung.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(boolean standardwert)
     {
@@ -242,6 +249,7 @@ public class Einstellungen
      * @param intern       Dies gibt an ob die Einstellung nur intern sein soll
      *                     oder auch in der Einstellungsdatei gespeichert werden
      *                     soll.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(String standardwert, boolean intern)
     {
@@ -256,6 +264,7 @@ public class Einstellungen
      * @param intern       Dies gibt an ob die Einstellung nur intern sein soll
      *                     oder auch in der Einstellungsdatei gespeichert werden
      *                     soll.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(int standardwert, boolean intern)
     {
@@ -270,6 +279,7 @@ public class Einstellungen
      * @param intern       Dies gibt an ob die Einstellung nur intern sein soll
      *                     oder auch in der Einstellungsdatei gespeichert werden
      *                     soll.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(double standardwert, boolean intern)
     {
@@ -286,6 +296,7 @@ public class Einstellungen
      * @param intern       Dies gibt an ob die Einstellung nur intern sein soll
      *                     oder auch in der Einstellungsdatei gespeichert werden
      *                     soll.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(boolean standardwert, boolean intern)
     {
@@ -302,10 +313,10 @@ public class Einstellungen
      * @param standardwert Der Standardwert der Einstellung.
      * @param minimalwert  Der niedrigste erlaubte Wert.
      * @param maximalwert  Der höchste erlaubte Wert.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(int standardwert, int minimalwert, int maximalwert)
     {
-
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
         property.setMinWert(minimalwert);
         property.setMaxWert(maximalwert);
@@ -320,6 +331,7 @@ public class Einstellungen
      * @param standardwert Der Standardwert der Einstellung.
      * @param minimalwert  Der niedrigste erlaubte Wert.
      * @param maximalwert  Der höchste erlaubte Wert.
+     * @return Die neue Einstellung
      */
     public static EinstellungenProperty neueEinstellung(double standardwert, double minimalwert, double maximalwert)
     {
