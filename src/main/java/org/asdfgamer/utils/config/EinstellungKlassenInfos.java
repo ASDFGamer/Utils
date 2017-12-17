@@ -9,8 +9,6 @@ import static java.util.logging.Logger.getLogger;
 /**
  * In dieser Klasse sind verschiedene Infos hinterlegt die für eine gesamte Klasse/Enum mit Einstellungen gelten und
  * deshalb nicht in den Einstellungproperties gespeichert werden können.
- *
- * TODO diese Klasse sinnvoll nutzen. Hierfür muss ich die Klasse in der eine Einstellung erstellt wurde herausfinden.
  */
 public class EinstellungKlassenInfos
 {
@@ -18,34 +16,16 @@ public class EinstellungKlassenInfos
     private final static Logger LOG = getLogger(EinstellungKlassenInfos.class.getName());
 
     /**
-     * Dies sind die Infos die zu einer Klasse gepeichert werden.
-     */
-    private class KlassenInfos
-    {
-
-        /**
-         * Dies gibt an, ob eine EInstellng in dieser Klasse abgeändert wurde.
-         */
-        private boolean geaendert = false;
-
-        /**
-         * Dies gibt an, wie viele EInstellungen in dieser Klasse existieren.
-         */
-        private int einstellungen = 0;
-
-    }
-
-    /**
      * Dies ist die Map in der zu allen relevanten Klassen die Infos hinterlegt sind.
      */
-    private Map<String, KlassenInfos> infos = new HashMap<>();
+    private static Map<String, KlassenInfos> infos = new HashMap<>();
 
     /**
      * Hiermit wird angegeben, dass die angegebene Klasse abgeändert wurde.
      *
      * @param klasse Der absolute Klassenname (z.B. org.asdfgamer.utils.config.Einstellungen)
      */
-    public void setChanged(String klasse)
+    public static void setChanged(String klasse)
     {
 
         if (infos.containsKey(klasse))
@@ -61,11 +41,12 @@ public class EinstellungKlassenInfos
 
     /**
      * Dies speichert wie viele Einstellungen in der Klasse vorhanden sind. Diese Anzahl kann sich nicht ändern.
-     * @param klasse Der absolute Klassenname (z.B. org.asdfgamer.utils.config.Einstellungen)
+     *
+     * @param klasse        Der absolute Klassenname (z.B. org.asdfgamer.utils.config.Einstellungen)
      * @param einstellungen Dies ist die Anzahl der EInstellungen
      * @return true, falls der Anzahl gesetzt werden konnte und false, falls die Anzahl schon gesetzt war
      */
-    public boolean setEinstellungsanzahl(String klasse, int einstellungen)
+    public static boolean setEinstellungsanzahl(String klasse, int einstellungen)
     {
 
         if (infos.containsKey(klasse))
@@ -80,7 +61,7 @@ public class EinstellungKlassenInfos
         } else
         {
             KlassenInfos klassenInfos = new KlassenInfos();
-            klassenInfos.einstellungen= einstellungen;
+            klassenInfos.einstellungen = einstellungen;
             infos.put(klasse, klassenInfos);
         }
         return true;
@@ -93,7 +74,7 @@ public class EinstellungKlassenInfos
      * @return true, falls eine Einstellung geändert wurde und false, falls keine geändert wurde oder zu der Klasse
      * keine Infos existieren
      */
-    public boolean isChanged(String klasse)
+    public static boolean isChanged(String klasse)
     {
 
         if (infos.containsKey(klasse))
@@ -110,7 +91,7 @@ public class EinstellungKlassenInfos
      * @param klasse Der absolute Klassenname (z.B. org.asdfgamer.utils.config.Einstellungen)
      * @return Die anzahl der Einstellungen oder 0, falls zu der Klasse keine Infos existieren.
      */
-    public int getEinstellungen(String klasse)
+    public static int getEinstellungen(String klasse)
     {
 
         if (infos.containsKey(klasse))
@@ -119,5 +100,88 @@ public class EinstellungKlassenInfos
         }
         LOG.warning("Zu der Klasse: " + klasse + "wurden noch keine Infos hinterlegt.");
         return 0;
+    }
+
+    /**
+     * Hiermit wird festgelegt, dass die Einstellungen dieser Klasse schon geladen wurden.
+     *
+     * @param klasse Der absolute Klassenname (z.B. org.asdfgamer.utils.config.Einstellungen)
+     */
+    public static void setEinstellungenGeladen(String klasse)
+    {
+
+        if (infos.containsKey(klasse))
+        {
+            infos.get(klasse).einstellungenGeladen = true;
+        } else
+        {
+            KlassenInfos klassenInfos = new KlassenInfos();
+            klassenInfos.einstellungenGeladen = true;
+            infos.put(klasse, klassenInfos);
+        }
+
+    }
+
+    /**
+     * Hiermit wird festgelegt, dass es ein Problem beim Laden der Einstellungen gab.
+     *
+     * @param klasse Der absolute Klassenname (z.B. org.asdfgamer.utils.config.Einstellungen)
+     */
+    public static void setProblemBeimLaden(String klasse)
+    {
+
+        if (infos.containsKey(klasse))
+        {
+            infos.get(klasse).einstellungenVollstaengigGeladen = false;
+            infos.get(klasse).einstellungenGeladen = true;
+
+        } else
+        {
+            KlassenInfos klassenInfos = new KlassenInfos();
+            klassenInfos.einstellungenVollstaengigGeladen = false;
+            klassenInfos.einstellungenGeladen = true;
+            infos.put(klasse, klassenInfos);
+        }
+    }
+
+    public static boolean getProblemBeimLaden(String klasse)
+    {
+
+        if (infos.containsKey(klasse))
+        {
+            if (infos.get(klasse).einstellungenGeladen)
+            {
+                return !infos.get(klasse).einstellungenVollstaengigGeladen;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Dies sind die Infos die zu einer Klasse gepeichert werden.
+     */
+    private static class KlassenInfos
+    {
+
+        /**
+         * Dies gibt an, ob eine Einstellung in dieser Klasse abgeändert wurde.
+         */
+        private boolean geaendert = false;
+
+        /**
+         * Dies gibt an, wie viele Einstellungen in dieser Klasse existieren.
+         */
+        private int einstellungen = 0;
+
+        /**
+         * Dies gibt an, ob die Einstellungen dieser Klasse schon geladen wurden.
+         */
+        private boolean einstellungenGeladen = false;
+
+        /**
+         * Dies gibt an, ob die Einstellungen vollständig geladen wurden, als sie das letzte mal geladen wurden.
+         * Falls {@link KlassenInfos#einstellungenGeladen}==false gilt, dann gibt dieses Feld keine sinnvollen Infos ab.
+         */
+        private boolean einstellungenVollstaengigGeladen = true;
     }
 }

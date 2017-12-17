@@ -30,7 +30,7 @@ public class EinstellungenProperty extends SimpleStringProperty
     private static final Logger LOG = Logger.getLogger(EinstellungenProperty.class.getName());
 
     /**
-     * Dies gibt an, dass irgendeine Einstellung geändert wurde. TODO anpassen, so dass es auf eine Klasse beschränkt wird.
+     * Dies gibt an, dass irgendeine Einstellung geändert wurde. TODO anpassen, so dass es auf eine Klasse beschränkt wird. Hierfür muss die Klasse in der die EInstellung erstellt wird bekannt sein.
      */
     private static boolean irgendwasGeändert = false;
 

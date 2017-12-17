@@ -60,7 +60,7 @@ public class Einstellungen
     {
 
         EinstellungenProperty property = new EinstellungenProperty();
-        //property.addListener(einstellungenAendern);
+        property.addListener(EinstellungenListener.getEinstellungenAendern(property));
         return property;
     }
 
@@ -73,7 +73,7 @@ public class Einstellungen
     {
 
         EinstellungenProperty property = new EinstellungenProperty(standardwert);
-//        property.addListener(einstellungenAendern);
+        property.addListener(EinstellungenListener.getEinstellungenAendern(property));
         return property;
     }
 //
@@ -87,7 +87,7 @@ public class Einstellungen
     {
 
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
-//        this.property.addListener(einstellungenAendern);
+        property.addListener(EinstellungenListener.getEinstellungenAendern(property));
         return property;
     }
 //
@@ -106,7 +106,7 @@ public class Einstellungen
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
         property.setMinWert(minimalwert);
         property.setMaxWert(maximalwert);
-//        property.addListener(einstellungenAendern);
+        property.addListener(EinstellungenListener.getEinstellungenAendern(property));
         return property;
     }
 //
@@ -121,7 +121,7 @@ public class Einstellungen
 
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
         property.setBoolean(standardwert);
-//        property.addListener(einstellungenAendern);
+        property.addListener(EinstellungenListener.getEinstellungenAendern(property));
         return property;
     }
 
@@ -135,7 +135,7 @@ public class Einstellungen
 
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
         property.setDouble(standardwert);
-//        property.addListener(einstellungenAendern);
+        property.addListener(EinstellungenListener.getEinstellungenAendern(property));
         return property;
     }
 
@@ -153,7 +153,7 @@ public class Einstellungen
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
         property.setMinWert(minimalwert);
         property.setMaxWert(maximalwert);
-//        this.property.addListener(einstellungenAendern);
+        property.addListener(EinstellungenListener.getEinstellungenAendern(property));
         return property;
     }
 
