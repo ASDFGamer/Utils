@@ -110,14 +110,13 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
         boolean result = true;
         Properties properties = new Properties();
         InputStream configFile = null;
-        boolean einstellungenNichtVollstaendig = false;//TODO damit was machen, Dies gibt an, dass nicht alle einstellungen geladen werden konnten, in EinstelllungKlassenInfos speichern
+        boolean einstellungenNichtVollstaendig = false;
         //Einstellungen finden
         Map<String, EinstellungenProperty> einstellungenList;
         if (isEnum(einstellungenKlasse))
         {
             einstellungenList = getEinstellungenFromEnum(einstellungenKlasse);
-        }
-        else
+        } else
         {
             einstellungenList = Utils.getFields(einstellungenKlasse);
         }
@@ -126,7 +125,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
         {
             if (!einstellung.getValue().isInternerWert())
             {
-                einstellung.getValue().removeListener(EinstellungenListener.getEinstellungenAendern(einstellung.getValue()));//TODO testen
+                einstellung.getValue().removeListener(EinstellungenListener.getEinstellungenAendern(einstellung.getValue()));
             }
         }
         //Laden der Einstellungen
@@ -175,9 +174,62 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             }
         }
 
+        String name;
+        if (einstellungenKlasse instanceof Class)
+        {
+            name = ((Class) einstellungenKlasse).getName();
+        } else
+        {
+            name = einstellungenKlasse.getClass().getName();
+        }
+
+        if (einstellungenNichtVollstaendig)
+        {
+            EinstellungKlassenInfos.setProblemBeimLaden(name);
+        } else
+        {
+            EinstellungKlassenInfos.setEinstellungenGeladen(name);
+        }
+
         return result;
     }
 
+    /**
+     * Mit dieser Methode können alle Einstellungen einer Klasse gespeichert werden.
+     *
+     * @param einstellungenKlasse Dies ist die Klasse in der die Einstellungen vorhanden sind.
+     * @return true, falls das speichern der Einstellungen erfolgreich war, ansonsten false.
+     */
+    @Override
+    public boolean speichern(Object einstellungenKlasse)
+    {
+
+        if (!objectPasst(einstellungenKlasse))
+        {
+            return false;
+        }
+
+        if (!pfadExists())
+        {
+            return false;
+        }
+
+        if (isEnum(einstellungenKlasse))
+        {
+            return speicherEinstellungenPropertys(getEinstellungenFromEnum(einstellungenKlasse));
+        } else
+        {
+            return speicherEinstellungenPropertys(Utils.getFields(einstellungenKlasse));
+        }
+
+    }
+
+    /**
+     * Mit dieser Funktion werden alle Einstellungspropertys aus dem angegebenen Enum gefunden und zurückgegeben
+     *
+     * @param einstellungenEnum Das Class-Objekt zu dem Enum
+     * @return Eine Map mit allen Einstellungen
+     */
     private Map<String, EinstellungenProperty> getEinstellungenFromEnum(Object einstellungenEnum)
     {
 
@@ -212,37 +264,6 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             e.printStackTrace();
         }
         return einstellungen;
-    }
-
-
-    /**
-     * Mit dieser Methode können alle Einstellungen einer Klasse gespeichert werden.
-     *
-     * @param einstellungenKlasse Dies ist die Klasse in der die Einstellungen vorhanden sind.
-     * @return true, falls das speichern der Einstellungen erfolgreich war, ansonsten false.
-     */
-    @Override
-    public boolean speichern(Object einstellungenKlasse)
-    {
-
-        if (!objectPasst(einstellungenKlasse))
-        {
-            return false;
-        }
-
-        if (!pfadExists())
-        {
-            return false;
-        }
-
-        if (isEnum(einstellungenKlasse))
-        {
-            return speicherEinstellungenPropertys(getEinstellungenFromEnum(einstellungenKlasse));
-        } else
-        {
-            return speicherEinstellungenPropertys(Utils.getFields(einstellungenKlasse));
-        }
-
     }
 
     /**
@@ -328,6 +349,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
 
     private boolean keineAenderungen(Map<String, EinstellungenProperty> einstellungen)
     {
+
         boolean einstellungGeaendert = false;
 
         for (Map.Entry<String, EinstellungenProperty> entry : einstellungen.entrySet())
@@ -354,6 +376,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
      */
     private boolean isEnum(Object einstellungenKlasse)
     {
+
         return (einstellungenKlasse instanceof Class) && (((Class) einstellungenKlasse).isEnum());
     }
 
@@ -366,6 +389,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
      */
     private boolean objectPasst(Object einstellungenKlasse)
     {
+
         if ((!(einstellungenKlasse instanceof IEinstellungen)) && (!isEnum(einstellungenKlasse)))
         {
             LOG.warning("Die angegebene Klasse muss entweder IEinstellungen implementieren oder ein Enum sein.");
