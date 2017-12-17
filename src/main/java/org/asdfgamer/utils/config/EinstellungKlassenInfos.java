@@ -9,7 +9,10 @@ import static java.util.logging.Logger.getLogger;
 /**
  * In dieser Klasse sind verschiedene Infos hinterlegt die für eine gesamte Klasse/Enum mit Einstellungen gelten und
  * deshalb nicht in den Einstellungproperties gespeichert werden können.
+ *
+ * @author ASDFGamer
  */
+@SuppressWarnings("unused")
 public class EinstellungKlassenInfos
 {
 

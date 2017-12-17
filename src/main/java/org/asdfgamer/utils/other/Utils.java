@@ -15,8 +15,9 @@ import java.util.logging.Logger;
 /**
  * Alle mögliche sinnvollen Methoden, die mehrmals verwendet werden können.
  *
- * @author Christoph Wildhagen
+ * @author ASDFGamer
  */
+@SuppressWarnings({"unused", "UnusedReturnValue", "WeakerAccess"})
 public class Utils
 {
 
@@ -87,7 +88,7 @@ public class Utils
     public static String getConfigFolder(String name)
     {
 
-        switch (getBetriebssystem())
+        switch (getBetriebssystemOhneNull())
         {
             case "windows":
                 return getConfigFolderWin(name);
@@ -376,6 +377,23 @@ public class Utils
 
     /**
      * Dies gibt das Betriebssystem welches genutzt wird als String aus.
+     * <p>
+     * Dies baut auf {@link Utils#getBetriebssystem()} auf, nur dass null zu dem leeren String umgewandelt wird.
+     *
+     * @return windows, linux, macos, solaris, ""(unbekannt)
+     */
+    public static String getBetriebssystemOhneNull()
+    {
+        String os = getBetriebssystem();
+        if (os == null)
+        {
+            return "";
+        }
+        return os;
+    }
+
+    /**
+     * Dies gibt das Betriebssystem welches genutzt wird als String aus.
      *
      * @return windows, linux, macos, solaris, null(unbekannt)
      */
@@ -401,6 +419,32 @@ public class Utils
     }
 
     /**
+     * Dies gibt das Betriebssystem welches genutzt wird als Integer aus.
+     *
+     * @return 1:Windows; 2:Unix/Linux; 3:MacOS; 4:Solaris; -1:Unbekannt
+     */
+    public static int getOSint()
+    {
+
+        if (isWindows())
+        {
+            return 1;
+        } else if (isUnix())
+        {
+            return 2;
+        } else if (isMac())
+        {
+            return 3;
+        } else if (isSolaris())
+        {
+            return 4;
+        } else
+        {
+            return -1;
+        }
+    }
+
+    /**
      * Gibt an ob es sich bei dem Betriebssystem um ein Windows handelt.
      *
      * @return true, falls Windows, sonst false.
@@ -413,18 +457,6 @@ public class Utils
     }
 
     /**
-     * Gibt an ob es sich bei dem Betriebssystem um ein Mac handelt.
-     *
-     * @return true, falls Mac, sonst false.
-     */
-    public static boolean isMac()
-    {
-
-        return (BETRIEBSSYSTEM.contains("mac"));
-
-    }
-
-    /**
      * Gibt an ob es sich bei dem Betriebssystem um ein Unix/Linux handelt.
      *
      * @return true, falls Unix/Linux, sonst false.
@@ -433,6 +465,18 @@ public class Utils
     {
 
         return (BETRIEBSSYSTEM.contains("nix") || BETRIEBSSYSTEM.contains("nux") || BETRIEBSSYSTEM.indexOf("aix") > 0);
+
+    }
+
+    /**
+     * Gibt an ob es sich bei dem Betriebssystem um ein Mac handelt.
+     *
+     * @return true, falls Mac, sonst false.
+     */
+    public static boolean isMac()
+    {
+
+        return (BETRIEBSSYSTEM.contains("mac"));
 
     }
 
@@ -558,9 +602,8 @@ public class Utils
                 LOG.info("is Public " + Modifier.isPublic(field.getModifiers()));
                 if (Modifier.isPublic(field.getModifiers()))
                 {
-
+                    //noinspection unchecked Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
                     felder.put(field.getName(), (T) field.get(klasse));
-
                 }
             } catch (IllegalAccessException e)
             {

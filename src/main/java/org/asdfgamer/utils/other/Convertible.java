@@ -5,6 +5,7 @@ package org.asdfgamer.utils.other;
  *
  * @author ASDFGamer
  */
+@SuppressWarnings({"unused", "ResultOfMethodCallIgnored"})
 public class Convertible
 {
 

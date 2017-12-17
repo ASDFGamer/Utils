@@ -2,7 +2,10 @@ package org.asdfgamer.utils.config;
 
 /**
  * Dies ist eine Beispielimplementation des Interfaces {@link IEinstellungen}.
+ *
+ * @author ASDFGamer
  */
+@SuppressWarnings("unused")
 public enum EinstellungEnum implements IEinstellungen
 {
     test("hallo");
@@ -33,15 +36,15 @@ public enum EinstellungEnum implements IEinstellungen
         return EINSTELLUNG.get();
     }
 
-    public EinstellungenProperty EINSTELLUNGProperty()
-    {
-
-        return EINSTELLUNG;
-    }
-
     public void setEINSTELLUNG(String EINSTELLUNG)
     {
 
         this.EINSTELLUNG.set(EINSTELLUNG);
+    }
+
+    public EinstellungenProperty EINSTELLUNGProperty()
+    {
+
+        return EINSTELLUNG;
     }
 }

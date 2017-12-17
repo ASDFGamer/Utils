@@ -15,7 +15,10 @@ import java.util.logging.Logger;
  * Diese Datei liegt dann in dem Betriebssystem-abhänigen Configordner. Unter Windows ist dies
  * %AppData%\\Roaming\\"PROGRAMM_NAME", unter Linux .config/"PROGRAMM_NAME" und unter anderen
  * Betriesbssystemen wird direkt ein Ordner im Benutzerverzeichnis erstellt.
+ *
+ * @author ASDFGamer
  */
+@SuppressWarnings({"WeakerAccess", "unused"})
 public class PropertiesSpeicher implements EinstellungenSpeicher
 {
 
@@ -225,72 +228,19 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     }
 
     /**
-     * Mit dieser Funktion werden alle Einstellungspropertys aus dem angegebenen Enum gefunden und zurückgegeben
+     * Hiermit wird überprüft ob es sich bei dem Objekt entweder um eine Instanz von IEinstellungen oder ein Enum handelt.
+     * Es wird genauer gesagt geprüft ob es sich um das Class-Objekt des Enums handelt.
      *
-     * @param einstellungenEnum Das Class-Objekt zu dem Enum
-     * @return Eine Map mit allen Einstellungen
+     * @param einstellungenKlasse Das Objekt das überprüft werden soll.
+     * @return true, falls es sich um einen weiter zu verarbeitetnen Typ handelt.
      */
-    private Map<String, EinstellungenProperty> getEinstellungenFromEnum(Object einstellungenEnum)
+    private boolean objectPasst(Object einstellungenKlasse)
     {
 
-        String enumName = ((Class) einstellungenEnum).getName();
-        Map<String, EinstellungenProperty> einstellungen = new HashMap<>();
-        try
+        if ((!(einstellungenKlasse instanceof IEinstellungen)) && (!isEnum(einstellungenKlasse)))
         {
-            Object[] enumConstants = Class.forName(enumName).getEnumConstants();
-            for (Object enumConstant : enumConstants)
-            {
-                if (enumConstant instanceof IEinstellungen)
-                {
-                    Method[] methods = enumConstant.getClass().getDeclaredMethods();
-                    for (Method method : methods)
-                    {
-                        if (method.getReturnType().equals(EinstellungenProperty.class))
-                        {
-                            try
-                            {
-                                einstellungen.putIfAbsent(((Enum) enumConstant).name(), (EinstellungenProperty) method.invoke(enumConstant));
-                            } catch (ReflectiveOperationException e)
-                            {
-                                LOG.warning("Es gab ein Problem beim abrufen einer Einstellung aus der Funktion: " + method.getName() + " \n Dies tritt z.B. auf, falls argumente gefordert sind.");
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (ClassNotFoundException e)
-        {
-            LOG.severe("Es gab ein Problem beim Wiederfinden der Klasse \"" + ((Class) einstellungenEnum).getName() + "\".");
-            e.printStackTrace();
-        }
-        return einstellungen;
-    }
-
-    /**
-     * Diese Methode üerprüft ob ein Pfad existiert und versucht ansonstenen einen zu erstellen.
-     * Falls kein Programmname angegeben ist kann kein Pfad erzeugt werden und desshalb wird false zurückgegeben.
-     * Ansonsten wird ein neuer Pfad aus den bekannten Infos erstellt und true zurückgegeben
-     *
-     * @return Falls kein Pfad existert oder erstellt werden kann: false, ansonsten true.
-     */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
-    private boolean pfadExists()
-    {
-
-        if (pfad == null)
-        {
-            if (PROGRAMM_NAME == null)
-            {
-                LOG.severe("Es ist kein Programmname festgelegt.");
-                return false;
-            }
-            if (DATEI_NAME.contains("."))
-            {
-                pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME);
-            } else
-            {
-                pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME + STD_EXTENSION);
-            }
+            LOG.warning("Die angegebene Klasse muss entweder IEinstellungen implementieren oder ein Enum sein.");
+            return false;
         }
         return true;
     }
@@ -369,6 +319,35 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     }
 
     /**
+     * Diese Methode üerprüft ob ein Pfad existiert und versucht ansonstenen einen zu erstellen.
+     * Falls kein Programmname angegeben ist kann kein Pfad erzeugt werden und desshalb wird false zurückgegeben.
+     * Ansonsten wird ein neuer Pfad aus den bekannten Infos erstellt und true zurückgegeben
+     *
+     * @return Falls kein Pfad existert oder erstellt werden kann: false, ansonsten true.
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private boolean pfadExists()
+    {
+
+        if (pfad == null)
+        {
+            if (PROGRAMM_NAME == null)
+            {
+                LOG.severe("Es ist kein Programmname festgelegt.");
+                return false;
+            }
+            if (DATEI_NAME.contains("."))
+            {
+                pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME);
+            } else
+            {
+                pfad = Utils.getConfigFile(PROGRAMM_NAME, DATEI_NAME + STD_EXTENSION);
+            }
+        }
+        return true;
+    }
+
+    /**
      * Hiermit wird überprüft ob es sich bei dem übergebenen Objekt um ein Class-Objekt eines Enums handelt.
      *
      * @param einstellungenKlasse Das Objekt das überprüft werden soll.
@@ -381,21 +360,45 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     }
 
     /**
-     * Hiermit wird überprüft ob es sich bei dem Objekt entweder um eine Instanz von IEinstellungen oder ein Enum handelt.
-     * Es wird genauer gesagt geprüft ob es sich um das Class-Objekt des Enums handelt.
+     * Mit dieser Funktion werden alle Einstellungspropertys aus dem angegebenen Enum gefunden und zurückgegeben
      *
-     * @param einstellungenKlasse Das Objekt das überprüft werden soll.
-     * @return true, falls es sich um einen weiter zu verarbeitetnen Typ handelt.
+     * @param einstellungenEnum Das Class-Objekt zu dem Enum
+     * @return Eine Map mit allen Einstellungen
      */
-    private boolean objectPasst(Object einstellungenKlasse)
+    private Map<String, EinstellungenProperty> getEinstellungenFromEnum(Object einstellungenEnum)
     {
 
-        if ((!(einstellungenKlasse instanceof IEinstellungen)) && (!isEnum(einstellungenKlasse)))
+        String enumName = ((Class) einstellungenEnum).getName();
+        Map<String, EinstellungenProperty> einstellungen = new HashMap<>();
+        try
         {
-            LOG.warning("Die angegebene Klasse muss entweder IEinstellungen implementieren oder ein Enum sein.");
-            return false;
+            Object[] enumConstants = Class.forName(enumName).getEnumConstants();
+            for (Object enumConstant : enumConstants)
+            {
+                if (enumConstant instanceof IEinstellungen)
+                {
+                    Method[] methods = enumConstant.getClass().getDeclaredMethods();
+                    for (Method method : methods)
+                    {
+                        if (method.getReturnType().equals(EinstellungenProperty.class))
+                        {
+                            try
+                            {
+                                einstellungen.putIfAbsent(((Enum) enumConstant).name(), (EinstellungenProperty) method.invoke(enumConstant));
+                            } catch (ReflectiveOperationException e)
+                            {
+                                LOG.warning("Es gab ein Problem beim abrufen einer Einstellung aus der Funktion: " + method.getName() + " \n Dies tritt z.B. auf, falls argumente gefordert sind.");
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e)
+        {
+            LOG.severe("Es gab ein Problem beim Wiederfinden der Klasse \"" + ((Class) einstellungenEnum).getName() + "\".");
+            e.printStackTrace();
         }
-        return true;
+        return einstellungen;
     }
 
 }

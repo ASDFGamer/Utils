@@ -11,6 +11,7 @@ import java.util.logging.Logger;
  *
  * @author ASDFGamer
  */
+@SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
 public class EinstellungenProperty extends SimpleStringProperty
 {
 
@@ -32,7 +33,7 @@ public class EinstellungenProperty extends SimpleStringProperty
     /**
      * Dies gibt an, dass irgendeine Einstellung geändert wurde. TODO anpassen, so dass es auf eine Klasse beschränkt wird. Hierfür muss die Klasse in der die EInstellung erstellt wird bekannt sein.
      */
-    private static boolean irgendwasGeändert = false;
+    private static boolean irgendwasGeaendert = false;
 
     /**
      * Dies ist der Standardwert der Einstellung als String.
@@ -91,90 +92,13 @@ public class EinstellungenProperty extends SimpleStringProperty
      *
      * @param initialValue Der Anfangs-/ Standardwert der Einstellung.
      */
-    public EinstellungenProperty(String initialValue)
+    EinstellungenProperty(String initialValue)
     {
 
         super(initialValue);
         this.STANDARDWERT = initialValue;
         this.init(initialValue);
         internerWert = false;
-    }
-
-    /**
-     * Diesem Konstruktor wurde der Standardwert, der Name und die Bean übergeben, alles andere wird mit Standardwerten aufgefüllt.
-     *
-     * @param bean Die benutzte Bean.
-     * @param name Der Name des Objekts.
-     */
-    public EinstellungenProperty(Object bean, String name)
-    {
-
-        super(bean, name);
-        internerWert = false;
-        this.STANDARDWERT = null;
-    }
-
-    /**
-     * Diesem Konstruktor wurde der Standardwert, der Name, die Bean und der Anfangswert übergeben.
-     *
-     * @param bean         Die benutzte Bean.
-     * @param name         Der Name des Objekts.
-     * @param initialValue Der Anfangs-/ Standardwert der Einstellung.
-     */
-    public EinstellungenProperty(Object bean, String name, String initialValue)
-    {
-
-        super(bean, name, initialValue);
-        this.STANDARDWERT = initialValue;
-        this.init(initialValue);
-        internerWert = false;
-    }
-
-    /**
-     * Diesem Konstruktor wurde der Standardwert und der Initialwert übergeben, alles andere wird mit Standardwerten aufgefüllt.
-     *
-     * @param initialValue Der Anfangs-/ Standardwert der Einstellung.
-     * @param internerWert Dies gibt an, ob die Einstellung nur intern gespeichert werden soll.
-     */
-    public EinstellungenProperty(String initialValue, boolean internerWert)
-    {
-
-        super(initialValue);
-        this.STANDARDWERT = initialValue;
-        this.init(initialValue);
-        this.internerWert = internerWert;
-    }
-
-    /**
-     * Diesem Konstruktor wurde der Standardwert, der Name und die Bean übergeben, alles andere wird mit Standardwerten aufgefüllt.
-     *
-     * @param bean         Die benutzte Bean.
-     * @param name         Der Name des Objekts.
-     * @param internerWert Dies gibt an, ob die Einstellung nur intern gespeichert werden soll.
-     */
-    public EinstellungenProperty(Object bean, String name, boolean internerWert)
-    {
-
-        super(bean, name);
-        this.internerWert = internerWert;
-        this.STANDARDWERT = null;
-    }
-
-    /**
-     * Diesem Konstruktor wurde der Standardwert, der Name, die Bean und der Anfangswert übergeben.
-     *
-     * @param bean         Die benutzte Bean.
-     * @param name         Der Name des Objekts.
-     * @param initialValue Der Anfangs-/ Standardwert der Einstellung.
-     * @param internerWert Dies gibt an, ob die Einstellung nur intern gespeichert werden soll.
-     */
-    public EinstellungenProperty(Object bean, String name, String initialValue, boolean internerWert)
-    {
-
-        super(bean, name, initialValue);
-        this.STANDARDWERT = initialValue;
-        this.init(initialValue);
-        this.internerWert = internerWert;
     }
 
     /**
@@ -199,6 +123,103 @@ public class EinstellungenProperty extends SimpleStringProperty
         return true;
     }
 
+    /**
+     * Diesem Konstruktor wurde der Standardwert, der Name und die Bean übergeben, alles andere wird mit Standardwerten aufgefüllt.
+     *
+     * @param bean Die benutzte Bean.
+     * @param name Der Name des Objekts.
+     */
+    EinstellungenProperty(Object bean, String name)
+    {
+
+        super(bean, name);
+        internerWert = false;
+        this.STANDARDWERT = null;
+    }
+
+    /**
+     * Diesem Konstruktor wurde der Standardwert, der Name, die Bean und der Anfangswert übergeben.
+     *
+     * @param bean         Die benutzte Bean.
+     * @param name         Der Name des Objekts.
+     * @param initialValue Der Anfangs-/ Standardwert der Einstellung.
+     */
+    EinstellungenProperty(Object bean, String name, String initialValue)
+    {
+
+        super(bean, name, initialValue);
+        this.STANDARDWERT = initialValue;
+        this.init(initialValue);
+        internerWert = false;
+    }
+
+    /**
+     * Diesem Konstruktor wurde der Standardwert und der Initialwert übergeben, alles andere wird mit Standardwerten aufgefüllt.
+     *
+     * @param initialValue Der Anfangs-/ Standardwert der Einstellung.
+     * @param internerWert Dies gibt an, ob die Einstellung nur intern gespeichert werden soll.
+     */
+    EinstellungenProperty(String initialValue, boolean internerWert)
+    {
+
+        super(initialValue);
+        this.STANDARDWERT = initialValue;
+        this.init(initialValue);
+        this.internerWert = internerWert;
+    }
+
+    /**
+     * Diesem Konstruktor wurde der Standardwert, der Name und die Bean übergeben, alles andere wird mit Standardwerten aufgefüllt.
+     *
+     * @param bean         Die benutzte Bean.
+     * @param name         Der Name des Objekts.
+     * @param internerWert Dies gibt an, ob die Einstellung nur intern gespeichert werden soll.
+     */
+    EinstellungenProperty(Object bean, String name, boolean internerWert)
+    {
+
+        super(bean, name);
+        this.internerWert = internerWert;
+        this.STANDARDWERT = null;
+    }
+
+    /**
+     * Diesem Konstruktor wurde der Standardwert, der Name, die Bean und der Anfangswert übergeben.
+     *
+     * @param bean         Die benutzte Bean.
+     * @param name         Der Name des Objekts.
+     * @param initialValue Der Anfangs-/ Standardwert der Einstellung.
+     * @param internerWert Dies gibt an, ob die Einstellung nur intern gespeichert werden soll.
+     */
+    EinstellungenProperty(Object bean, String name, String initialValue, boolean internerWert)
+    {
+
+        super(bean, name, initialValue);
+        this.STANDARDWERT = initialValue;
+        this.init(initialValue);
+        this.internerWert = internerWert;
+    }
+
+    /**
+     * Dies gibt an, ob irgendeine Einstellung schon geändert wurde, während der ChangeListener aktiv war.
+     * Standardmäßig ist diesr immer aktiv, nur z.B. beim Laden von Einstellungen wird dieser kurzzeitig deaktiviert.
+     * <p>
+     * Hierbei ist zu beachten, dass alle Einstellungen berücksichtigt werden und nicht nur die aus einer Datei.
+     *
+     * @return true, falls dieser Einstellung geändert wurde, ansonsten false.
+     */
+    public static boolean getEineEinstellungGeaendert()
+    {
+
+        return irgendwasGeaendert;
+    }
+
+    /**
+     * Dies gibt an, ob diese Einstellung nur für den internen Gebrauch gedacht ist und nicht gespeichert werden soll.
+     *
+     * @return true, falls es nur ein interner Wert ist, ansonsten false.
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isInternerWert()
     {
 
@@ -236,62 +257,6 @@ public class EinstellungenProperty extends SimpleStringProperty
             return false;
         }
 
-    }
-
-    /**
-     * Dies setzt den Integerwert der Einstellung und updatet den Stringwert.
-     *
-     * @param newValue Der neue Wert.
-     * @return true, falls alles gut gegangen ist, sonst false.
-     */
-    public boolean setInteger(int newValue)
-    {
-
-        if (this.wertInteger != null)
-        {
-            if (this.maximalwert != null && this.maximalwert < newValue)
-            {
-                newValue = this.maximalwert.intValue();
-            } else if (this.minimalwert != null && this.minimalwert > newValue)
-            {
-                newValue = this.minimalwert.intValue();
-            }
-            this.wertInteger = newValue;
-            super.set(String.valueOf(newValue));
-            return true;
-        } else
-        {
-            LOG.warning("Diese Einstellung hat keinen Integerwert");
-            return false;
-        }
-    }
-
-    /**
-     * Dies setzt den Doublewert der Einstellung und updatet den Stringwert.
-     *
-     * @param newValue Der neue Wert.
-     * @return true, falls alles gut gegangen ist, sonst false.
-     */
-    public boolean setDouble(double newValue)
-    {
-
-        if (this.wertDouble != null)
-        {
-            if (this.maximalwert != null && this.maximalwert < newValue)
-            {
-                newValue = this.maximalwert;
-            } else if (this.minimalwert != null && this.minimalwert > newValue)
-            {
-                newValue = this.minimalwert;
-            }
-            this.wertDouble = newValue;
-            super.set(String.valueOf(newValue));
-            return true;
-        } else
-        {
-            LOG.warning("Diese Einstellung hat keinen Doublewert");
-            return false;
-        }
     }
 
     /**
@@ -348,28 +313,6 @@ public class EinstellungenProperty extends SimpleStringProperty
     {
 
         return this.wertBoolean != null;
-    }
-
-    /**
-     * Dies gibt zurück ob die Einstellung einen Integerwert hat.
-     *
-     * @return true, falls ein Intergerwert existert, sonst false.
-     */
-    public boolean hasIntegerValue()
-    {
-
-        return this.wertInteger != null;
-    }
-
-    /**
-     * Dies gibt zurück ob die Einstellung einen Doublewert hat.
-     *
-     * @return true, falls ein Doublewert existert, sonst false.
-     */
-    public boolean hasDoubleValue()
-    {
-
-        return this.wertDouble != null;
     }
 
     /**
@@ -430,6 +373,62 @@ public class EinstellungenProperty extends SimpleStringProperty
     }
 
     /**
+     * Dies setzt den Integerwert der Einstellung und updatet den Stringwert.
+     *
+     * @param newValue Der neue Wert.
+     * @return true, falls alles gut gegangen ist, sonst false.
+     */
+    public boolean setInteger(int newValue)
+    {
+
+        if (this.wertInteger != null)
+        {
+            if (this.maximalwert != null && this.maximalwert < newValue)
+            {
+                newValue = this.maximalwert.intValue();
+            } else if (this.minimalwert != null && this.minimalwert > newValue)
+            {
+                newValue = this.minimalwert.intValue();
+            }
+            this.wertInteger = newValue;
+            super.set(String.valueOf(newValue));
+            return true;
+        } else
+        {
+            LOG.warning("Diese Einstellung hat keinen Integerwert");
+            return false;
+        }
+    }
+
+    /**
+     * Dies setzt den Doublewert der Einstellung und updatet den Stringwert.
+     *
+     * @param newValue Der neue Wert.
+     * @return true, falls alles gut gegangen ist, sonst false.
+     */
+    public boolean setDouble(double newValue)
+    {
+
+        if (this.wertDouble != null)
+        {
+            if (this.maximalwert != null && this.maximalwert < newValue)
+            {
+                newValue = this.maximalwert;
+            } else if (this.minimalwert != null && this.minimalwert > newValue)
+            {
+                newValue = this.minimalwert;
+            }
+            this.wertDouble = newValue;
+            super.set(String.valueOf(newValue));
+            return true;
+        } else
+        {
+            LOG.warning("Diese Einstellung hat keinen Doublewert");
+            return false;
+        }
+    }
+
+    /**
      * Diese Methode setzt einen maximalen Wert für die Einstellung was dafür sorgt, dass jeder Wert der höher ist automatisch zu diesem Wert wird.
      * Falls es sich bei der Einstellung nicht um eine Integer oder Double Einstellung handelt passiert nichts und es wird 'false' zurückgegeben.
      *
@@ -453,6 +452,28 @@ public class EinstellungenProperty extends SimpleStringProperty
         }
 
         return true;
+    }
+
+    /**
+     * Dies gibt zurück ob die Einstellung einen Doublewert hat.
+     *
+     * @return true, falls ein Doublewert existert, sonst false.
+     */
+    public boolean hasDoubleValue()
+    {
+
+        return this.wertDouble != null;
+    }
+
+    /**
+     * Dies gibt zurück ob die Einstellung einen Integerwert hat.
+     *
+     * @return true, falls ein Intergerwert existert, sonst false.
+     */
+    public boolean hasIntegerValue()
+    {
+
+        return this.wertInteger != null;
     }
 
     /**
@@ -551,7 +572,7 @@ public class EinstellungenProperty extends SimpleStringProperty
     {
 
         geaendert = true;
-        irgendwasGeändert = true;
+        irgendwasGeaendert = true;
     }
 
     /**
@@ -564,20 +585,6 @@ public class EinstellungenProperty extends SimpleStringProperty
     {
 
         return geaendert;
-    }
-
-    /**
-     * Dies gibt an, ob irgendeine Einstellung schon geändert wurde, während der ChangeListener aktiv war.
-     * Standardmäßig ist diesr immer aktiv, nur z.B. beim Laden von Einstellungen wird dieser kurzzeitig deaktiviert.
-     * <p>
-     * Hierbei ist zu beachten, dass alle Einstellungen berücksichtigt werden und nicht nur die aus einer Datei.
-     *
-     * @return true, falls dieser Einstellung geändert wurde, ansonsten false.
-     */
-    public static boolean getEineEinstellungGeaendert()
-    {
-
-        return irgendwasGeändert;
     }
 
 }

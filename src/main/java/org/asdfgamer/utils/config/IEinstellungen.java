@@ -7,7 +7,10 @@ package org.asdfgamer.utils.config;
  * "neueEinstellung(Object[]) aufgerufen werden.
  * <p>
  * Eine Beispielimplementierung diese Interfaces ist in {@link EinstellungEnum} dargestellt.
+ *
+ * @author ASDFGamer
  */
+@SuppressWarnings("WeakerAccess")
 public interface IEinstellungen
 {
 

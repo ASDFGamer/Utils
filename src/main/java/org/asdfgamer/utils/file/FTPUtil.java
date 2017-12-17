@@ -21,6 +21,7 @@ import static java.util.logging.Logger.getLogger;
  *
  * @author ASDFGamer
  */
+@SuppressWarnings({"WeakerAccess", "UnusedReturnValue", "unused"})
 public class FTPUtil
 {
 
@@ -45,11 +46,10 @@ public class FTPUtil
         {
             LOG.info("Das aktuelle Verzeichnis konnte nicht ausgelesen werden.");
         }
-        int i = -1;
-        boolean result = true;
+        @SuppressWarnings("UnusedAssignment") boolean result = true;
         if (path.getNameCount() > 1)
         {
-            for (i = 0; i < path.getNameCount() - 1; i++)
+            for (int i = 0; i < path.getNameCount() - 1; i++)
             {
                 if (!isFolderFTP(path.getName(i), client, true))
                 {
@@ -62,68 +62,6 @@ public class FTPUtil
             InputStream inputStream = client.retrieveFileStream(path.getName(path.getNameCount() - 1).toString());
             int returnCode = client.getReplyCode();
             result = !(inputStream == null || returnCode == 550);
-
-            if (!stay)
-            {
-                client.changeWorkingDirectory(dirnow);
-            }
-        } catch (IOException e)
-        {
-            result = false;
-        }
-        return result;
-    }
-
-    /**
-     * Dies überprüft ob ein bestimmtes Verzeichnis existiert.
-     *
-     * @param path   Der Pfad zum Verzeichnis vom aktuellen Pfad des Clients aus.
-     * @param client Der FTP-Client der überprüft werden soll.
-     * @param stay   legt fest ob der client in dem zuletzt verwendeten Verzeichnis bleiben soll oder ob er zurück zum Anfang soll.
-     * @return true, falls der Ordner existiert, sonst false.
-     */
-    public static boolean isFolderFTP(String path, FTPClient client, boolean stay)
-    {
-
-        return isFolderFTP(Paths.get(path), client, stay);
-    }
-
-    /**
-     * Dies überprüft ob ein bestimmtes Verzeichnis existiert.
-     *
-     * @param path   Der Pfad zum Verzeichnis vom aktuellen Pfad des Clients aus.
-     * @param client Der FTP-Client der überprüft werden soll.
-     * @param stay   legt fest ob der client in dem zuletzt verwendeten Verzeichnis bleiben soll oder ob er zurück zum Anfang soll.
-     * @return true, falls der Ordner existiert, sonst false.
-     */
-    public static boolean isFolderFTP(Path path, FTPClient client, boolean stay)
-    {
-
-        String dirnow = "";
-        try
-        {
-            dirnow = client.printWorkingDirectory();
-        } catch (IOException e)
-        {
-            LOG.info("Das aktuelle Verzeichnis konnte nicht ausgelesen werden.");
-        }
-        int i = -1;
-        boolean result = true;
-        /*if (path.getNameCount()>1)Warum ist dieser Code da?
-        {
-            for (i = 0; i<path.getNameCount()-1;i++)
-            {
-                if (!isFolderFTP(path.getName(i),client,true))
-                {
-                    return false;
-                }
-            }
-        }*/
-        try
-        {
-            client.changeWorkingDirectory(path.toString());
-            int returnCode = client.getReplyCode();
-            result = returnCode != 550;
 
             if (!stay)
             {
@@ -184,38 +122,53 @@ public class FTPUtil
     }
 
     /**
-     * Dies Erstellt einen Ordner an dem angegbenen Pfad
+     * Dies überprüft ob ein bestimmtes Verzeichnis existiert.
      *
-     * @param path   Der Ordnerpfad relativ zum aktuellen workingDirectory
-     * @param client Der FTP-Client auf dem der Ordner erstellt werden soll
-     * @return true, falls der Ordner erstellt werden konnte, sonst false.
+     * @param path   Der Pfad zum Verzeichnis vom aktuellen Pfad des Clients aus.
+     * @param client Der FTP-Client der überprüft werden soll.
+     * @param stay   legt fest ob der client in dem zuletzt verwendeten Verzeichnis bleiben soll oder ob er zurück zum Anfang soll.
+     * @return true, falls der Ordner existiert, sonst false.
      */
-    private static boolean createFolderFTP_rec(Path path, FTPClient client)
+    public static boolean isFolderFTP(Path path, FTPClient client, boolean stay)
     {
 
-        if (isFolderFTP(path, client, false))
-        {
-            LOG.info("Der Ordner " + path + " existiert schon auf dem Client " + client.getRemoteAddress().getHostAddress());
-        }
-        if (path.getNameCount() > 1)
-        {
-            LOG.info(path.toString() + " zu " + path.subpath(0, path.getNameCount() - 1).toString());
-            if (!createFolderFTP_rec(path.subpath(0, path.getNameCount() - 1), client))
-            {
-                return false;
-            }
-        }
+        String dirnow = "";
         try
         {
-            client.makeDirectory(path.toString());
-
-        } catch (IOException ex)
+            dirnow = client.printWorkingDirectory();
+        } catch (IOException e)
         {
-            LOG.warning("Das Verzeichnis " + path + " konnte nicht auf " + client.getRemoteAddress().getHostAddress() + " erstellt werden.");
-            return false;
+            LOG.info("Das aktuelle Verzeichnis konnte nicht ausgelesen werden.");
         }
 
-        return true;
+        @SuppressWarnings("UnusedAssignment") boolean result = true;
+        /*
+        int i = -1;
+        if (path.getNameCount()>1)Warum ist dieser Code da?
+        {
+            for (i = 0; i<path.getNameCount()-1;i++)
+            {
+                if (!isFolderFTP(path.getName(i),client,true))
+                {
+                    return false;
+                }
+            }
+        }*/
+        try
+        {
+            client.changeWorkingDirectory(path.toString());
+            int returnCode = client.getReplyCode();
+            result = returnCode != 550;
+
+            if (!stay)
+            {
+                client.changeWorkingDirectory(dirnow);
+            }
+        } catch (IOException e)
+        {
+            result = false;
+        }
+        return result;
     }
 
     /**
@@ -394,6 +347,56 @@ public class FTPUtil
         {
             return false;
         }
+    }
+
+    /**
+     * Dies Erstellt einen Ordner an dem angegbenen Pfad
+     *
+     * @param path   Der Ordnerpfad relativ zum aktuellen workingDirectory
+     * @param client Der FTP-Client auf dem der Ordner erstellt werden soll
+     * @return true, falls der Ordner erstellt werden konnte, sonst false.
+     */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
+    private static boolean createFolderFTP_rec(Path path, FTPClient client)
+    {
+
+        if (isFolderFTP(path, client, false))
+        {
+            LOG.info("Der Ordner " + path + " existiert schon auf dem Client " + client.getRemoteAddress().getHostAddress());
+        }
+        if (path.getNameCount() > 1)
+        {
+            LOG.info(path.toString() + " zu " + path.subpath(0, path.getNameCount() - 1).toString());
+            if (!createFolderFTP_rec(path.subpath(0, path.getNameCount() - 1), client))
+            {
+                return false;
+            }
+        }
+        try
+        {
+            client.makeDirectory(path.toString());
+
+        } catch (IOException ex)
+        {
+            LOG.warning("Das Verzeichnis " + path + " konnte nicht auf " + client.getRemoteAddress().getHostAddress() + " erstellt werden.");
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Dies überprüft ob ein bestimmtes Verzeichnis existiert.
+     *
+     * @param path   Der Pfad zum Verzeichnis vom aktuellen Pfad des Clients aus.
+     * @param client Der FTP-Client der überprüft werden soll.
+     * @param stay   legt fest ob der client in dem zuletzt verwendeten Verzeichnis bleiben soll oder ob er zurück zum Anfang soll.
+     * @return true, falls der Ordner existiert, sonst false.
+     */
+    public static boolean isFolderFTP(String path, FTPClient client, boolean stay)
+    {
+
+        return isFolderFTP(Paths.get(path), client, stay);
     }
 
     /**
