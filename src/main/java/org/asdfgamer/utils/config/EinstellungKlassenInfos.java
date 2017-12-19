@@ -161,6 +161,19 @@ public class EinstellungKlassenInfos
     }
 
     /**
+     * Hiermit wird die angegebene Klasse zu den gespeicherten Klassen hinzugefügt.
+     *
+     * @param klassenname Der vollständige Klassenname
+     */
+    public static void add(String klassenname)
+    {
+        if (!infos.containsKey(klassenname))
+        {
+            infos.put(klassenname, new KlassenInfos());
+        }
+    }
+
+    /**
      * Dies sind die Infos die zu einer Klasse gepeichert werden.
      */
     private static class KlassenInfos

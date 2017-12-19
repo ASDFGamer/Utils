@@ -20,6 +20,11 @@ public class Einstellungen
     private final static Logger LOG = getLogger(Einstellungen.class.getName());
 
     /**
+     * Dies gibt an ob die Methode die ein Array aus Objekten annnimmt zum erstellen geneutzt wurde.
+     */
+    private static boolean objArrErsteller = false;
+
+    /**
      * Der Name des Programms das die Einstellungen erstellt. TODO verwenden fürs Speichern der Einstellungen?
      */
     @SuppressWarnings("unused")
@@ -78,7 +83,7 @@ public class Einstellungen
      */
     public static EinstellungenProperty neueEinstellung(Object[] einstellungen)
     {
-
+        objArrErsteller = true;
         switch (einstellungen.length)
         {
             case 0:
@@ -193,7 +198,24 @@ public class Einstellungen
 
         EinstellungenProperty property = new EinstellungenProperty(standardwert);
         property.addListener(EinstellungenListener.getEinstellungenAendern(property));
+        addKlasse(property);
+
         return property;
+    }
+
+    private static void addKlasse(EinstellungenProperty property)
+    {
+        String klassenname;
+        if (objArrErsteller)
+        {
+            klassenname = Thread.currentThread().getStackTrace()[5].getClassName();
+            objArrErsteller = false;
+        } else
+        {
+            klassenname = Thread.currentThread().getStackTrace()[3].getClassName();
+        }
+        property.setKlasse(klassenname);
+        EinstellungKlassenInfos.add(klassenname);
     }
 
     /**
@@ -207,6 +229,7 @@ public class Einstellungen
 
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
         property.addListener(EinstellungenListener.getEinstellungenAendern(property));
+        addKlasse(property);
         return property;
     }
 
@@ -224,6 +247,7 @@ public class Einstellungen
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
         property.setDouble(standardwert);
         property.addListener(EinstellungenListener.getEinstellungenAendern(property));
+        addKlasse(property);
         return property;
     }
 
@@ -239,6 +263,7 @@ public class Einstellungen
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
         property.setBoolean(standardwert);
         property.addListener(EinstellungenListener.getEinstellungenAendern(property));
+        addKlasse(property);
         return property;
     }
 
@@ -253,8 +278,9 @@ public class Einstellungen
      */
     public static EinstellungenProperty neueEinstellung(String standardwert, boolean intern)
     {
-
-        return new EinstellungenProperty(standardwert, intern);
+        EinstellungenProperty property = new EinstellungenProperty(standardwert, intern);
+        addKlasse(property);
+        return property;
     }
 
     /**
@@ -269,7 +295,9 @@ public class Einstellungen
     public static EinstellungenProperty neueEinstellung(int standardwert, boolean intern)
     {
 
-        return new EinstellungenProperty(String.valueOf(standardwert), intern);
+        EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert), intern);
+        addKlasse(property);
+        return property;
     }
 
     /**
@@ -286,6 +314,7 @@ public class Einstellungen
 
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert), intern);
         property.setDouble(standardwert);
+        addKlasse(property);
         return property;
     }
 
@@ -303,6 +332,7 @@ public class Einstellungen
 
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert), intern);
         property.setBoolean(standardwert);
+        addKlasse(property);
         return property;
     }
 
@@ -321,6 +351,7 @@ public class Einstellungen
         property.setMinWert(minimalwert);
         property.setMaxWert(maximalwert);
         property.addListener(EinstellungenListener.getEinstellungenAendern(property));
+        addKlasse(property);
         return property;
     }
 
@@ -340,6 +371,7 @@ public class Einstellungen
         property.setMinWert(minimalwert);
         property.setMaxWert(maximalwert);
         property.addListener(EinstellungenListener.getEinstellungenAendern(property));
+        addKlasse(property);
         return property;
     }
 

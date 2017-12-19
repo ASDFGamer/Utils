@@ -140,7 +140,6 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             for (Map.Entry<String, EinstellungenProperty> einstellung : einstellungenList.entrySet())
             {
                 //Enum kommt nicht hier her.
-                LOG.info("PropertiesSpeicher.getEinstellungen Zeile 79\n" + einstellung.getKey() + "\n" + properties.getProperty(einstellung.getKey()));
 
                 if (properties.getProperty(einstellung.getKey()) == null && !einstellung.getValue().isInternerWert())
                 {

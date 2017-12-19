@@ -77,6 +77,11 @@ public class EinstellungenProperty extends SimpleStringProperty
     private boolean geaendert = false;
 
     /**
+     * Dies ist die Klasse in der die Property definiert ist.
+     */
+    private String KLASSE;
+
+    /**
      * Diesem Konstruktor wurde kein Wert übergeben, alles wird mit Standardwerten aufgefüllt.
      */
     public EinstellungenProperty()
@@ -587,4 +592,30 @@ public class EinstellungenProperty extends SimpleStringProperty
         return geaendert;
     }
 
+    /**
+     * Hiermit wird der Klassenname der Klasse die diese Property erstellt zurückgegeben.
+     *
+     * @return der Klassenname der Klasse die diese Property erstellt
+     */
+    String getKlasse()
+    {
+        return KLASSE;
+    }
+
+    /**
+     * Hiermit wird die Klasse angegeben in der diese Property erfragt wurde (z.B. nicht  {@link Einstellungen} sondern
+     * {@link EinstellungEnum}). Dies ist für interne benutzung gedacht.
+     *
+     * @param klasse Dies ist der vollständige Klassenname der definierenden Klasse
+     * @return true, falls das ändern geklappt hat, ansonten false
+     */
+    boolean setKlasse(String klasse)
+    {
+        if (this.KLASSE == null)
+        {
+            this.KLASSE = klasse;
+            return true;
+        }
+        return false;
+    }
 }
