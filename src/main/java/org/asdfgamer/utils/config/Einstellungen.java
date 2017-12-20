@@ -1,6 +1,12 @@
 package org.asdfgamer.utils.config;
 
+import org.asdfgamer.utils.other.Utils;
+
+import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -25,9 +31,8 @@ public class Einstellungen
     private static boolean objArrErsteller = false;
 
     /**
-     * Der Name des Programms das die Einstellungen erstellt. TODO verwenden fürs Speichern der Einstellungen?
+     * Der Name des Programms das die Einstellungen erstellt.
      */
-    @SuppressWarnings("unused")
     private final String NAME;
 
     /**
@@ -83,6 +88,7 @@ public class Einstellungen
      */
     public static EinstellungenProperty neueEinstellung(Object[] einstellungen)
     {
+
         objArrErsteller = true;
         switch (einstellungen.length)
         {
@@ -138,6 +144,7 @@ public class Einstellungen
      */
     private static EinstellungenProperty zweiArgumente(Object[] einstellungen)
     {
+
         if (einstellungen.length < 2)
         {
             LOG.warning("Die Methode erwartet Array mit zwei Argumenten, diese hat aber weniger.");
@@ -170,6 +177,7 @@ public class Einstellungen
      */
     private static EinstellungenProperty dreiArgumente(Object[] einstellungen)
     {
+
         if (einstellungen.length < 3)
         {
             LOG.warning("Die Methode erwartet Array mit drei Argumenten, diese hat aber weniger.");
@@ -203,21 +211,6 @@ public class Einstellungen
         return property;
     }
 
-    private static void addKlasse(EinstellungenProperty property)
-    {
-        String klassenname;
-        if (objArrErsteller)
-        {
-            klassenname = Thread.currentThread().getStackTrace()[5].getClassName();
-            objArrErsteller = false;
-        } else
-        {
-            klassenname = Thread.currentThread().getStackTrace()[3].getClassName();
-        }
-        property.setKlasse(klassenname);
-        EinstellungKlassenInfos.add(klassenname);
-    }
-
     /**
      * Hiermit wird eine Einstllungsproperty erstellt mit einem Integer als Standardwert.
      *
@@ -232,8 +225,6 @@ public class Einstellungen
         addKlasse(property);
         return property;
     }
-
-    //Interne Einstelungen
 
     /**
      * Hiermit wird eine Einstllungsproperty erstellt mit einem double als Standardwert.
@@ -250,6 +241,8 @@ public class Einstellungen
         addKlasse(property);
         return property;
     }
+
+    //Interne Einstelungen
 
     /**
      * Hiermit wird eine Einstllungsproperty erstellt mit einem boolschen Wahrheitswert als Standardwert.
@@ -278,6 +271,7 @@ public class Einstellungen
      */
     public static EinstellungenProperty neueEinstellung(String standardwert, boolean intern)
     {
+
         EinstellungenProperty property = new EinstellungenProperty(standardwert, intern);
         addKlasse(property);
         return property;
@@ -347,6 +341,7 @@ public class Einstellungen
      */
     public static EinstellungenProperty neueEinstellung(int standardwert, int minimalwert, int maximalwert)
     {
+
         EinstellungenProperty property = new EinstellungenProperty(String.valueOf(standardwert));
         property.setMinWert(minimalwert);
         property.setMaxWert(maximalwert);
@@ -375,17 +370,126 @@ public class Einstellungen
         return property;
     }
 
+    private static void addKlasse(EinstellungenProperty property)
+    {
+
+        String klassenname;
+        if (objArrErsteller)
+        {
+            klassenname = Thread.currentThread().getStackTrace()[5].getClassName();
+            objArrErsteller = false;
+        } else
+        {
+            klassenname = Thread.currentThread().getStackTrace()[3].getClassName();
+        }
+        property.setKlasse(klassenname);
+        EinstellungKlassenInfos.add(klassenname);
+    }
+
     /**
-     * Mit dieser Methode werden die Einstellungen aus dem angegebenen Speicher geladen.
+     * Mit dieser Methode werden die Einstellungen aus der angegebenen Klasse geladen.
+     * Hierfür wird der angegebene Speicher verwendet.
      *
      * @param einstellungen Dies ist die Klasse in der die Einstellungen definiert sind.
      * @return true, falls das Laden der Einstellungen erfolgreich war, ansonsten false.
      */
-    public boolean lade(IEinstellungen einstellungen)
+    public boolean laden(Object einstellungen)
     {
 //        List<EinstellungenProperty> properties = Utils.getFields(einstellungen);
 
-        return SPEICHER.getEinstellungen(einstellungen);
+        if (isEnum(einstellungen))
+        {
+            return SPEICHER.getEinstellungen(getEinstellungenFromEnum(einstellungen));
+        }
+        return SPEICHER.getEinstellungen(Utils.getFields(einstellungen));
+    }
+
+    /**
+     * Hiermit wird überprüft ob es sich bei dem übergebenen Objekt um ein Class-Objekt eines Enums handelt.
+     *
+     * @param einstellungenKlasse Das Objekt das überprüft werden soll.
+     * @return true, falls es ein Ennum ist, ansonsten false.
+     */
+    private boolean isEnum(Object einstellungenKlasse)
+    {
+
+        return (einstellungenKlasse instanceof Class) && (((Class) einstellungenKlasse).isEnum());
+    }
+
+    /**
+     * Mit dieser Funktion werden alle Einstellungspropertys aus dem angegebenen Enum gefunden und zurückgegeben
+     *
+     * @param einstellungenEnum Das Class-Objekt zu dem Enum
+     * @return Eine Map mit allen Einstellungen
+     */
+    private Map<String, EinstellungenProperty> getEinstellungenFromEnum(Object einstellungenEnum)
+    {
+
+        String enumName = ((Class) einstellungenEnum).getName();
+        Map<String, EinstellungenProperty> einstellungen = new HashMap<>();
+        try
+        {
+            Object[] enumConstants = Class.forName(enumName).getEnumConstants();
+            for (Object enumConstant : enumConstants)
+            {
+                if (enumConstant instanceof IEinstellungen)
+                {
+                    Method[] methods = enumConstant.getClass().getDeclaredMethods();
+                    for (Method method : methods)
+                    {
+                        if (method.getReturnType().equals(EinstellungenProperty.class))
+                        {
+                            try
+                            {
+                                einstellungen.putIfAbsent(((Enum) enumConstant).name(), (EinstellungenProperty) method.invoke(enumConstant));
+                            } catch (ReflectiveOperationException e)
+                            {
+                                LOG.warning("Es gab ein Problem beim abrufen einer Einstellung aus der Funktion: " + method.getName() + " \n Dies tritt z.B. auf, falls argumente gefordert sind.");
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e)
+        {
+            LOG.severe("Es gab ein Problem beim Wiederfinden der Klasse \"" + ((Class) einstellungenEnum).getName() + "\".");
+            e.printStackTrace();
+        }
+        return einstellungen;
+    }
+
+    /**
+     * Hiermit werden alle Einstellungen aus allen Klassen geladen.
+     * Hierfür wird der angegebene Speicher verwendet.
+     * Um zu überprüfen ob alle Einstellungen einer bestimmten Klasse vollständig geladen wurden muss auf die
+     * {@link EinstellungKlassenInfos} zugeriffen werden.
+     *
+     * @return true, falls Einstellungen alle geladen wurden, ansonsten false.
+     */
+    public boolean laden()
+    {
+
+        Set<String> klassen = EinstellungKlassenInfos.getKlassen();
+        boolean ergebnis = false;
+        for (String klasse : klassen)
+        {
+            try
+            {
+                if (isEnum(Class.forName(klasse).getClass()))
+                {
+                    ergebnis = SPEICHER.getEinstellungen(getEinstellungenFromEnum(Class.forName(klasse).getClass()));
+                } else
+                {
+                    ergebnis = SPEICHER.getEinstellungen(Utils.getFields(Class.forName(klasse))) && ergebnis;
+                }
+            } catch (ClassNotFoundException e)
+            {
+                LOG.warning("Bei der Klasse " + klasse + "gab es ein Problem beim Wiederfinden der " +
+                        "Klasse zum Speichern. Somit wird sie nun nicht gespeichert.");
+                ergebnis = false;
+            }
+        }
+        return ergebnis;
     }
 
     /**
@@ -394,9 +498,46 @@ public class Einstellungen
      * @param einstellungen Dies ist die KLasse in der die Einstellungen gespeichert sind.
      * @return true, falls das Speichern erfolgreich war, ansonsten false.
      */
-    public boolean speicher(IEinstellungen einstellungen)
+    public boolean speichern(Object einstellungen)
     {
 
-        return SPEICHER.speichern(einstellungen);
+        if (isEnum(einstellungen))
+        {
+            return SPEICHER.speichern(getEinstellungenFromEnum(einstellungen));
+        }
+        return SPEICHER.speichern(Utils.getFields(einstellungen));
+    }
+
+    /**
+     * Hiermit werden alle Einstellungen aus allen Klassen gespeichert.
+     * Hierfür wird der angegebene Speicher verwendet.
+     *
+     * @return true, falls alle Einstellungen gespeichert wurden, ansonsten false.
+     */
+    public boolean speichern()
+    {
+
+        Set<String> klassen = EinstellungKlassenInfos.getKlassen();
+        boolean ergebnis = true;
+        for (String klasse : klassen)
+        {
+            try
+            {
+                if (isEnum(Class.forName(klasse).getClass()))
+                {
+                    ergebnis = SPEICHER.speichern(getEinstellungenFromEnum(Class.forName(klasse).getClass()));
+                } else
+                {
+                    ergebnis = SPEICHER.speichern(Utils.getFields(Class.forName(klasse))) && ergebnis;
+                }
+            } catch (ClassNotFoundException e)
+            {
+                LOG.warning("Bei der Klasse " + klasse + "gab es ein Problem beim Wiederfinden der " +
+                        "Klasse zum Speichern. Somit wird sie nun nicht gespeichert.");
+                ergebnis = false;
+            }
+
+        }
+        return ergebnis;
     }
 }

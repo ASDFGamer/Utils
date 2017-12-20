@@ -21,16 +21,13 @@ public class PropertiesSpeicherTest implements IEinstellungen
     {
 
         assertEquals(false, einstellung.getEinstellungGeaendert());
-        EinstellungenSpeicher speicher = new PropertiesSpeicher("test");
-        assertEquals(false,speicher.getEinstellungen(this));//Da kein Progrname angegeben ist.
-        assertEquals(true,PropertiesSpeicher.setProgrammName("test"));
-        assertEquals(false,PropertiesSpeicher.setProgrammName("test"));
-        assertEquals(true,speicher.speichern(this));
+        Einstellungen einstellungen = new Einstellungen("test");
+        assertEquals(true, einstellungen.speichern(this));
         assertEquals(false, einstellung.getEinstellungGeaendert());
         einstellung.set("funktioniert nicht");
         assertEquals(true, einstellung.getEinstellungGeaendert());
         assertEquals(false, einstellung2.getEinstellungGeaendert());
-        assertEquals(true, speicher.getEinstellungen(this));
+        assertEquals(true, einstellungen.laden(this));
         assertEquals("es geht",einstellung.get());
         assertEquals(false, einstellung2.getEinstellungGeaendert());
     }
@@ -38,11 +35,10 @@ public class PropertiesSpeicherTest implements IEinstellungen
     @Test
     public void einstellungenLadenEnum()
     {
-        EinstellungenSpeicher speicher = new PropertiesSpeicher("testenum");
-        PropertiesSpeicher.setProgrammName("test");
-        assertEquals(true,speicher.speichern(EinstellungEnum.class));
+        Einstellungen einstellungen = new Einstellungen("testEnum");
+        assertEquals(true, einstellungen.speichern(EinstellungEnum.class));
         EinstellungEnum.test.EINSTELLUNGProperty().set("funktioniert nicht");
-        assertEquals(true, speicher.getEinstellungen(EinstellungEnum.class));
+        assertEquals(true, einstellungen.laden(EinstellungEnum.class));
         assertEquals("hallo", EinstellungEnum.test.EINSTELLUNGProperty().get());
     }
 }

@@ -9,7 +9,10 @@ package org.asdfgamer.utils.config;
  * Eine Beispielimplementierung diese Interfaces ist in {@link EinstellungEnum} dargestellt.
  *
  * @author ASDFGamer
+ * @deprecated Veraltet, da nicht merh ötig, wenn sowieso alle Klassen gespeichert werden die EinstellungenProperys
+ * enthanten. Außerdem geht dies nicht für Enums TODO entfernen
  */
+@Deprecated
 @SuppressWarnings("WeakerAccess")
 public interface IEinstellungen
 {

@@ -2,6 +2,7 @@ package org.asdfgamer.utils.config;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -167,10 +168,23 @@ public class EinstellungKlassenInfos
      */
     public static void add(String klassenname)
     {
+
         if (!infos.containsKey(klassenname))
         {
             infos.put(klassenname, new KlassenInfos());
         }
+    }
+
+    /**
+     * Hiermit wird ein Set aus allen Klassen zurückgegeben die EinstellungenPropertys besitzen.
+     *
+     * @return Ein Set aus allen Klassen die EinstellungenProperys besitzen.
+     */
+    public static Set<String> getKlassen()
+    {
+
+        Set<String> klassen = infos.keySet();
+        return klassen;
     }
 
     /**
