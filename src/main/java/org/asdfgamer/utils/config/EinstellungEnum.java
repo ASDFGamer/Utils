@@ -1,12 +1,12 @@
 package org.asdfgamer.utils.config;
 
 /**
- * Dies ist eine Beispielimplementation des Interfaces {@link IEinstellungen}.
+ * Dies ist eine Beispielimplementation für EInstellungen in einem Enum.
  *
  * @author ASDFGamer
  */
 @SuppressWarnings("unused")
-public enum EinstellungEnum implements IEinstellungen
+public enum EinstellungEnum
 {
     test("hallo");
 
@@ -28,7 +28,8 @@ public enum EinstellungEnum implements IEinstellungen
 
     /*
      * Theoretisch wäre von den folgenden Gettern/Settern nur der Getter für die Property notwendig, da es für die Getter
-     * und Setter noch andere Methoden gibt, die andere Typen annehmen/ausgeben.
+     * und Setter noch andere Methoden gibt, die andere Typen annehmen/ausgeben. Der Getter für die Property ist jedoch
+     * notwendig, da dieser intern verwendet wird.
      */
     public String getEINSTELLUNG()
     {

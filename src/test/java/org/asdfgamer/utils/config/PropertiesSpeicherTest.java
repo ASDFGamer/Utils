@@ -5,7 +5,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 
 @SuppressWarnings("WeakerAccess")
-public class PropertiesSpeicherTest implements IEinstellungen
+public class PropertiesSpeicherTest
 {
     public static final EinstellungenProperty einstellung = Einstellungen.neueEinstellung("es geht");
 

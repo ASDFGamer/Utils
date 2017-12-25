@@ -13,12 +13,13 @@ import static java.util.logging.Logger.getLogger;
 
 /**
  * Erstellt und verwaltet EinstellungsPropertys und Einstellungsklassen.
- *
+ * <p>
  * <b> Alle EinstellungsPropertys public erstellen</b>
  * Ansonsten kommt es zu Problemen beim Speichern und Laden der Einstellungen, da hinterlegt ist, dass in den Klassen
  * Einstellungen existieren, aber keine zu finden sind.
  *
  * @author ASDFGamer
+ * @version 0.9
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class Einstellungen
@@ -391,21 +392,19 @@ public class Einstellungen
     }
 
     /**
-     * Mit dieser Methode werden die Einstellungen aus der angegebenen Klasse geladen.
-     * Hierfür wird der angegebene Speicher verwendet.
+     * Mit dieser Methode werden die Einstellungen aus der Klasse die angegeben wurde gespeichert.
      *
-     * @param einstellungen Dies ist die Klasse in der die Einstellungen definiert sind.
-     * @return true, falls das Laden der Einstellungen erfolgreich war, ansonsten false.
+     * @param einstellungen Dies ist die KLasse in der die Einstellungen gespeichert sind.
+     * @return true, falls das Speichern erfolgreich war, ansonsten false.
      */
-    public boolean laden(Object einstellungen)
+    public boolean speichern(Object einstellungen)
     {
-//        List<EinstellungenProperty> properties = Utils.getFields(einstellungen);
 
         if (isEnum(einstellungen))
         {
-            return SPEICHER.getEinstellungen(getEinstellungenFromEnum(einstellungen));
+            return SPEICHER.speichern(getEinstellungenFromEnum(einstellungen));
         }
-        return SPEICHER.getEinstellungen(Utils.getFields(einstellungen));
+        return SPEICHER.speichern(Utils.getFields(einstellungen));
     }
 
     /**
@@ -419,7 +418,6 @@ public class Einstellungen
 
         return (einstellungenKlasse instanceof Class) && (((Class) einstellungenKlasse).isEnum());
     }
-
 
     /**
      * Mit dieser Funktion werden alle Einstellungspropertys aus dem angegebenen Enum gefunden und zurückgegeben
@@ -437,6 +435,39 @@ public class Einstellungen
     }
 
     /**
+     * Hiermit werden alle Einstellungen aus allen Klassen gespeichert.
+     * Hierfür wird der angegebene Speicher verwendet.
+     *
+     * @return true, falls alle Einstellungen gespeichert wurden, ansonsten false.
+     */
+    public boolean speichern()
+    {
+
+        Set<String> klassen = EinstellungKlassenInfos.getKlassen();
+        boolean ergebnis = true;
+        for (String klasse : klassen)
+        {
+            try
+            {
+                if (isEnum(Class.forName(klasse)))
+                {
+                    ergebnis = SPEICHER.speichern(getEinstellungenFromEnum(klasse));
+                } else
+                {
+                    ergebnis = SPEICHER.speichern(Utils.getFields(Class.forName(klasse))) && ergebnis;
+                }
+            } catch (ClassNotFoundException e)
+            {
+                LOG.warning("Bei der Klasse " + klasse + "gab es ein Problem beim Wiederfinden der " +
+                        "Klasse zum Speichern. Somit wird sie nun nicht gespeichert.");
+                ergebnis = false;
+            }
+
+        }
+        return ergebnis;
+    }
+
+    /**
      * Mit dieser Funktion werden alle Einstellungspropertys aus dem angegebenen Enum gefunden und zurückgegeben
      *
      * @param einstellungenEnum Der Name des Enums
@@ -450,23 +481,21 @@ public class Einstellungen
             Object[] enumConstants = Class.forName(einstellungenEnum).getEnumConstants();
             for (Object enumConstant : enumConstants)
             {
-                if (enumConstant instanceof IEinstellungen)
+                Method[] methods = enumConstant.getClass().getDeclaredMethods();
+                for (Method method : methods)
                 {
-                    Method[] methods = enumConstant.getClass().getDeclaredMethods();
-                    for (Method method : methods)
+                    if (method.getReturnType().equals(EinstellungenProperty.class))
                     {
-                        if (method.getReturnType().equals(EinstellungenProperty.class))
+                        try
                         {
-                            try
-                            {
-                                einstellungen.putIfAbsent(((Enum) enumConstant).name(), (EinstellungenProperty) method.invoke(enumConstant));
-                            } catch (ReflectiveOperationException e)
-                            {
-                                LOG.warning("Es gab ein Problem beim abrufen einer Einstellung aus der Funktion: " + method.getName() + " \n Dies tritt z.B. auf, falls argumente gefordert sind.");
-                            }
+                            einstellungen.putIfAbsent(((Enum) enumConstant).name(), (EinstellungenProperty) method.invoke(enumConstant));
+                        } catch (ReflectiveOperationException e)
+                        {
+                            LOG.warning("Es gab ein Problem beim abrufen einer Einstellung aus der Funktion: " + method.getName() + " \n Dies tritt z.B. auf, falls argumente gefordert sind.");
                         }
                     }
                 }
+
             }
         } catch (ClassNotFoundException e)
         {
@@ -474,6 +503,24 @@ public class Einstellungen
             e.printStackTrace();
         }
         return einstellungen;
+    }
+
+    /**
+     * Mit dieser Methode werden die Einstellungen aus der angegebenen Klasse geladen.
+     * Hierfür wird der angegebene Speicher verwendet.
+     *
+     * @param einstellungen Dies ist die Klasse in der die Einstellungen definiert sind.
+     * @return true, falls das Laden der Einstellungen erfolgreich war, ansonsten false.
+     */
+    public boolean laden(Object einstellungen)
+    {
+//        List<EinstellungenProperty> properties = Utils.getFields(einstellungen);
+
+        if (isEnum(einstellungen))
+        {
+            return SPEICHER.getEinstellungen(getEinstellungenFromEnum(einstellungen));
+        }
+        return SPEICHER.getEinstellungen(Utils.getFields(einstellungen));
     }
 
     /**
@@ -510,55 +557,6 @@ public class Einstellungen
                         "Klasse zum Speichern. Somit wird sie nun nicht gespeichert.");
                 ergebnis = false;
             }
-        }
-        return ergebnis;
-    }
-
-    /**
-     * Mit dieser Methode werden die Einstellungen aus der Klasse die angegeben wurde gespeichert.
-     *
-     * @param einstellungen Dies ist die KLasse in der die Einstellungen gespeichert sind.
-     * @return true, falls das Speichern erfolgreich war, ansonsten false.
-     */
-    public boolean speichern(Object einstellungen)
-    {
-
-        if (isEnum(einstellungen))
-        {
-            return SPEICHER.speichern(getEinstellungenFromEnum(einstellungen));
-        }
-        return SPEICHER.speichern(Utils.getFields(einstellungen));
-    }
-
-    /**
-     * Hiermit werden alle Einstellungen aus allen Klassen gespeichert.
-     * Hierfür wird der angegebene Speicher verwendet.
-     *
-     * @return true, falls alle Einstellungen gespeichert wurden, ansonsten false.
-     */
-    public boolean speichern()
-    {
-
-        Set<String> klassen = EinstellungKlassenInfos.getKlassen();
-        boolean ergebnis = true;
-        for (String klasse : klassen)
-        {
-            try
-            {
-                if (isEnum(Class.forName(klasse)))
-                {
-                    ergebnis = SPEICHER.speichern(getEinstellungenFromEnum(klasse));
-                } else
-                {
-                    ergebnis = SPEICHER.speichern(Utils.getFields(Class.forName(klasse))) && ergebnis;
-                }
-            } catch (ClassNotFoundException e)
-            {
-                LOG.warning("Bei der Klasse " + klasse + "gab es ein Problem beim Wiederfinden der " +
-                        "Klasse zum Speichern. Somit wird sie nun nicht gespeichert.");
-                ergebnis = false;
-            }
-
         }
         return ergebnis;
     }

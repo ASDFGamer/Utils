@@ -5,6 +5,8 @@ import java.util.Map;
 /**
  * Dieses Interface wird dafür verwendet, dass verschiedene Speichermöglichkeiten für die Einstellungen verwendet werden können.
  *
+ * TODO anpassen auf Java Module mit provides/uses
+ *
  * @author ASDFGamer
  * @version 0.9
  */
