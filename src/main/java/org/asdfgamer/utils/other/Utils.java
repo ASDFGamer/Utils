@@ -610,11 +610,12 @@ public class Utils
                 LOG.fine("is Public " + Modifier.isPublic(field.getModifiers()));
                 if (Modifier.isPublic(field.getModifiers()))
                 {
-                    //noinspection unchecked Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
+
                     if (klasse instanceof Class)
                     {
                         try
                         {
+                            //noinspection unchecked Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
                             felder.put(field.getName(), (T) field.get(null));
                         } catch (NullPointerException e)
                         {
@@ -624,6 +625,7 @@ public class Utils
                         }
                     } else
                     {
+                        //noinspection unchecked Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
                         felder.put(field.getName(), (T) field.get(klasse));
                     }
                 }

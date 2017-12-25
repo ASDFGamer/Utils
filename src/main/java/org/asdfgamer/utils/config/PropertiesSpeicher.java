@@ -87,7 +87,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             ergebnis = ladeEinstellungenPropertys(klassenEinstellungen.getValue(), pfad) && ergebnis;
 
         }
-
+        LOG.warning("PropertiesSpeicher.getEinstellungen Zeile 90 !!!!!!!!!!!!!!!!!!!!!!!!!!" + ergebnis);
         return ergebnis;
     }
 
@@ -143,6 +143,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             {
                 if (!einstellung.getValue().isInternerWert())
                 {
+                    LOG.info("speichern " + einstellung.getKey());
                     properties.setProperty(einstellung.getKey(), einstellung.getValue().get());
                 }
             }
@@ -299,7 +300,6 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
                 einstellung.getValue().addListener(EinstellungenListener.getEinstellungenAendern(einstellung.getValue()));
             }
         }
-
 
         return result;
     }

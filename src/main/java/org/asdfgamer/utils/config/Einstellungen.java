@@ -14,6 +14,10 @@ import static java.util.logging.Logger.getLogger;
 /**
  * Erstellt und verwaltet EinstellungsPropertys und Einstellungsklassen.
  *
+ * <b> Alle EinstellungsPropertys public erstellen</b>
+ * Ansonsten kommt es zu Problemen beim Speichern und Laden der Einstellungen, da hinterlegt ist, dass in den Klassen
+ * Einstellungen existieren, aber keine zu finden sind.
+ *
  * @author ASDFGamer
  */
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -416,20 +420,34 @@ public class Einstellungen
         return (einstellungenKlasse instanceof Class) && (((Class) einstellungenKlasse).isEnum());
     }
 
+
     /**
      * Mit dieser Funktion werden alle Einstellungspropertys aus dem angegebenen Enum gefunden und zurückgegeben
      *
-     * @param einstellungenEnum Das Class-Objekt zu dem Enum
+     * @param einstellungenEnum Das Class-Objekt des Enums
      * @return Eine Map mit allen Einstellungen
      */
     private Map<String, EinstellungenProperty> getEinstellungenFromEnum(Object einstellungenEnum)
     {
+        if (isEnum(einstellungenEnum))
+        {
+            return getEinstellungenFromEnum(((Class) einstellungenEnum).getName());
+        }
+        return null;
+    }
 
-        String enumName = ((Class) einstellungenEnum).getName();
+    /**
+     * Mit dieser Funktion werden alle Einstellungspropertys aus dem angegebenen Enum gefunden und zurückgegeben
+     *
+     * @param einstellungenEnum Der Name des Enums
+     * @return Eine Map mit allen Einstellungen
+     */
+    private Map<String, EinstellungenProperty> getEinstellungenFromEnum(String einstellungenEnum)
+    {
         Map<String, EinstellungenProperty> einstellungen = new HashMap<>();
         try
         {
-            Object[] enumConstants = Class.forName(enumName).getEnumConstants();
+            Object[] enumConstants = Class.forName(einstellungenEnum).getEnumConstants();
             for (Object enumConstant : enumConstants)
             {
                 if (enumConstant instanceof IEinstellungen)
@@ -452,7 +470,7 @@ public class Einstellungen
             }
         } catch (ClassNotFoundException e)
         {
-            LOG.severe("Es gab ein Problem beim Wiederfinden der Klasse \"" + ((Class) einstellungenEnum).getName() + "\".");
+            LOG.severe("Es gab ein Problem beim Wiederfinden der Klasse \"" + einstellungenEnum + "\".");
             e.printStackTrace();
         }
         return einstellungen;
@@ -470,16 +488,20 @@ public class Einstellungen
     {
 
         Set<String> klassen = EinstellungKlassenInfos.getKlassen();
-        boolean ergebnis = false;
+
+        boolean ergebnis = true;
         for (String klasse : klassen)
         {
             try
             {
-                if (isEnum(Class.forName(klasse).getClass()))
+                LOG.info(klasse + " wird zu " + Class.forName(klasse).getName());
+                if (isEnum(Class.forName(klasse)))
                 {
-                    ergebnis = SPEICHER.getEinstellungen(getEinstellungenFromEnum(Class.forName(klasse).getClass()));
+                    LOG.info("is Enum:" + klasse);
+                    ergebnis = SPEICHER.getEinstellungen(getEinstellungenFromEnum(klasse)) && ergebnis;
                 } else
                 {
+                    LOG.info("sdgrafr" + Class.forName(klasse).getName());
                     ergebnis = SPEICHER.getEinstellungen(Utils.getFields(Class.forName(klasse))) && ergebnis;
                 }
             } catch (ClassNotFoundException e)
@@ -523,9 +545,9 @@ public class Einstellungen
         {
             try
             {
-                if (isEnum(Class.forName(klasse).getClass()))
+                if (isEnum(Class.forName(klasse)))
                 {
-                    ergebnis = SPEICHER.speichern(getEinstellungenFromEnum(Class.forName(klasse).getClass()));
+                    ergebnis = SPEICHER.speichern(getEinstellungenFromEnum(klasse));
                 } else
                 {
                     ergebnis = SPEICHER.speichern(Utils.getFields(Class.forName(klasse))) && ergebnis;
