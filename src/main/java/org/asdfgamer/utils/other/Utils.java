@@ -583,27 +583,49 @@ public class Utils
     }
 
     /**
-     * Hiermit werden alle Felder von einem Typ aus einem Objekt ausgelesen und dann die Felder die zu einem bestimmten Typ gehören als List zurückgegeben.
+     * Hiermit werden alle Felder von einem Typ aus einem Objekt ausgelesen und dann die Felder die zu einem bestimmten
+     * Typ gehören als List zurückgegeben.
      *
-     * @param klasse Dies ist das Objekt aus dem die Felder ausgelesen werden.
+     * @param klasse Dies ist das Objekt aus dem die Felder ausgelesen werden. Es kann sich auch um das dazugehörige
+     *               Class-Objekt handeln, aber dann können nur statische Felder betrachtet werden.
      * @param <T>    Dies ist der Typ von dem die ausgelesenen Felder sein sollen.
      * @return Dies ist eine Liste mit allen Feldern des angegebenen Typs.
      */
     public static <T> Map<String, T> getFields(Object klasse)
     {
-
-        Field[] fields = klasse.getClass().getDeclaredFields();
-        LOG.info("Utils.getFields Zeile 456: fields lenght = " + fields.length);
+        Field[] fields;
+        if (klasse instanceof Class)
+        {
+            fields = ((Class) klasse).getDeclaredFields();
+        } else
+        {
+            fields = klasse.getClass().getDeclaredFields();
+        }
+        LOG.info("Utils.getFields Zeile 602: Klasse: " + klasse.getClass().getName() + " fields lenght = " + fields.length);
         Map<String, T> felder = new HashMap<>();
         for (Field field : fields)
         {
             try
             {
-                LOG.info("is Public " + Modifier.isPublic(field.getModifiers()));
+                LOG.fine("is Public " + Modifier.isPublic(field.getModifiers()));
                 if (Modifier.isPublic(field.getModifiers()))
                 {
                     //noinspection unchecked Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
-                    felder.put(field.getName(), (T) field.get(klasse));
+                    if (klasse instanceof Class)
+                    {
+                        try
+                        {
+                            felder.put(field.getName(), (T) field.get(null));
+                        } catch (NullPointerException e)
+                        {
+                            LOG.warning("Wenn zum Abfragen der Felder einer Klasse nur ein Class-Objekt übergeben " +
+                                    "wird, dann können nur statische Felder betrachtet werden (bei der Klasse "
+                                    + ((Class) klasse).getSimpleName() + ").");
+                        }
+                    } else
+                    {
+                        felder.put(field.getName(), (T) field.get(klasse));
+                    }
                 }
             } catch (IllegalAccessException e)
             {
