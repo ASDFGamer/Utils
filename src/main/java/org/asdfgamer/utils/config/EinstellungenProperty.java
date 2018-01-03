@@ -604,7 +604,7 @@ public class EinstellungenProperty extends SimpleStringProperty
 
     /**
      * Hiermit wird die Klasse angegeben in der diese Property erfragt wurde (z.B. nicht  {@link Einstellungen} sondern
-     * {@link EinstellungEnum}). Dies ist für interne benutzung gedacht.
+     * {@link SettingsEnum}). Dies ist für interne benutzung gedacht.
      *
      * @param klasse Dies ist der vollständige Klassenname der definierenden Klasse
      * @return true, falls das ändern geklappt hat, ansonten false

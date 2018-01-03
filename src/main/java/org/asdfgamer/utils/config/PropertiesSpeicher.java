@@ -29,12 +29,14 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     /**
      * Dies ist die Standardmäßeige Dateiendungen falls keine Endung angegeben wurde.
      */
-    private static final String STD_EXTENSION = ".cfg";
+    private static final String STD_EXTENSION = ".properties";
 
     /**
      * Dies ist der Name des Programmes welches die Einstellugen speichert.
      */
     private final String PROGRAMM_NAME;
+
+    private final boolean STD_PROPERTIES;
 
     /**
      * Dies gibt an, ob die Einstellungen nach änderungen untersucht werden sollen und nur bei änderungen abgespeichert
@@ -51,20 +53,25 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     {
 
         this.PROGRAMM_NAME = progname;
+        this.STD_PROPERTIES = false;
     }
 
     /**
      * Hiermit wir ein neuer Einstellungsspeicher erzeugt für die Datei mit dem angegebenen Namen.
      *
-     * @param progname        Der Name des Programms
-     * @param checkForChanges Dies gibt an, ob die Einstellungen nur bei änderungen gespeichert werden sollen.
-     *                        Standardmäßig false.
+     * @param progname         Der Name des Programms
+     * @param checkForChanges  Dies gibt an, ob die Einstellungen nur bei änderungen gespeichert werden sollen.
+     *                         Standardmäßig false.
+     * @param useStdProperties Dies gibt an, ob das Standardobjekt von Java zum Speichern der Properties verwendet
+     *                         werden soll, oder die Eingeninterpretation, welche die Einstellungen sortiert und
+     *                         Kommentare/Abschnittstitel schreiben kann.
      */
-    public PropertiesSpeicher(String progname, boolean checkForChanges)
+    public PropertiesSpeicher(String progname, boolean checkForChanges, boolean useStdProperties)
     {
 
         this.PROGRAMM_NAME = progname;
         this.checkForChanges = checkForChanges;
+        this.STD_PROPERTIES = useStdProperties;
     }
 
     /**
@@ -76,6 +83,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     @Override
     public boolean getEinstellungen(Map<String, EinstellungenProperty> einstellungen)
     {
+
         boolean ergebnis = true;
         Map<String, Map<String, EinstellungenProperty>> klassen = sortiereEinstellungenNachKlassen(einstellungen);
         for (Map.Entry<String, Map<String, EinstellungenProperty>> klassenEinstellungen : klassen.entrySet())
@@ -87,7 +95,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
             ergebnis = ladeEinstellungenPropertys(klassenEinstellungen.getValue(), pfad) && ergebnis;
 
         }
-        LOG.warning("PropertiesSpeicher.getEinstellungen Zeile 90 !!!!!!!!!!!!!!!!!!!!!!!!!!" + ergebnis);
+        LOG.warning("PropertiesSpeicher.getSettings Zeile 90 !!!!!!!!!!!!!!!!!!!!!!!!!!" + ergebnis);
         return ergebnis;
     }
 
@@ -100,6 +108,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     @Override
     public boolean speichern(Map<String, EinstellungenProperty> einstellungen)
     {
+
         boolean ergebnis = true;
         Map<String, Map<String, EinstellungenProperty>> klassen = sortiereEinstellungenNachKlassen(einstellungen);
         for (Map.Entry<String, Map<String, EinstellungenProperty>> klassenEinstellungen : klassen.entrySet())
@@ -205,6 +214,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
      */
     private Map<String, Map<String, EinstellungenProperty>> sortiereEinstellungenNachKlassen(Map<String, EinstellungenProperty> einstellungen)
     {
+
         Map<String, Map<String, EinstellungenProperty>> klassenEinstellungen = new HashMap<>();
         for (Map.Entry<String, EinstellungenProperty> einstellung : einstellungen.entrySet())
         {
@@ -232,6 +242,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private String erstellePfad(String dateiName)
     {
+
         return Utils.getConfigFile(PROGRAMM_NAME, dateiName + STD_EXTENSION);
     }
 
@@ -244,6 +255,7 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
      */
     private boolean ladeEinstellungenPropertys(Map<String, EinstellungenProperty> einstellungen, String pfad)
     {
+
         boolean result = true;
         Properties properties = new Properties();
         InputStream configFile = null;
@@ -268,10 +280,10 @@ public class PropertiesSpeicher implements EinstellungenSpeicher
                 {
                     result = false;
                     LOG.warning("Für die Einstellung " + einstellung.getKey() + " konnte kein Wert geladen werden.");
-                    EinstellungKlassenInfos.setProblemBeimLaden(einstellung.getValue().getKlasse());
+                    SettingClassInfo.setProblemsWithLoading(einstellung.getValue().getKlasse());
                 }
                 einstellung.getValue().set(properties.getProperty(einstellung.getKey(), einstellung.getValue().getStandardwert()));
-                EinstellungKlassenInfos.setEinstellungenGeladen(einstellung.getValue().getKlasse());//Wir zu häufig aufgerufen.
+                SettingClassInfo.setSettingsLoaded(einstellung.getValue().getKlasse());//Wir zu häufig aufgerufen.
             }
         } catch (IOException e)
         {

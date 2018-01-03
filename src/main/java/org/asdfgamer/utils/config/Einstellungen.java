@@ -31,7 +31,7 @@ public class Einstellungen
     private final static Logger LOG = getLogger(Einstellungen.class.getName());
 
     /**
-     * Dies gibt an ob die Methode die ein Array aus Objekten annnimmt zum erstellen geneutzt wurde.
+     * Dies gibt an ob die Methode die ein Array aus Objekten annnimmt zum erstellen genutzt wurde.
      */
     private static boolean objArrErsteller = false;
 
@@ -388,7 +388,7 @@ public class Einstellungen
             klassenname = Thread.currentThread().getStackTrace()[3].getClassName();
         }
         property.setKlasse(klassenname);
-        EinstellungKlassenInfos.add(klassenname);
+        SettingClassInfo.add(klassenname);
     }
 
     /**
@@ -443,7 +443,7 @@ public class Einstellungen
     public boolean speichern()
     {
 
-        Set<String> klassen = EinstellungKlassenInfos.getKlassen();
+        Set<String> klassen = SettingClassInfo.getClasses();
         boolean ergebnis = true;
         for (String klasse : klassen)
         {
@@ -527,14 +527,14 @@ public class Einstellungen
      * Hiermit werden alle Einstellungen aus allen Klassen geladen.
      * Hierfür wird der angegebene Speicher verwendet.
      * Um zu überprüfen ob alle Einstellungen einer bestimmten Klasse vollständig geladen wurden muss auf die
-     * {@link EinstellungKlassenInfos} zugeriffen werden.
+     * {@link SettingClassInfo} zugeriffen werden.
      *
      * @return true, falls Einstellungen alle geladen wurden, ansonsten false.
      */
     public boolean laden()
     {
 
-        Set<String> klassen = EinstellungKlassenInfos.getKlassen();
+        Set<String> klassen = SettingClassInfo.getClasses();
 
         boolean ergebnis = true;
         for (String klasse : klassen)

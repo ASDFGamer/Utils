@@ -28,11 +28,11 @@ public class PropertiesSpeicherTest
     public void einstellungenLadenEnum()
     {
         Einstellungen einstellungen = new Einstellungen("testEnum");
-        EinstellungEnum.test.EINSTELLUNGProperty().set("hallo");
-        assertEquals(true, einstellungen.speichern(EinstellungEnum.class));
-        EinstellungEnum.test.EINSTELLUNGProperty().set("funktioniert nicht");
-        assertEquals(true, einstellungen.laden(EinstellungEnum.class));
-        assertEquals("hallo", EinstellungEnum.test.EINSTELLUNGProperty().get());
+        SettingsEnum.test.SETTINGProperty().set("hello");
+        assertEquals(true, einstellungen.speichern(SettingsEnum.class));
+        SettingsEnum.test.SETTINGProperty().set("funktioniert nicht");
+        assertEquals(true, einstellungen.laden(SettingsEnum.class));
+        assertEquals("hello", SettingsEnum.test.SETTINGProperty().get());
     }
 
     @Test
@@ -40,15 +40,15 @@ public class PropertiesSpeicherTest
     {
         einstellung.set("Hurra");
         einstellung2.set("Hipp Hipp");
-        EinstellungEnum.test.EINSTELLUNGProperty().set("Nun dies");
+        SettingsEnum.test.SETTINGProperty().set("Nun dies");
         Einstellungen einstellungen = new Einstellungen("test");
         assertEquals(true, einstellungen.speichern());
         einstellung.set("Schade");
         einstellung2.set("es geht nicht");
-        EinstellungEnum.test.EINSTELLUNGProperty().set("obwohl es sollte");
+        SettingsEnum.test.SETTINGProperty().set("obwohl es sollte");
         assertEquals(true, einstellungen.laden());
         assertEquals("Hurra", einstellung.get());
         assertEquals("Hipp Hipp", einstellung2.get());
-        assertEquals("Nun dies", EinstellungEnum.test.EINSTELLUNGProperty().get());
+        assertEquals("Nun dies", SettingsEnum.test.SETTINGProperty().get());
     }
 }
