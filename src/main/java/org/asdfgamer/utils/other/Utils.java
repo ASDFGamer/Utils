@@ -173,12 +173,12 @@ public class Utils
     }
 
     /**
-     * Dies gibt den Pfad zu der gesuchten Einstellungsdatei zurück.
+     * Dies gibt den Pfad zu der gesuchten Einstellungsdatei zurück und erstellt eine leere Datei an der Stelle.
      *
      * @param progname Der Name des Programms ({@link Utils#getConfigFolder(java.lang.String)
      *                 }).
      * @param filename Der Name der Einstellungsdatei.
-     * @return Den Pfad der Einstellungsdatei.
+     * @return Den Pfad der Einstellungsdatei oder null falls sie nicht erstellt werden konnte.
      */
     public static String getConfigFile(String progname, String filename)
     {
@@ -187,7 +187,11 @@ public class Utils
         Path file = Paths.get(sfile);
         if (!isFile(file))
         {
-            createFile(file);
+            if (!createFile(file))
+            {
+                LOG.warning("Die Configdatei "+ sfile+ " konnte nicht erstellt werden.");
+                return null;
+            }
         }
         return sfile;
     }

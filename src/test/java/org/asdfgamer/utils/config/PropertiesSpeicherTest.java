@@ -7,19 +7,19 @@ import static org.junit.Assert.assertEquals;
 @SuppressWarnings("WeakerAccess")
 public class PropertiesSpeicherTest
 {
-    public static final EinstellungenProperty einstellung = Einstellungen.neueEinstellung("es geht");
+    public static final SettingsProperty einstellung = Settings.newSetting("es geht");
 
-    public static final EinstellungenProperty einstellung2 = Einstellungen.neueEinstellung("es geht");
+    public static final SettingsProperty einstellung2 = Settings.newSetting("es geht");
 
     @Test
     public void einstellungLaden()
     {
         einstellung.set("es geht");
         einstellung2.set("es geht");
-        Einstellungen einstellungen = new Einstellungen("test");
-        assertEquals(true, einstellungen.speichern(this));
+        Settings einstellungen = new Settings("test");
+        assertEquals(true, einstellungen.save(this));
         einstellung.set("funktioniert nicht");
-        assertEquals(true, einstellungen.laden(this));
+        assertEquals(true, einstellungen.load(this));
         assertEquals("es geht",einstellung.get());
         //TODO Einstellungen geändert wieder überprüfen
     }
@@ -27,11 +27,11 @@ public class PropertiesSpeicherTest
     @Test
     public void einstellungenLadenEnum()
     {
-        Einstellungen einstellungen = new Einstellungen("testEnum");
+        Settings einstellungen = new Settings("testEnum");
         SettingsEnum.test.SETTINGProperty().set("hello");
-        assertEquals(true, einstellungen.speichern(SettingsEnum.class));
+        assertEquals(true, einstellungen.save(SettingsEnum.class));
         SettingsEnum.test.SETTINGProperty().set("funktioniert nicht");
-        assertEquals(true, einstellungen.laden(SettingsEnum.class));
+        assertEquals(true, einstellungen.load(SettingsEnum.class));
         assertEquals("hello", SettingsEnum.test.SETTINGProperty().get());
     }
 
@@ -41,12 +41,12 @@ public class PropertiesSpeicherTest
         einstellung.set("Hurra");
         einstellung2.set("Hipp Hipp");
         SettingsEnum.test.SETTINGProperty().set("Nun dies");
-        Einstellungen einstellungen = new Einstellungen("test");
-        assertEquals(true, einstellungen.speichern());
+        Settings einstellungen = new Settings("test");
+        assertEquals(true, einstellungen.save());
         einstellung.set("Schade");
         einstellung2.set("es geht nicht");
         SettingsEnum.test.SETTINGProperty().set("obwohl es sollte");
-        assertEquals(true, einstellungen.laden());
+        assertEquals(true, einstellungen.load());
         assertEquals("Hurra", einstellung.get());
         assertEquals("Hipp Hipp", einstellung2.get());
         assertEquals("Nun dies", SettingsEnum.test.SETTINGProperty().get());

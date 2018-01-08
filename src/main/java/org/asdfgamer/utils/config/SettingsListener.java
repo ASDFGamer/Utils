@@ -4,14 +4,20 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
 /**
- * In dieser Klasse sind verschiedene Listener die sinnvoll auf EinstellungenPropertys angewendet werden können.
+ * This Class is used to store common Listeners for the Settings.
  *
  * @author ASDFGamer
  */
-public class EinstellungenListener
+public class SettingsListener
 {
 
-    public static ChangeListener<String> getEinstellungenAendern(EinstellungenProperty einstellung)
+    /**
+     * This provides an Listener that notes it in the setting if the value changed.
+     * This Listener is as standard in every Setting active.
+     * @param setting The Setting that should get the Listener.
+     * @return The new ChangeListener.
+     */
+    public static ChangeListener<String> getSettingChange(SettingsProperty setting)
     {
 
         return new ChangeListener<>()
@@ -33,7 +39,7 @@ public class EinstellungenListener
 
                 if (oldValue != null && newValue != null && !oldValue.equals(newValue))
                 {
-                    einstellung.setEinstellungenGeaendert();
+                    setting.setSettingChanged();
                 }
             }
         };

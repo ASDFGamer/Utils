@@ -3,7 +3,8 @@ package org.asdfgamer.utils.config;
 import java.io.File;
 import java.util.Map;
 
-import static org.asdfgamer.utils.other.Utils.*;
+import static org.asdfgamer.utils.other.Utils.createFile;
+import static org.asdfgamer.utils.other.Utils.isFile;
 
 /**
  * This class saves the given values in a file. It can also add Captions and Comments to specific values.
@@ -46,7 +47,7 @@ public class Properties
         {
             createFile(fileName);
         }
-        return new File(fileName);//Hier sollte nie eine Exception geworfen werden.
+        return new File(fileName);//This should'n throw an exception
     }
 
     /**
@@ -56,7 +57,7 @@ public class Properties
      * @param setting The Setting that should be saved.
      * @return true, if the value got successfully added, otherwise false.
      */
-    public boolean add(String name, EinstellungenProperty setting)
+    public boolean add(String name, SettingsProperty setting)
     {
 
         return false;
@@ -69,7 +70,7 @@ public class Properties
      * @param className The Name of the Class that should be used to sort the values.
      * @return true, if the Settings got successfully added and sorted, otherwise false.
      */
-    public boolean add(Map<String, EinstellungenProperty> settings, Class className)
+    public boolean add(Map<String, SettingsProperty> settings, Class className)
     {
 
         return add(settings) && sort(className);
@@ -81,7 +82,7 @@ public class Properties
      * @param settings A Map of names of Settings and the associated EinstellungenProperty.
      * @return true, if the Settings got successfully added, otherwise false.
      */
-    public boolean add(Map<String, EinstellungenProperty> settings)
+    public boolean add(Map<String, SettingsProperty> settings)
     {
 
         return false;

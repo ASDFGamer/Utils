@@ -11,7 +11,7 @@ public enum SettingsEnum
     test("hello"),
     testNumber(1);
 
-    private final EinstellungenProperty SETTING;
+    private final SettingsProperty SETTING;
 
     /**
      * This constructor is for Enums important, because this lets you use one constructor for all cases.
@@ -23,7 +23,7 @@ public enum SettingsEnum
     SettingsEnum(Object... args)
     {
 
-        SETTING = Einstellungen.neueEinstellung(args);
+        SETTING = Settings.newSetting(args);
     }
 
     /*
@@ -42,7 +42,7 @@ public enum SettingsEnum
         this.SETTING.set(SETTING);
     }
 
-    public EinstellungenProperty SETTINGProperty()
+    public SettingsProperty SETTINGProperty()
     {
 
         return SETTING;
