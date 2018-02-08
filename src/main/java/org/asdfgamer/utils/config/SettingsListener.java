@@ -3,11 +3,14 @@ package org.asdfgamer.utils.config;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 
+import java.util.Locale;
+
 /**
  * This Class is used to store common Listeners for the Settings.
  *
  * @author ASDFGamer
  */
+@SuppressWarnings("WeakerAccess")
 public class SettingsListener
 {
 
@@ -41,6 +44,23 @@ public class SettingsListener
                 {
                     setting.setSettingChanged();
                 }
+            }
+        };
+    }
+
+    public static ChangeListener<String> getLanguageChangeListener()
+    {
+        return new ChangeListener<String>()
+        {
+
+            @Override
+            public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue)
+            {
+                PropertiesFileStorage.setLocale(Locale.forLanguageTag(newValue));
+                SettingClassInfo.setLocale(Locale.forLanguageTag(newValue));
+                SettingsProperty.setLocale(Locale.forLanguageTag(newValue));
+                Settings.setLocale(Locale.forLanguageTag(newValue));
+                Properties.setLocale(Locale.forLanguageTag(newValue));
             }
         };
     }

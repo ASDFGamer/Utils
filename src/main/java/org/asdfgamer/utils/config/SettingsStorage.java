@@ -8,6 +8,7 @@ import java.util.Map;
  * @author ASDFGamer
  * @version 1.0
  */
+@SuppressWarnings("WeakerAccess")
 public interface SettingsStorage
 {
 

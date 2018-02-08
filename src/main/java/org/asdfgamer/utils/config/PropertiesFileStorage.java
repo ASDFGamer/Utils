@@ -3,8 +3,7 @@ package org.asdfgamer.utils.config;
 import org.asdfgamer.utils.other.Utils;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -29,12 +28,16 @@ public class PropertiesFileStorage implements SettingsStorage
     /**
      * This is the file extension if there is no Extension given. TODO add possibility to change the extension.
      */
-    private static final String STD_EXTENSION = ".properties";
+    private static final String STD_EXTENSION = ".cfg";
 
     /**
      * This is the name of the program that saves the Settings.
      */
     private final String PROGRAM_NAME;
+
+    private static Locale locale = Locale.getDefault();
+
+    private final ResourceBundle bundle = ResourceBundle.getBundle("config/propertiesFileStorage",locale);
 
     /**
      * This indicates what implementation should be used to save the Properties:
@@ -93,13 +96,13 @@ public class PropertiesFileStorage implements SettingsStorage
     {
 
         boolean result = true;
-        Map<String, Map<String, SettingsProperty>> classes = sortiereEinstellungenNachKlassen(settings);
+        Map<String, Map<String, SettingsProperty>> classes = sortSettingsInClasses(settings);
         for (Map.Entry<String, Map<String, SettingsProperty>> settingsSortedInClasses : classes.entrySet())
         {
             String name = settingsSortedInClasses.getKey().substring(settingsSortedInClasses.getKey().lastIndexOf('.') + 1);
             String path = createFile(name);
 
-            result = loadSettingProperies(settingsSortedInClasses.getValue(), path) && result;
+            result = loadSettingProperties(settingsSortedInClasses.getValue(), path) && result;
         }
         return result;
     }
@@ -116,8 +119,8 @@ public class PropertiesFileStorage implements SettingsStorage
     {
 
         boolean result = true;
-        Map<String, Map<String, SettingsProperty>> klassen = sortiereEinstellungenNachKlassen(settings);
-        for (Map.Entry<String, Map<String, SettingsProperty>> settingsSortedInClasses : klassen.entrySet())
+        Map<String, Map<String, SettingsProperty>> classes = sortSettingsInClasses(settings);
+        for (Map.Entry<String, Map<String, SettingsProperty>> settingsSortedInClasses : classes.entrySet())
         {
             String name = settingsSortedInClasses.getKey().substring(settingsSortedInClasses.getKey().lastIndexOf('.') + 1);
             String path = createFile(name);
@@ -154,19 +157,18 @@ public class PropertiesFileStorage implements SettingsStorage
         try
         {
             configFile = new FileOutputStream(path);
-            for (Map.Entry<String, SettingsProperty> einstellung : settings.entrySet())
+            for (Map.Entry<String, SettingsProperty> setting : settings.entrySet())
             {
-                if (!einstellung.getValue().isInternalValue())
+                if (!setting.getValue().isInternalValue())
                 {
-                    LOG.info("speichern " + einstellung.getKey());
-                    properties.setProperty(einstellung.getKey(), einstellung.getValue().get());
+                    properties.setProperty(setting.getKey(), setting.getValue().get());
                 }
             }
 
-            properties.store(new OutputStreamWriter(configFile, "UTF-8"), "Dies sind die Einstellungen des Spiels '" + PROGRAM_NAME + "'.");
+            properties.store(new OutputStreamWriter(configFile, "UTF-8"), bundle.getString("fileHeader")+ PROGRAM_NAME + "'.");
         } catch (IOException e)
         {
-            LOG.log(Level.WARNING, "Es gab Probleme beim Öffnen der Datei zum Speichern der Einstellungen", e);
+            LOG.log(Level.WARNING, bundle.getString("problemOpen"), e);
             return false;
         } finally
         {
@@ -177,7 +179,7 @@ public class PropertiesFileStorage implements SettingsStorage
                     configFile.close();
                 } catch (IOException e)
                 {
-                    LOG.log(Level.SEVERE, "Die Configfile konnte nicht geschlossen werden.", e);
+                    LOG.log(Level.SEVERE, bundle.getString("problemClose"), e);
                 }
             }
         }
@@ -206,7 +208,7 @@ public class PropertiesFileStorage implements SettingsStorage
 
         if (!settingChanged)
         {
-            LOG.info("Es wurde keine Einstellung geändert, deshalb muss nichts gespeichert werden.");
+            LOG.info(bundle.getString("nothingChanged"));
             return true;
         }
         return false;
@@ -221,7 +223,7 @@ public class PropertiesFileStorage implements SettingsStorage
      * @return A nested Map which has in the first map the Classname and in the second Map the name of the setting an
      * the setting itself.
      */
-    private Map<String, Map<String, SettingsProperty>> sortiereEinstellungenNachKlassen(Map<String, SettingsProperty> settings)
+    private Map<String, Map<String, SettingsProperty>> sortSettingsInClasses(Map<String, SettingsProperty> settings)
     {
 
         Map<String, Map<String, SettingsProperty>> settingClasses = new HashMap<>();
@@ -263,7 +265,7 @@ public class PropertiesFileStorage implements SettingsStorage
      * @param path          The path to the file.
      * @return true, if the settings got loaded successful.
      */
-    private boolean loadSettingProperies(Map<String, SettingsProperty> settings, String path)
+    private boolean loadSettingProperties(Map<String, SettingsProperty> settings, String path)
     {
 
         boolean result = true;
@@ -289,7 +291,7 @@ public class PropertiesFileStorage implements SettingsStorage
                 if (properties.getProperty(setting.getKey()) == null && !setting.getValue().isInternalValue())
                 {
                     result = false;
-                    LOG.warning("Für die Einstellung " + setting.getKey() + " konnte kein Wert geladen werden.");
+                    LOG.warning(bundle.getString("problemLoadSetting_start")+" '"+ setting.getKey() + "' " +bundle.getString("problemLoadSetting_end"));
                     SettingClassInfo.setProblemsWithLoading(setting.getValue().getClassName());
                 }
                 setting.getValue().set(properties.getProperty(setting.getKey(), setting.getValue().getDefaultValue()));
@@ -297,7 +299,7 @@ public class PropertiesFileStorage implements SettingsStorage
             }
         } catch (IOException e)
         {
-            LOG.log(Level.WARNING, "Die Configfile konnte nicht geladen werden.", e);
+            LOG.log(Level.WARNING, bundle.getString("problemLoadFile"), e);
             result = false;
         } finally
         {
@@ -309,7 +311,7 @@ public class PropertiesFileStorage implements SettingsStorage
                     configFile.close();
                 } catch (IOException e)
                 {
-                    LOG.log(Level.SEVERE, "Die Configfile konnte nicht geschlossen werden.", e);
+                    LOG.log(Level.SEVERE, bundle.getString("problemClose"), e);
                 }
             }
         }
@@ -324,6 +326,16 @@ public class PropertiesFileStorage implements SettingsStorage
         }
 
         return result;
+    }
+
+    /**
+     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
+     * @param newLocale The new locale
+     */
+    protected static void setLocale(Locale newLocale)
+    {
+
+        locale = newLocale;
     }
 
 }

@@ -1,15 +1,17 @@
-package org.asdfgamer.utils.config;
+package org.asdfgamer.utils.config.tests;
+
+import org.asdfgamer.utils.config.Settings;
+import org.asdfgamer.utils.config.SettingsProperty;
 
 /**
- * This is an example for an Enum with Settings.
+ * This Enum gets Used in the tests
  *
  * @author ASDFGamer
  */
 @SuppressWarnings("unused")
-public enum SettingsEnum
+public enum TestEnum
 {
-    test("hello"),
-    testNumber(1);
+    test("test");
 
     private final SettingsProperty SETTING;
 
@@ -20,7 +22,7 @@ public enum SettingsEnum
      *
      * @param args This are the arguments that get used to create the Setting..
      */
-    SettingsEnum(Object... args)
+    TestEnum(Object... args)
     {
 
         SETTING = Settings.newSetting(args);

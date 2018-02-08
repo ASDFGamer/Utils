@@ -1,8 +1,6 @@
 package org.asdfgamer.utils.config;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -13,7 +11,7 @@ import static java.util.logging.Logger.getLogger;
  *
  * @author ASDFGamer
  */
-@SuppressWarnings("unused")
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class SettingClassInfo
 {
 
@@ -25,7 +23,12 @@ public class SettingClassInfo
     /**
      * This Map is the Map with the info to every relevant Class.
      */
-    private static Map<String, ClassInfo> info = new HashMap<>();
+    private final static Map<String, ClassInfo> info = new HashMap<>();
+
+    private static Locale locale = Locale.getDefault();
+
+    private final static ResourceBundle bundle = ResourceBundle.getBundle("config/SettingClassInfo",locale);
+
 
     /**
      * This is used to show that the Class is changed.
@@ -60,8 +63,7 @@ public class SettingClassInfo
         {
             if (info.get(classname).settings != 0)
             {
-                LOG.warning("Die Anzahl der Einstellungen wurde schon gesetzt und darf nicht mehr abgeändert werden.");
-                //TODO internationalisation of Log Messages.
+                LOG.warning(bundle.getString("NumberOfSettingsAlreadySet"));
                 return false;
             }
             info.get(classname).settings = settings;
@@ -88,7 +90,7 @@ public class SettingClassInfo
         {
             return info.get(className).changed;
         }
-        LOG.warning("Zu der Klasse: " + className + "wurden noch keine Infos hinterlegt.");
+        LOG.warning(bundle.getString("noInfo_start") + className + bundle.getString("noInfo_end"));
         return false;
     }
 
@@ -105,7 +107,7 @@ public class SettingClassInfo
         {
             return info.get(className).settings;
         }
-        LOG.warning("Zu der Klasse: " + className + "wurden noch keine Infos hinterlegt.");
+        LOG.warning(bundle.getString("noInfo_start") + className + bundle.getString("noInfo_end"));
         return 0;
     }
 
@@ -139,13 +141,13 @@ public class SettingClassInfo
 
         if (info.containsKey(className))
         {
-            info.get(className).settingsLoadedCompletly = false;
+            info.get(className).settingsLoadedCompletely = false;
             info.get(className).settingsLoaded = true;
 
         } else
         {
             ClassInfo classInfo = new ClassInfo();
-            classInfo.settingsLoadedCompletly = false;
+            classInfo.settingsLoadedCompletely = false;
             classInfo.settingsLoaded = true;
             info.put(className, classInfo);
         }
@@ -164,7 +166,7 @@ public class SettingClassInfo
         {
             if (info.get(className).settingsLoaded)
             {
-                return !info.get(className).settingsLoadedCompletly;
+                return !info.get(className).settingsLoadedCompletely;
             }
         }
         return false;
@@ -196,6 +198,17 @@ public class SettingClassInfo
     }
 
     /**
+     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
+     *
+     * @param newLocale The new locale
+     */
+    protected static void setLocale(Locale newLocale)
+    {
+
+        locale = newLocale;
+    }
+
+    /**
      * This is the Information that gets saved for a Class.
      */
     private static class ClassInfo
@@ -220,6 +233,6 @@ public class SettingClassInfo
          * This indicates if all Settings were loaded successfully the last time.
          * If {@link ClassInfo#settingsLoaded}==false then is this field unimportant.
          */
-        private boolean settingsLoadedCompletly = true;
+        private boolean settingsLoadedCompletely = true;
     }
 }

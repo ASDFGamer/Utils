@@ -4,6 +4,8 @@ import javafx.beans.property.SimpleStringProperty;
 import org.asdfgamer.utils.other.Convertible;
 import org.asdfgamer.utils.other.Utils;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 /**
@@ -17,24 +19,32 @@ public class SettingsProperty extends SimpleStringProperty
 {
 
     /**
-     * This are all values that can be interpreted as 'true' TODO add possibility to edit this values
-     */
-    private static final String[] TRUE_VALUES = {"true", "wahr"};
-
-    /**
-     * This are all values that can be interpreted as 'false' TODO add possibility to edit this values
-     */
-    private static final String[] FALSE_VALUES = {"false", "falsch"};
-
-    /**
      * The used Logger
      */
     private static final Logger LOG = Logger.getLogger(SettingsProperty.class.getName());
 
     /**
+     * This are all values that can be interpreted as 'true' TODO add possibility to edit this values
+     * This are the values true and the version in the used language (german:wahr)
+     */
+    @SuppressWarnings("SpellCheckingInspection")
+    private static String[] TRUE_VALUES = {"true"};
+
+    /**
+     * This are all values that can be interpreted as 'false'
+     * This are the values false and the version in the used language (german:falsch)
+     */
+    @SuppressWarnings("SpellCheckingInspection")
+    private static String[] FALSE_VALUES = {"false"};
+
+    /**
      * This notes that something changed in some setting. TODO check if some way is implemented to see this for a class.
      */
     private static boolean somethingChanged = false;
+
+    private static Locale locale = Locale.getDefault();
+
+    private static final ResourceBundle bundle = ResourceBundle.getBundle("config/SettingsProperty", locale);
 
     /**
      * This is the default value for the Setting, interpreted as String.
@@ -82,6 +92,14 @@ public class SettingsProperty extends SimpleStringProperty
     private String CLASS_NAME;
 
     /**
+     * This is an short text that gives Information about the Setting
+     */
+    private String INFO_TEXT;
+
+    private int lineNumber = 0;
+
+
+    /**
      * This is the default constructor, everything uses default values.
      */
     public SettingsProperty()
@@ -109,7 +127,7 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This constructor recives the default/initial value and if this setting is internal, everything else uses
+     * This constructor receives the default/initial value and if this setting is internal, everything else uses
      * default values.
      *
      * @param initialValue  The default/initial value of the setting.
@@ -139,13 +157,25 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This Methode gets called from the Constructor to check if the inital value convertible to boolean, integer or
+     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
+     *
+     * @param newLocale The new locale
+     */
+    protected static void setLocale(Locale newLocale)
+    {
+
+        locale = newLocale;
+        TRUE_VALUES = new String[]{TRUE_VALUES[0], bundle.getString("true_value")};
+        FALSE_VALUES = new String[]{FALSE_VALUES[0], bundle.getString("false_value")};
+    }
+
+    /**
+     * This Methode gets called from the Constructor to check if the initial value convertible to boolean, integer or
      * double. If so it saves the value in that format.
      *
      * @param initialValue The initial Value of the setting.
-     * @return true, if there was no problem, otherwise false.
      */
-    private boolean init(String initialValue)
+    private void init(String initialValue)
     {
 
         if (Convertible.toBoolean(initialValue, TRUE_VALUES, FALSE_VALUES))
@@ -158,7 +188,6 @@ public class SettingsProperty extends SimpleStringProperty
         {
             this.valueDouble = Double.parseDouble(initialValue);
         }
-        return true;
     }
 
     /**
@@ -202,7 +231,7 @@ public class SettingsProperty extends SimpleStringProperty
             return true;
         } else
         {
-            LOG.warning("Diese Einstellung hat keinen Booleanwert");
+            LOG.warning(bundle.getString("noBooleanValue"));
             return false;
         }
 
@@ -267,18 +296,6 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This returns the value of the setting as String.
-     *
-     * @return The value of the setting formatted as String.
-     */
-    @Override
-    public String get()
-    {
-
-        return super.get();
-    }
-
-    /**
      * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
      * The methode {@link SettingsProperty#setString(String)} does exactly the same thing, but returns an boolean value
      * instead of the exception.
@@ -298,7 +315,7 @@ public class SettingsProperty extends SimpleStringProperty
                 this.valueBoolean = Utils.isTrue(newValue, TRUE_VALUES);
             } else
             {
-                throw new IllegalArgumentException("Der Wert " + newValue + " konnte nicht zu boolean umgewandelt werden, obwohl die Einstellung vom Typ boolean ist.");
+                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_boolean"));
             }
         }
 
@@ -309,7 +326,7 @@ public class SettingsProperty extends SimpleStringProperty
                 setInteger(Integer.parseInt(newValue));
             } else
             {
-                throw new IllegalArgumentException("Der Wert " + newValue + " konnte nicht zu Integer umgewandelt werden, obwohl die Einstellung vom Typ Integer ist.");
+                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_integer"));
             }
         }
 
@@ -320,7 +337,7 @@ public class SettingsProperty extends SimpleStringProperty
                 setDouble(Double.valueOf(newValue));
             } else
             {
-                throw new IllegalArgumentException("Der Wert " + newValue + " konnte nicht zu Double umgewandelt werden, obwohl die Einstellung vom Typ Double ist.");
+                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_double"));
             }
         }
 
@@ -374,7 +391,7 @@ public class SettingsProperty extends SimpleStringProperty
             return true;
         } else
         {
-            LOG.warning("Diese Einstellung hat keinen Integerwert");
+            LOG.warning(bundle.getString("noIntegerValue"));
             return false;
         }
     }
@@ -405,7 +422,7 @@ public class SettingsProperty extends SimpleStringProperty
             return true;
         } else
         {
-            LOG.warning("Diese Einstellung hat keinen Doublewert");
+            LOG.warning(bundle.getString("noDoubleValue"));
             return false;
         }
     }
@@ -426,10 +443,10 @@ public class SettingsProperty extends SimpleStringProperty
         } else if (hasIntegerValue())
         {
             this.maximum = maximum;
-            LOG.fine("Da es sich bei der Einstellung um eine Integereinstellung handelt wird der Doublewert in ein Integerwert umgewandelt.");
+            LOG.fine(bundle.getString("DoubleValueToInteger"));
         } else
         {
-            LOG.fine("Dies ist eine Einstellung die keinen Maximalwert haben kann.");
+            LOG.fine(bundle.getString("noMaximumValueAllowed"));
             return false;
         }
 
@@ -474,7 +491,7 @@ public class SettingsProperty extends SimpleStringProperty
             this.maximum = (double) maximum;
         } else
         {
-            LOG.fine("Dies ist eine Einstellung die keinen Maximalwert haben kann.");
+            LOG.fine(bundle.getString("noMaximumValueAllowed"));
             return false;
         }
         return true;
@@ -496,10 +513,10 @@ public class SettingsProperty extends SimpleStringProperty
         } else if (hasIntegerValue())
         {
             this.minimum = minimum;
-            LOG.fine("Da es sich bei der Einstellung um eine Integereinstellung handelt wird der Doublewert in ein Integerwert umgewandelt.");
+            LOG.fine(bundle.getString("DoubleValueToInteger"));
         } else
         {
-            LOG.fine("Dies ist eine Einstellung die keinen Minimalwert haben kann.");
+            LOG.fine(bundle.getString("noMinimumValueAllowed"));
             return false;
         }
         return true;
@@ -520,7 +537,7 @@ public class SettingsProperty extends SimpleStringProperty
             this.minimum = (double) minimum;
         } else
         {
-            LOG.fine("Dies ist eine Einstellung die keinen Minimalwert haben kann.");
+            LOG.fine(bundle.getString("noMinimumValueAllowed"));
             return false;
         }
         return true;
@@ -582,7 +599,7 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This is used to set the name of the class that declared this Setting. For example {@link SettingsEnum} and not
+     * This is used to set the name of the class that declared this Setting. For example {@link SettingsConfig} and not
      * {@link Settings}.
      *
      * @param className This is the complete name of the defining class.
@@ -597,5 +614,55 @@ public class SettingsProperty extends SimpleStringProperty
             return true;
         }
         return false;
+    }
+
+    /**
+     * This is used to set the information text for this setting. This can only be set one time.
+     *
+     * @param text Information about this setting
+     * @return true, if there wasn't any text set, otherwise false.
+     */
+    protected boolean setInformationText(String text)
+    {
+
+        if (this.INFO_TEXT == null)
+        {
+            this.INFO_TEXT = text;
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * This returns the information text or null if it isn't set.
+     *
+     * @return the information text or null if it isn't set.
+     */
+    public String getInformationText()
+    {
+
+        return INFO_TEXT + "test";
+    }
+
+    /**
+     * This gets the Line number of the setting in the class.
+     *
+     * @return The Line number in the class or '0' if it can't get the number.
+     */
+    protected int getLineNumber()
+    {
+
+        return lineNumber;
+    }
+
+    /**
+     * This sets the Line Number of the property in the class where it is defined.
+     *
+     * @param lineNumber The Line number.
+     */
+    protected void setLine(int lineNumber)
+    {
+
+        this.lineNumber = lineNumber;
     }
 }

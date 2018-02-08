@@ -1,6 +1,6 @@
 apply plugin: 'java'
 apply plugin: 'maven'
-//apply plugin: 'application'
+apply plugin: 'application'
 apply plugin:  'idea'
 //plugins {
 //    id "java"
@@ -10,15 +10,14 @@ apply plugin:  'idea'
 //}
 
 group = 'org.asdfgamer.utils'
-version = '1.0'
+version = '0.9'
 ext.moduleName= 'org.asdfgamer.utils'
+mainClassName='org.asdfgamer.utils.config.tests.Main'
 
 description = "Dies sind verschiedene Utility-Klassen die ich brauche."
 
 sourceCompatibility = 1.9
 targetCompatibility = 1.9
-
-
 
 repositories {
         
@@ -30,10 +29,12 @@ dependencies {
 
     // JUnit and Mockito
     testCompile "junit:junit:4.12"
+    //Da es ein Problem mit dem Laden der Ressourcen für die Tests gibt (Die RessourceBundels werden nicht gefunden)
+    compile "junit:junit:4.12"
     //test
 }
 
-//Aenderungen fuer Jingsaw
+//Changes for Jigsaw
 
 
 compileJava {
@@ -71,4 +72,4 @@ test {
         classpath = files()
     }
 }
-//Ende der Aenderungen fuer Jingsaw
+//End of Changes for Jigsaw

@@ -3,13 +3,11 @@ package org.asdfgamer.utils.config;
 import org.asdfgamer.utils.other.Utils;
 
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
+import static org.asdfgamer.utils.config.SettingsConfig.language;
 
 /**
  * This creates SettingsProperties und manages SettingsProperties and Setting-classes.
@@ -44,6 +42,10 @@ public class Settings
      */
     private final SettingsStorage STORAGE;
 
+    private static Locale locale = Locale.getDefault();
+
+    private final static ResourceBundle bundle = ResourceBundle.getBundle("config/Settings",locale);
+
     /**
      * This creates a new Settings-object.
      * The used storage is a properties file in the systems standard configuration folder.
@@ -52,9 +54,9 @@ public class Settings
      */
     public Settings(String programName)
     {
-
         this.NAME = programName;
         this.STORAGE = new PropertiesFileStorage(programName);
+        loadOwnSettings();
     }
 
     /**
@@ -65,9 +67,18 @@ public class Settings
      */
     public Settings(String programName, SettingsStorage storage)
     {
-
         this.NAME = programName;
         this.STORAGE = storage;
+        loadOwnSettings();
+    }
+
+    /**
+     * This loads the settings for the ConfigClasses.
+     */
+    private void loadOwnSettings()
+    {
+        load(SettingsConfig.class);
+        language.SETTINGProperty().addListener(SettingsListener.getLanguageChangeListener());
     }
 
     /**
@@ -105,7 +116,7 @@ public class Settings
             case 3:
                 return threeArguments(args);
             default:
-                LOG.warning("Es wurden zu viele Argumente für die Einstellung angegeben: " + Arrays.toString(args));
+                LOG.warning(bundle.getString("toManyArgs")+ Arrays.toString(args));
                 return newSetting();
 
         }
@@ -135,7 +146,7 @@ public class Settings
         {
             return newSetting((Boolean) setting);
         }
-        LOG.warning("Die Einstellung mit einem Argument ist von einem nicht unterstützten Typ.");
+        LOG.warning(bundle.getString("wrongTypeOneArg"));
         return newSetting();
     }
 
@@ -150,7 +161,7 @@ public class Settings
 
         if (args.length < 2)
         {
-            LOG.warning("Die Methode erwartet Array mit zwei Argumenten, diese hat aber weniger.");
+            LOG.warning(bundle.getString("lessThenTwoArgs"));
             return newSetting();
         }
 
@@ -167,7 +178,7 @@ public class Settings
         {
             return newSetting((Boolean) args[0], (Boolean) args[1]);
         }
-        LOG.warning("Die Einstellung mit zwei Argumenten ist von einem nicht unterstützten Typ.");
+        LOG.warning(bundle.getString("wrongTypeTwoArgs"));
         return newSetting();
     }
 //
@@ -183,7 +194,7 @@ public class Settings
 
         if (settings.length < 3)
         {
-            LOG.warning("Die Methode erwartet Array mit drei Argumenten, diese hat aber weniger.");
+            LOG.warning(bundle.getString("lessThenThreeArgs"));
             return newSetting();
         }
 
@@ -194,7 +205,7 @@ public class Settings
         {
             return newSetting((Double) settings[0], (Double) settings[1], (Double) settings[2]);
         }
-        LOG.warning("Die Einstellung mit drei Argumenten ist von einem nicht unterstützten Typ.");
+        LOG.warning(bundle.getString("wrongTypeThreeArgs"));
         return newSetting();
     }
 
@@ -260,8 +271,6 @@ public class Settings
         addClass(property);
         return property;
     }
-
-    //Interne Einstelungen
 
     /**
      * This creates an SettingsProperty with a String as default value.
@@ -366,7 +375,7 @@ public class Settings
     }
 
     /**
-     * This adds the Class in wich the setting ist declared to the list of all classes with settings.
+     * This adds the Class in which the setting ist declared to the list of all classes with settings.
      * @param property The Setting.
      */
     private static void addClass(SettingsProperty property)
@@ -376,13 +385,35 @@ public class Settings
         if (objArrayCreator)
         {
             className = Thread.currentThread().getStackTrace()[5].getClassName();
+            setLine(property,Thread.currentThread().getStackTrace()[5]);
             objArrayCreator = false;
         } else
         {
             className = Thread.currentThread().getStackTrace()[3].getClassName();
+            setLine(property,Thread.currentThread().getStackTrace()[3]);
         }
         property.setClassName(className);
         SettingClassInfo.add(className);
+    }
+
+    /**
+     * This gets the Line number of the property if it is can (the class is an enum) and saves it in the property.
+     * @param property The Property where the linenumber should be added.
+     * @param element The Element from the stacktrace.
+     */
+    private static void setLine(SettingsProperty property, StackTraceElement element)
+    {
+
+        try
+        {
+            if (Class.forName(element.getClassName()).isEnum())//Test if this can work with normal classes. (It cant find the declaration only the initialisation).
+            {
+                property.setLine(element.getLineNumber());
+            }
+        } catch (ClassNotFoundException e)
+        {
+            LOG.fine(bundle.getString("classNotFound")+ element.getClassName() + "'.");
+        }
     }
 
     /**
@@ -451,8 +482,7 @@ public class Settings
                 }
             } catch (ClassNotFoundException e)
             {
-                LOG.warning("Bei der Klasse " + classObj + "gab es ein Problem beim Wiederfinden der " +
-                        "Klasse zum Speichern. Somit wird sie nun nicht gespeichert.");
+                LOG.warning(bundle.getString("classToSaveNotFound_start")+ classObj + bundle.getString("classToSaveNotFound_end"));
                 result = false;
             }
 
@@ -484,7 +514,7 @@ public class Settings
                             settings.putIfAbsent(((Enum) enumConstant).name(), (SettingsProperty) method.invoke(enumConstant));
                         } catch (ReflectiveOperationException e)
                         {
-                            LOG.warning("Es gab ein Problem beim abrufen einer Einstellung aus der Funktion: " + method.getName() + " \n Dies tritt z.B. auf, falls argumente gefordert sind.");
+                            LOG.warning(bundle.getString("problemWithFunctionCall")+ method.getName() + " \n" + bundle.getString("problemWithFunctionCallInfo") );
                         }
                     }
                 }
@@ -492,7 +522,7 @@ public class Settings
             }
         } catch (ClassNotFoundException e)
         {
-            LOG.severe("Es gab ein Problem beim Wiederfinden der Klasse \"" + enumName + "\".");
+            LOG.severe(bundle.getString("classNotFound")+ enumName + "'.");
             e.printStackTrace();
         }
         return settings;
@@ -540,11 +570,20 @@ public class Settings
                 }
             } catch (ClassNotFoundException e)
             {
-                LOG.warning("Bei der Klasse " + className + "gab es ein Problem beim Wiederfinden der " +
-                        "Klasse zum Speichern. Somit wird sie nun nicht gespeichert.");
+                LOG.warning(bundle.getString("classToSaveNotFound_start")+ className + bundle.getString("classToSaveNotFound_end"));
                 result = false;
             }
         }
         return result;
+    }
+
+    /**
+     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
+     * @param newLocale The new locale
+     */
+    protected static void setLocale(Locale newLocale)
+    {
+
+        locale = newLocale;
     }
 }

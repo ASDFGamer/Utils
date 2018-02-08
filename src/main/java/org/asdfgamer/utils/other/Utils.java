@@ -605,7 +605,7 @@ public class Utils
         {
             fields = klasse.getClass().getDeclaredFields();
         }
-        LOG.info("Utils.getFields Zeile 602: Klasse: " + klasse.getClass().getName() + " fields lenght = " + fields.length);
+        LOG.fine("Klasse: " + klasse.getClass().getName() + " hat " + fields.length + " Felder");
         Map<String, T> felder = new HashMap<>();
         for (Field field : fields)
         {
@@ -623,9 +623,12 @@ public class Utils
                             felder.put(field.getName(), (T) field.get(null));
                         } catch (NullPointerException e)
                         {
-                            LOG.warning("Wenn zum Abfragen der Felder einer Klasse nur ein Class-Objekt übergeben " +
-                                    "wird, dann können nur statische Felder betrachtet werden (bei der Klasse "
-                                    + ((Class) klasse).getSimpleName() + ").");
+                            if (!((Class)klasse).isEnum() )//Damit die Meldung nicht zu oft ausgegeben wird, da es dort nicht verhindert werden kann.
+                            {
+                                LOG.fine("Wenn zum Abfragen der Felder einer Klasse nur ein Class-Objekt übergeben " +
+                                        "wird, dann können nur statische Felder betrachtet werden (bei der Klasse "
+                                        + ((Class) klasse).getSimpleName() + ").");//Falls ein Weg gefunden werden kann dies nicht auszugeben, falls T instanceof SettingsProperty, dann kann es wieder zu Info werden, aber ansonsten ist es zu oft ausgegeben.
+                            }
                         }
                     } else
                     {
