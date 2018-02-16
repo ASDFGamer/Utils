@@ -44,18 +44,26 @@ public class Properties
     private final String file;
 
     /**
+     * This is the Name of the Program.
+     */
+    private final String PROGRAM_NAME;
+
+    /**
      * This is the used sorter to sort all Settings in the right order.
      */
     private SettingsSorter settingsSorter = new SettingsSorter();
+
+    private Class className = null;
 
     /**
      * This creates an new Properties Object witch can save Settings.
      *
      * @param fileName This is the path to the Properties-File.
+     * @param programName The Name of the Program.
      */
-    public Properties(String fileName)
+    public Properties(String fileName, String programName)
     {
-
+        PROGRAM_NAME = programName;
         file = fileName;
     }
 
@@ -78,22 +86,21 @@ public class Properties
      */
     public void add(String name, SettingsProperty setting)
     {
-
-        settingsSorter.add(name, setting);
-    }
-
-    /**
-     * This Method adds a Map of Settings to the list of Properties that should be saved ands sorts them afterwards.
-     *
-     * @param settings  A Map of names of Settings and the associated SettingsProperty.
-     * @param className The Name of the Class that should be used to sort the values.
-     */
-    @SuppressWarnings("unused")
-    public void add(Map<String, SettingsProperty> settings, Class className)
-    {
-
-        add(settings);
-        settingsSorter.add(className);
+        if (!setting.isInternalValue())
+        {
+            settingsSorter.add(name, setting);
+            if (className == null)
+            {
+                try
+                {
+                    className = Class.forName(setting.getClassName());
+                } catch (ClassNotFoundException e)
+                {
+                    LOG.warning(bundle.getString("classNotFound") + setting.getClassName());
+                    className = null;
+                }
+            }
+        }
     }
 
     /**
@@ -108,6 +115,7 @@ public class Properties
         {
             add(setting.getKey(), setting.getValue());
         }
+        settingsSorter.add(className);
     }
 
     /**
@@ -130,9 +138,13 @@ public class Properties
         try
         {
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "utf-8"));
+            writer.write("#"+bundle.getString("fileHeader")+ PROGRAM_NAME + "'.");
+            writer.write("\n");
+
             for (ListElement element : content)
             {
-                writer.write(element.getContent());//TODO check if this clears the file.
+                writer.write( element.getContent());//TODO check if this clears the file.
+                writer.write("\n");
             }
             writer.flush();
         } catch (IOException e)

@@ -17,6 +17,6 @@ class CaptionElement extends ListElement
     CaptionElement(int lineNumber, Caption content)
     {
 
-        super(lineNumber, content.value());
+        super(lineNumber, "\n#"+content.value() + "\n");
     }
 }

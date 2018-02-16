@@ -27,7 +27,7 @@ public class SettingElement extends ListElement
     SettingElement(String name, SettingsProperty setting)
     {
 
-        super(setting.getLineNumber(), "#" + setting.getInformationText() + "(" + bundle.getString("std_value") + " = " + setting.getDefaultValue() + ")" + "\n" + name + "=" + setting.get());
+        super(setting.getLineNumber(), "#" + setting.getInformationText() + "(" + bundle.getString("std_value") + " = " + setting.getDefaultValue() + ")" + "\n" + name + "=" + setting.get() + "\n");
         this.SETTING = setting;
         this.NAME = name;
     }

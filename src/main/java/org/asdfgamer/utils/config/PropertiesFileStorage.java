@@ -41,8 +41,8 @@ public class PropertiesFileStorage implements SettingsStorage
 
     /**
      * This indicates what implementation should be used to save the Properties:
-     * true = {@link java.util.Properties}.
-     * false = {@link org.asdfgamer.utils.config.Properties}.
+     * true = {@link org.asdfgamer.utils.config.Properties}.
+     * false = {@link java.util.Properties}.
      * This implementation is only used while saving. To load properties this class always uses {@link java.util.Properties}
      */
     private final boolean MY_PROPERTIES;
@@ -53,7 +53,6 @@ public class PropertiesFileStorage implements SettingsStorage
     private boolean checkForChanges = false;
 
     /**
-     * TODO translate
      * This creates a new SettingsStorage for the given Program name.
      * This object uses all default values.
      *
@@ -102,9 +101,18 @@ public class PropertiesFileStorage implements SettingsStorage
             String name = settingsSortedInClasses.getKey().substring(settingsSortedInClasses.getKey().lastIndexOf('.') + 1);
             String path = createFile(name);
 
-            result = loadSettingProperties(settingsSortedInClasses.getValue(), path) && result;
+                result = loadSettingProperties(settingsSortedInClasses.getValue(), path) && result;
+
         }
         return result;
+    }
+
+    private boolean saveMYSettingProperties(Map<String, SettingsProperty> value, String path)
+    {
+
+        org.asdfgamer.utils.config.Properties myProperties = new org.asdfgamer.utils.config.Properties(path,PROGRAM_NAME);
+        myProperties.add(value);
+        return myProperties.save();
     }
 
     /**
@@ -125,8 +133,13 @@ public class PropertiesFileStorage implements SettingsStorage
             String name = settingsSortedInClasses.getKey().substring(settingsSortedInClasses.getKey().lastIndexOf('.') + 1);
             String path = createFile(name);
 
-            result = saveSettingsProperty(settingsSortedInClasses.getValue(), path) && result;
-
+            if (MY_PROPERTIES)
+            {
+                result = saveMYSettingProperties(settingsSortedInClasses.getValue(),path) && result;
+            }else
+            {
+                result = saveSettingsProperty(settingsSortedInClasses.getValue(), path) && result;
+            }
         }
         return result;
 

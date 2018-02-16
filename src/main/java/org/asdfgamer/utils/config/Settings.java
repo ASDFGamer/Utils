@@ -77,7 +77,10 @@ public class Settings
      */
     private void loadOwnSettings()
     {
-        load(SettingsConfig.class);
+        if (!load(SettingsConfig.class))
+        {
+            save(SettingsConfig.class);//If the Settings aren't saved and the user program doesn't save all
+        }
         language.SETTINGProperty().addListener(SettingsListener.getLanguageChangeListener());
     }
 
@@ -622,7 +625,7 @@ public class Settings
         if (objArrayCreator)
         {
             className = Thread.currentThread().getStackTrace()[5].getClassName();
-            setLine(property,Thread.currentThread().getStackTrace()[5]);
+            setLine(property,Thread.currentThread().getStackTrace()[6]);
             objArrayCreator = false;
         } else
         {
@@ -800,10 +803,17 @@ public class Settings
             {
                 if (isEnum(Class.forName(className)))
                 {
-                    result = STORAGE.load(getSettingsFromEnum(className)) && result;
+                    Map<String,SettingsProperty> fields = getSettingsFromEnum(className);
+                    if (!fields.isEmpty()){
+                        result = STORAGE.load(fields) && result;
+                    }
                 } else
                 {
-                    result = STORAGE.load(Utils.getFields(Class.forName(className))) && result;
+                    Map<String,SettingsProperty> fields = Utils.getFields(Class.forName(className));
+                    if (!fields.isEmpty())
+                    {
+                        result = STORAGE.load(fields) && result;
+                    }
                 }
             } catch (ClassNotFoundException e)
             {

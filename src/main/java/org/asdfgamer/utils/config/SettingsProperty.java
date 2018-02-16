@@ -94,7 +94,7 @@ public class SettingsProperty extends SimpleStringProperty
     /**
      * This is an short text that gives Information about the Setting
      */
-    private String INFO_TEXT;
+    private String INFO_TEXT = "";
 
     private int lineNumber = 0;
 
@@ -625,7 +625,7 @@ public class SettingsProperty extends SimpleStringProperty
     protected boolean setInformationText(String text)
     {
 
-        if (this.INFO_TEXT == null)
+        if (this.INFO_TEXT.isEmpty())
         {
             this.INFO_TEXT = text;
             return true;
@@ -636,12 +636,12 @@ public class SettingsProperty extends SimpleStringProperty
     /**
      * This returns the information text or null if it isn't set.
      *
-     * @return the information text or null if it isn't set.
+     * @return the information text or "" if it isn't set.
      */
     public String getInformationText()
     {
 
-        return INFO_TEXT + "test";
+        return INFO_TEXT;
     }
 
     /**

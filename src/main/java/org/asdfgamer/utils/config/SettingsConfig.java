@@ -12,7 +12,12 @@ import java.util.Locale;
 @SuppressWarnings("unused")
 public enum SettingsConfig
 {
-    language(Locale.getDefault().toLanguageTag());
+    @Caption("Allgemein")
+    language(Locale.getDefault().toLanguageTag()),
+    test("Hallo"),
+    du("auch"),
+    @Caption("Spezifisch")
+    geanu("du");
 
     private final SettingsProperty SETTING;
 
