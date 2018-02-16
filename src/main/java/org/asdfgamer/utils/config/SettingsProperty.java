@@ -44,7 +44,7 @@ public class SettingsProperty extends SimpleStringProperty
 
     private static Locale locale = Locale.getDefault();
 
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("config/SettingsProperty", locale);
+    private static final ResourceBundle bundle = ResourceBundle.getBundle("config/Settings", locale);
 
     /**
      * This is the default value for the Setting, interpreted as String.
@@ -649,7 +649,7 @@ public class SettingsProperty extends SimpleStringProperty
      *
      * @return The Line number in the class or '0' if it can't get the number.
      */
-    protected int getLineNumber()
+    public int getLineNumber()
     {
 
         return lineNumber;

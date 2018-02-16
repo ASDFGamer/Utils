@@ -115,6 +115,8 @@ public class Settings
                 return twoArguments(args);
             case 3:
                 return threeArguments(args);
+            case 4:
+                return fourArguments(args);
             default:
                 LOG.warning(bundle.getString("toManyArgs")+ Arrays.toString(args));
                 return newSetting();
@@ -153,30 +155,42 @@ public class Settings
     /**
      * This Methode interprets an Array with two Object in such a way that it creates an SettingsProperty.
      *
-     * @param args The array with two arguments.
+     * @param settings The array with two arguments.
      * @return The new Setting.
      */
-    private static SettingsProperty twoArguments(Object[] args)
+    private static SettingsProperty twoArguments(Object[] settings)
     {
 
-        if (args.length < 2)
+        if (settings.length < 2)
         {
             LOG.warning(bundle.getString("lessThenTwoArgs"));
             return newSetting();
         }
 
-        if (args[0] instanceof String && args[1] instanceof Boolean)
+        if (settings[0] instanceof String && settings[1] instanceof Boolean)
         {
-            return newSetting((String) args[0], (Boolean) args[1]);
-        } else if (args[0] instanceof Integer && args[1] instanceof Boolean)
+            return newSetting((String) settings[0], (Boolean) settings[1]);
+        }else if (settings[0] instanceof String && settings[1] instanceof String)
         {
-            return newSetting((Integer) args[0], (Boolean) args[1]);
-        } else if (args[0] instanceof Double && args[1] instanceof Boolean)
+            return newSetting((String) settings[0], (String) settings[1]);
+        }else if (settings[0] instanceof Integer && settings[1] instanceof Boolean)
         {
-            return newSetting((Double) args[0], (Boolean) args[1]);
-        } else if (args[0] instanceof Boolean && args[1] instanceof Boolean)
+            return newSetting((Integer) settings[0], (Boolean) settings[1]);
+        }else if (settings[0] instanceof Integer && settings[1] instanceof String)
         {
-            return newSetting((Boolean) args[0], (Boolean) args[1]);
+            return newSetting((Integer) settings[0], (String) settings[1]);
+        }else if (settings[0] instanceof Double && settings[1] instanceof Boolean)
+        {
+            return newSetting((Double) settings[0], (Boolean) settings[1]);
+        }else if (settings[0] instanceof Double && settings[1] instanceof String)
+        {
+            return newSetting((Double) settings[0], (String) settings[1]);
+        } else if (settings[0] instanceof Boolean && settings[1] instanceof Boolean)
+        {
+            return newSetting((Boolean) settings[0], (Boolean) settings[1]);
+        }else if (settings[0] instanceof Boolean && settings[1] instanceof String)
+        {
+            return newSetting((Boolean) settings[0], (String) settings[1]);
         }
         LOG.warning(bundle.getString("wrongTypeTwoArgs"));
         return newSetting();
@@ -204,8 +218,46 @@ public class Settings
         } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double)
         {
             return newSetting((Double) settings[0], (Double) settings[1], (Double) settings[2]);
+        } else if (settings[0] instanceof String && settings[1] instanceof Boolean && settings[2] instanceof String)
+        {
+            return newSetting((String) settings[0], (Boolean) settings[1],(String) settings[2]);
+        }else if (settings[0] instanceof Integer && settings[1] instanceof Boolean && settings[2] instanceof String)
+        {
+            return newSetting((Integer) settings[0], (Boolean) settings[1],(String) settings[2]);
+        }else if (settings[0] instanceof Double && settings[1] instanceof Boolean && settings[2] instanceof String)
+        {
+            return newSetting((Double) settings[0], (Boolean) settings[1],(String) settings[2]);
+        }else if (settings[0] instanceof Boolean && settings[1] instanceof Boolean && settings[2] instanceof String)
+        {
+            return newSetting((Boolean) settings[0], (Boolean) settings[1],(String) settings[2]);
         }
         LOG.warning(bundle.getString("wrongTypeThreeArgs"));
+        return newSetting();
+    }
+
+    /**
+     * This Methode interprets an Array with four  Object in such a way that it creates an SettingsProperty.
+     *
+     * @param settings The array with four arguments.
+     * @return The new Setting.
+     */
+    private static SettingsProperty fourArguments(Object[] settings)
+    {
+
+        if (settings.length < 4)
+        {
+            LOG.warning(bundle.getString("lessThenFourArgs"));
+            return newSetting();
+        }
+
+        if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer && settings[3] instanceof String  )
+        {
+            return newSetting((Integer) settings[0], (Integer) settings[1], (Integer) settings[2], (String) settings[3]);
+        } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double && settings[3] instanceof String)
+        {
+            return newSetting((Double) settings[0], (Double) settings[1], (Double) settings[2],(String)settings[3]);
+        }
+        LOG.warning(bundle.getString("wrongTypeFourArgs"));
         return newSetting();
     }
 
@@ -370,6 +422,191 @@ public class Settings
         property.setMinimumValue(minimum);
         property.setMaximumValue(maximum);
         property.addListener(SettingsListener.getSettingChange(property));
+        addClass(property);
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a String as default value.
+     *
+     * @param defaultValue The default value
+     * @param description This is the description for the given Setting
+     * @return The new Setting
+     */
+    public static SettingsProperty newSetting(String defaultValue,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(defaultValue);
+        property.addListener(SettingsListener.getSettingChange(property));
+        property.setInformationText(description);
+        addClass(property);
+
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a Integer as default value.
+     *
+     * @param defaultValue The default value
+     * @param description This is the description for the given Setting
+     * @return The new Setting.
+     */
+    public static SettingsProperty newSetting(int defaultValue,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
+        property.addListener(SettingsListener.getSettingChange(property));
+        property.setInformationText(description);
+        addClass(property);
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a Double as default value.
+     *
+     * @param defaultValue The default value
+     * @param description This is the description for the given Setting
+     * @return The new Setting
+     */
+    public static SettingsProperty newSetting(double defaultValue,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
+        property.setDouble(defaultValue);
+        property.addListener(SettingsListener.getSettingChange(property));
+        property.setInformationText(description);
+        addClass(property);
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a boolean as default value.
+     *
+     * @param defaultValue The default value.
+     * @param description This is the description for the given Setting
+     * @return The new Setting
+     */
+    public static SettingsProperty newSetting(boolean defaultValue,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
+        property.setBoolean(defaultValue);
+        property.addListener(SettingsListener.getSettingChange(property));
+        property.setInformationText(description);
+        addClass(property);
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a String as default value.
+     *
+     * @param defaultValue The default Value
+     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+     * @param description This is the description for the given Setting
+     * @return The new setting
+     */
+    public static SettingsProperty newSetting(String defaultValue, boolean internal,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(defaultValue, internal);
+        property.setInformationText(description);
+        addClass(property);
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a Integer as default value.
+     *
+     * @param defaultValue The default Value
+     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+     * @param description This is the description for the given Setting
+     * @return The new setting
+     */
+    public static SettingsProperty newSetting(int defaultValue, boolean internal,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
+        property.setInformationText(description);
+        addClass(property);
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a Double as default value.
+     *
+     * @param defaultValue The default Value
+     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+     * @param description This is the description for the given Setting
+     * @return The new setting
+     */
+    public static SettingsProperty newSetting(double defaultValue, boolean internal,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
+        property.setDouble(defaultValue);
+        property.setInformationText(description);
+        addClass(property);
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a boolean as default value.
+     *
+     * @param defaultValue The default Value
+     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+     * @param description This is the description for the given Setting
+     * @return The new setting
+     */
+    public static SettingsProperty newSetting(boolean defaultValue, boolean internal,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
+        property.setBoolean(defaultValue);
+        property.setInformationText(description);
+        addClass(property);
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a integer as default value.
+     * Additionally this creates an area for the Setting.
+     *
+     * @param defaultValue The default value.
+     * @param minimum  The lowest allowed value.
+     * @param maximum  The highest allowed value.
+     * @param description This is the description for the given Setting
+     * @return The new setting
+     */
+    public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
+        property.setMinimumValue(minimum);
+        property.setMaximumValue(maximum);
+        property.addListener(SettingsListener.getSettingChange(property));
+        property.setInformationText(description);
+        addClass(property);
+        return property;
+    }
+
+    /**
+     * This creates an SettingsProperty with a double as default value.
+     * Additionally this creates an area for the Setting.
+     *
+     * @param defaultValue The default value.
+     * @param minimum  The lowest allowed value.
+     * @param maximum  The highest allowed value.
+     * @param description This is the description for the given Setting
+     * @return The new setting
+     */
+    public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum,String description)
+    {
+
+        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
+        property.setMinimumValue(minimum);
+        property.setMaximumValue(maximum);
+        property.addListener(SettingsListener.getSettingChange(property));
+        property.setInformationText(description);
         addClass(property);
         return property;
     }

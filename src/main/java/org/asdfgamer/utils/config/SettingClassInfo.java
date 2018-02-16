@@ -27,7 +27,7 @@ public class SettingClassInfo
 
     private static Locale locale = Locale.getDefault();
 
-    private final static ResourceBundle bundle = ResourceBundle.getBundle("config/SettingClassInfo",locale);
+    private final static ResourceBundle bundle = ResourceBundle.getBundle("config/Settings",locale);
 
 
     /**

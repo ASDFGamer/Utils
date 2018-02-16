@@ -37,7 +37,7 @@ public class PropertiesFileStorage implements SettingsStorage
 
     private static Locale locale = Locale.getDefault();
 
-    private final ResourceBundle bundle = ResourceBundle.getBundle("config/propertiesFileStorage",locale);
+    private final ResourceBundle bundle = ResourceBundle.getBundle("config/Settings",locale);
 
     /**
      * This indicates what implementation should be used to save the Properties:
