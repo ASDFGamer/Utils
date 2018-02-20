@@ -1,5 +1,6 @@
 package org.asdfgamer.utils.config;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -13,6 +14,7 @@ public class SettingsTest
     public final SettingsProperty setting2 = Settings.newSetting(new Object[]{5, 0, 9});
 
     @Test
+    @Ignore
     public void newSetting()
     {
 

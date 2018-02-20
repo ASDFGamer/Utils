@@ -2,6 +2,8 @@ package org.asdfgamer.utils.config.sort;
 
 import org.asdfgamer.utils.config.SettingsProperty;
 
+import static org.asdfgamer.utils.config.SettingUtils.bundle;
+
 /**
  * This is an {@link ListElement} for Settings.
  */

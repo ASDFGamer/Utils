@@ -6,12 +6,11 @@ import org.asdfgamer.utils.other.Utils;
 
 import java.io.*;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
-import java.util.ResourceBundle;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
+import static org.asdfgamer.utils.config.SettingUtils.bundle;
 
 /**
  * This class saves the given values in a file. It can also add Captions and Comments to specific values.
@@ -28,15 +27,6 @@ public class Properties
      */
     private final static Logger LOG = getLogger(Properties.class.getName());
 
-    /**
-     * This is the locale for the used Language
-     */
-    private static Locale locale = Locale.getDefault();
-
-    /**
-     * This is the resource Bundle for the Strings that need to be translated
-     */
-    private final static ResourceBundle bundle = ResourceBundle.getBundle("config/Settings", locale);//TODO test if a change in language works
 
     /**
      * This ist the filename of the file in which the Properties get written.
@@ -58,25 +48,16 @@ public class Properties
     /**
      * This creates an new Properties Object witch can save Settings.
      *
-     * @param fileName This is the path to the Properties-File.
+     * @param fileName    This is the path to the Properties-File.
      * @param programName The Name of the Program.
      */
     public Properties(String fileName, String programName)
     {
+
         PROGRAM_NAME = programName;
         file = fileName;
     }
 
-    /**
-     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
-     *
-     * @param newLocale The new locale
-     */
-    public static void setLocale(Locale newLocale)
-    {
-
-        locale = newLocale;
-    }
 
     /**
      * This Method add an new Value from the given SettingsProperty to the end of the File.
@@ -86,6 +67,7 @@ public class Properties
      */
     public void add(String name, SettingsProperty setting)
     {
+
         if (!setting.isInternalValue())
         {
             settingsSorter.add(name, setting);
@@ -138,12 +120,12 @@ public class Properties
         try
         {
             Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "utf-8"));
-            writer.write("#"+bundle.getString("fileHeader")+ PROGRAM_NAME + "'.");
+            writer.write("#" + bundle.getString("fileHeader") + PROGRAM_NAME + "'.");
             writer.write("\n");
 
             for (ListElement element : content)
             {
-                writer.write( element.getContent());//TODO check if this clears the file.
+                writer.write(element.getContent());//TODO check if this clears the file.
                 writer.write("\n");
             }
             writer.flush();

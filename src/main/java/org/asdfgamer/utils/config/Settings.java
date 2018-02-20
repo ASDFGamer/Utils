@@ -2,11 +2,14 @@ package org.asdfgamer.utils.config;
 
 import org.asdfgamer.utils.other.Utils;
 
-import java.lang.reflect.Method;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
+import static org.asdfgamer.utils.config.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.SettingUtils.getSettingsFromEnum;
 import static org.asdfgamer.utils.config.SettingsConfig.language;
 
 /**
@@ -42,9 +45,7 @@ public class Settings
      */
     private final SettingsStorage STORAGE;
 
-    private static Locale locale = Locale.getDefault();
 
-    private final static ResourceBundle bundle = ResourceBundle.getBundle("config/Settings",locale);
 
     /**
      * This creates a new Settings-object.
@@ -665,38 +666,11 @@ public class Settings
     public boolean save(Object settings)
     {
 
-        if (isEnum(settings))
+        if (Utils.isEnum(settings))
         {
             return STORAGE.save(getSettingsFromEnum(settings));
         }
         return STORAGE.save(Utils.getFields(settings));
-    }
-
-    /**
-     * This tests if the given object is the Class-object of an enum.
-     *
-     * @param enumObject The Object that should be checked.
-     * @return true, if it ist an enum, otherwise false.
-     */
-    private boolean isEnum(Object enumObject)
-    {
-
-        return (enumObject instanceof Class) && (((Class) enumObject).isEnum());
-    }
-
-    /**
-     * This finds all SettingsProperties from the given Enum and returns them as Map.
-     *
-     * @param enumObject The Class-object of the enum
-     * @return A Map with all Settings
-     */
-    private Map<String, SettingsProperty> getSettingsFromEnum(Object enumObject)
-    {
-        if (isEnum(enumObject))
-        {
-            return getSettingsFromEnum(((Class) enumObject).getName());
-        }
-        return null;
     }
 
     /**
@@ -713,7 +687,7 @@ public class Settings
         {
             try
             {
-                if (isEnum(Class.forName(classObj)))
+                if (Utils.isEnum(Class.forName(classObj)))
                 {
                     result = STORAGE.save(getSettingsFromEnum(classObj));
                 } else
@@ -730,43 +704,7 @@ public class Settings
         return result;
     }
 
-    /**
-     * This finds all SettingsProperties from the given Enum and returns them as Map.
-     *
-     * @param enumName The name of the enum
-     * @return A Map with all Settings
-     */
-    private Map<String, SettingsProperty> getSettingsFromEnum(String enumName)
-    {
-        Map<String, SettingsProperty> settings = new HashMap<>();
-        try
-        {
-            Object[] enumConstants = Class.forName(enumName).getEnumConstants();
-            for (Object enumConstant : enumConstants)
-            {
-                Method[] methods = enumConstant.getClass().getDeclaredMethods();
-                for (Method method : methods)
-                {
-                    if (method.getReturnType().equals(SettingsProperty.class))
-                    {
-                        try
-                        {
-                            settings.putIfAbsent(((Enum) enumConstant).name(), (SettingsProperty) method.invoke(enumConstant));
-                        } catch (ReflectiveOperationException e)
-                        {
-                            LOG.warning(bundle.getString("problemWithFunctionCall")+ method.getName() + " \n" + bundle.getString("problemWithFunctionCallInfo") );
-                        }
-                    }
-                }
 
-            }
-        } catch (ClassNotFoundException e)
-        {
-            LOG.severe(bundle.getString("classNotFound")+ enumName + "'.");
-            e.printStackTrace();
-        }
-        return settings;
-    }
 
     /**
      * This loads all values for the Settings in the given Class.
@@ -777,7 +715,7 @@ public class Settings
     public boolean load(Object settings)
     {
 
-        if (isEnum(settings))
+        if (Utils.isEnum(settings))
         {
             return STORAGE.load(getSettingsFromEnum(settings));
         }
@@ -801,7 +739,7 @@ public class Settings
         {
             try
             {
-                if (isEnum(Class.forName(className)))
+                if (Utils.isEnum(Class.forName(className)))
                 {
                     Map<String,SettingsProperty> fields = getSettingsFromEnum(className);
                     if (!fields.isEmpty()){
@@ -824,13 +762,4 @@ public class Settings
         return result;
     }
 
-    /**
-     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
-     * @param newLocale The new locale
-     */
-    protected static void setLocale(Locale newLocale)
-    {
-
-        locale = newLocale;
-    }
 }

@@ -12,6 +12,7 @@ public class Main
         propertiesFileStorageTest.loadAllSettings();
         propertiesFileStorageTest.loadSettings();
         propertiesFileStorageTest.loadSettingsFromEnum();
+        GUI.main(args);
     }
 
 }

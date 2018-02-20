@@ -1,9 +1,12 @@
 package org.asdfgamer.utils.config;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
+import static org.asdfgamer.utils.config.SettingUtils.bundle;
 
 /**
  * In this Class are different information about the whole Class/Enum with Settings, because they are for the Class/Enum
@@ -24,10 +27,6 @@ public class SettingClassInfo
      * This Map is the Map with the info to every relevant Class.
      */
     private final static Map<String, ClassInfo> info = new HashMap<>();
-
-    private static Locale locale = Locale.getDefault();
-
-    private final static ResourceBundle bundle = ResourceBundle.getBundle("config/Settings",locale);
 
 
     /**
@@ -197,16 +196,6 @@ public class SettingClassInfo
         return info.keySet();
     }
 
-    /**
-     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
-     *
-     * @param newLocale The new locale
-     */
-    protected static void setLocale(Locale newLocale)
-    {
-
-        locale = newLocale;
-    }
 
     /**
      * This is the Information that gets saved for a Class.

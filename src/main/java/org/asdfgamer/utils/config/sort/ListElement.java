@@ -1,24 +1,10 @@
 package org.asdfgamer.utils.config.sort;
 
-import java.util.Locale;
-import java.util.ResourceBundle;
-
 /**
  * This is an Element of the List witch contains all Setting ans Captions so they can be used in the right order.
  */
 public abstract class ListElement
 {
-
-    /**
-     * This is the used locale.
-     */
-    private static Locale locale = Locale.getDefault();
-
-    /**
-     * This is the used Resource Bundle.
-     */
-    @SuppressWarnings("WeakerAccess")
-    protected final static ResourceBundle bundle = ResourceBundle.getBundle("config/Settings", locale);
 
     /**
      * This is the content of the Element.
@@ -57,17 +43,6 @@ public abstract class ListElement
     public int getLineNumber()
     {
         return lineNumber;
-    }
-
-    /**
-     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
-     *
-     * @param newLocale The new locale
-     */
-    public static void setLocale(Locale newLocale)
-    {
-
-        locale = newLocale;
     }
 }
 

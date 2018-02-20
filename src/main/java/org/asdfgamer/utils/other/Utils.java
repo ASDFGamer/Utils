@@ -619,7 +619,8 @@ public class Utils
                     {
                         try
                         {
-                            //noinspection unchecked Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
+
+                            // Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
                             felder.put(field.getName(), (T) field.get(null));
                         } catch (NullPointerException e)
                         {
@@ -629,7 +630,11 @@ public class Utils
                                         "wird, dann können nur statische Felder betrachtet werden (bei der Klasse "
                                         + ((Class) klasse).getSimpleName() + ").");//Falls ein Weg gefunden werden kann dies nicht auszugeben, falls T instanceof SettingsProperty, dann kann es wieder zu Info werden, aber ansonsten ist es zu oft ausgegeben.
                             }
+                        } catch (Exception e)
+                        {
+                            LOG.fine("Unbekanntes Problem in getFields");
                         }
+
                     } else
                     {
                         //noinspection unchecked Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
@@ -646,5 +651,17 @@ public class Utils
             }
         }
         return felder;
+    }
+
+    /**
+     * This tests if the given object is the Class-object of an enum.
+     *
+     * @param enumObject The Object that should be checked.
+     * @return true, if it ist an enum, otherwise false.
+     */
+    public static boolean isEnum(Object enumObject)
+    {
+
+        return (enumObject instanceof Class) && (((Class) enumObject).isEnum());
     }
 }

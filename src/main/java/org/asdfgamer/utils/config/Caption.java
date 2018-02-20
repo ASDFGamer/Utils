@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
  * This is only possible for the order of the Fields. If you declare the settings in a Class then the settings will be
  * in the order you defined them in the methode and the Captions are before the Element you declared them.
  */
-@Target(ElementType.FIELD)
+@Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Caption
 {

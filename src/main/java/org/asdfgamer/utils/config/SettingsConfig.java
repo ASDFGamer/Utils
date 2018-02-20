@@ -10,6 +10,8 @@ import java.util.Locale;
  * @author ASDFGamer
  */
 @SuppressWarnings("unused")
+@Caption("Config for Settings")
+//@NoGUI
 public enum SettingsConfig
 {
     @Caption("Allgemein")

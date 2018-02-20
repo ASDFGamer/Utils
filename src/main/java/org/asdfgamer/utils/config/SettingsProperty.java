@@ -5,8 +5,9 @@ import org.asdfgamer.utils.other.Convertible;
 import org.asdfgamer.utils.other.Utils;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 import java.util.logging.Logger;
+
+import static org.asdfgamer.utils.config.SettingUtils.bundle;
 
 /**
  * This is the Property in which the setting gets saved.
@@ -15,7 +16,7 @@ import java.util.logging.Logger;
  * @version 0.9
  */
 @SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
-public class SettingsProperty extends SimpleStringProperty
+public class SettingsProperty extends SimpleStringProperty //TODO add Name of setting and refactor code after that change
 {
 
     /**
@@ -41,10 +42,6 @@ public class SettingsProperty extends SimpleStringProperty
      * This notes that something changed in some setting. TODO check if some way is implemented to see this for a class.
      */
     private static boolean somethingChanged = false;
-
-    private static Locale locale = Locale.getDefault();
-
-    private static final ResourceBundle bundle = ResourceBundle.getBundle("config/Settings", locale);
 
     /**
      * This is the default value for the Setting, interpreted as String.
@@ -163,8 +160,6 @@ public class SettingsProperty extends SimpleStringProperty
      */
     protected static void setLocale(Locale newLocale)
     {
-
-        locale = newLocale;
         TRUE_VALUES = new String[]{TRUE_VALUES[0], bundle.getString("true_value")};
         FALSE_VALUES = new String[]{FALSE_VALUES[0], bundle.getString("false_value")};
     }
@@ -664,5 +659,28 @@ public class SettingsProperty extends SimpleStringProperty
     {
 
         this.lineNumber = lineNumber;
+    }
+
+    /**
+     * This return the Type of the Setting.
+     *
+     * @return The Type of the Setting.
+     */
+    public SettingsPropertyTypes getType()
+    {
+
+        if (hasBooleanValue())
+        {
+            return SettingsPropertyTypes.Boolean;
+        } else if (hasDoubleValue())
+        {
+            return SettingsPropertyTypes.Double;
+        } else if (hasIntegerValue())
+        {
+            return SettingsPropertyTypes.Integer;
+        } else
+        {
+            return SettingsPropertyTypes.String;
+        }
     }
 }

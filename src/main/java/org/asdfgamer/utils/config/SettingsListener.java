@@ -2,7 +2,6 @@ package org.asdfgamer.utils.config;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
-import org.asdfgamer.utils.config.sort.ListElement;
 
 import java.util.Locale;
 
@@ -53,12 +52,8 @@ public class SettingsListener
     {
         return (observable, oldValue, newValue) ->
         {
-            PropertiesFileStorage.setLocale(Locale.forLanguageTag(newValue));
-            SettingClassInfo.setLocale(Locale.forLanguageTag(newValue));
             SettingsProperty.setLocale(Locale.forLanguageTag(newValue));
-            Settings.setLocale(Locale.forLanguageTag(newValue));
-            Properties.setLocale(Locale.forLanguageTag(newValue));
-            ListElement.setLocale(Locale.forLanguageTag(newValue));
+            SettingUtils.setLocale(Locale.forLanguageTag(newValue));
         };
     }
 }

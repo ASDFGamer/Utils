@@ -3,10 +3,13 @@ package org.asdfgamer.utils.config;
 import org.asdfgamer.utils.other.Utils;
 
 import java.io.*;
-import java.util.*;
+import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
+import static org.asdfgamer.utils.config.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.SettingUtils.sortSettingsInClasses;
 
 /**
  * This class lets you save Settings in a Properties-File.
@@ -34,10 +37,6 @@ public class PropertiesFileStorage implements SettingsStorage
      * This is the name of the program that saves the Settings.
      */
     private final String PROGRAM_NAME;
-
-    private static Locale locale = Locale.getDefault();
-
-    private final ResourceBundle bundle = ResourceBundle.getBundle("config/Settings",locale);
 
     /**
      * This indicates what implementation should be used to save the Properties:
@@ -227,33 +226,7 @@ public class PropertiesFileStorage implements SettingsStorage
         return false;
     }
 
-    /**
-     * This creates a nested Map which has in the first map the Classname and in the second Map the name of the setting
-     * an the setting itself.
-     *
-     * @param settings This are all settings that should be sorted as Map. The Key is the Name of the setting and the
-     *                value is the setting itself. The settings can be from different classes but don't have to be.
-     * @return A nested Map which has in the first map the Classname and in the second Map the name of the setting an
-     * the setting itself.
-     */
-    private Map<String, Map<String, SettingsProperty>> sortSettingsInClasses(Map<String, SettingsProperty> settings)
-    {
 
-        Map<String, Map<String, SettingsProperty>> settingClasses = new HashMap<>();
-        for (Map.Entry<String, SettingsProperty> setting : settings.entrySet())
-        {
-            if (settingClasses.containsKey(setting.getValue().getClassName()))
-            {
-                settingClasses.get(setting.getValue().getClassName()).put(setting.getKey(), setting.getValue());
-            } else
-            {
-                Map<String, SettingsProperty> className = new HashMap<>();
-                className.put(setting.getKey(), setting.getValue());
-                settingClasses.put(setting.getValue().getClassName(), className);
-            }
-        }
-        return settingClasses;
-    }
 
     /**
      * This Methode searches for  a File with the given Name. If it exists it returns the path ro it and if it doesn't
@@ -339,16 +312,6 @@ public class PropertiesFileStorage implements SettingsStorage
         }
 
         return result;
-    }
-
-    /**
-     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
-     * @param newLocale The new locale
-     */
-    protected static void setLocale(Locale newLocale)
-    {
-
-        locale = newLocale;
     }
 
 }
