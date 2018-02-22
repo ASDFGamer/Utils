@@ -5,7 +5,7 @@ import org.asdfgamer.utils.config.Caption;
 /**
  * This Class is used to create Elements that can be added to an List of ListElements.
  */
-class CaptionElement extends ListElement
+public class CaptionElement extends ListElement
 {
 
     /**

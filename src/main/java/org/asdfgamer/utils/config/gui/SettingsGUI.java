@@ -5,15 +5,18 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.asdfgamer.utils.config.*;
-import org.asdfgamer.utils.other.Utils;
+import org.asdfgamer.utils.config.sort.CaptionElement;
+import org.asdfgamer.utils.config.sort.ListElement;
+import org.asdfgamer.utils.config.sort.SettingElement;
+import org.asdfgamer.utils.config.sort.SettingsSorter;
 
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
 import static org.asdfgamer.utils.config.SettingUtils.bundle;
-import static org.asdfgamer.utils.config.SettingUtils.getSettingsFromEnum;
+import static org.asdfgamer.utils.config.SettingUtils.getSettingsFromObject;
 
 /**
  * This returns a Scene that can be used to view and change the Settings.
@@ -99,17 +102,21 @@ public class SettingsGUI
         GridPane gridPane = new GridPane();
         try
         {
-            Map<String, SettingsProperty> settings;
-            if (Utils.isEnum(Class.forName(classname)))
+            List<SettingsProperty> settings = getSettingsFromObject(Class.forName(classname));
+            //TODO sort settings, add Captions
+            SettingsSorter sorter = new SettingsSorter();
+            sorter.add(settings);
+            sorter.add(Class.forName(classname));
+            List<ListElement> elements = sorter.getSortedList();
+            for (ListElement element : elements)
             {
-                settings = getSettingsFromEnum(classname);
-            } else
-            {
-                settings = Utils.getFields(Class.forName(classname));
-            }
-            for (Map.Entry<String, SettingsProperty> entry : settings.entrySet())
-            {
-                addSetting(gridPane, entry.getKey(), entry.getValue());
+                if (element instanceof CaptionElement)
+                {
+                    addCaption(gridPane, (CaptionElement) element);
+                } else if (element instanceof SettingElement)
+                {
+                    addSetting(gridPane, (SettingElement) element);
+                }
             }
         } catch (ClassNotFoundException e)
         {
@@ -120,16 +127,25 @@ public class SettingsGUI
         return tab;
     }
 
-    private void addSetting(GridPane gridPane, String name, SettingsProperty setting)
+    private void addCaption(GridPane gridPane, CaptionElement element)
+    {
+
+        int row = gridPane.getRowCount();
+        Label caption = new Label(element.getContent());
+        gridPane.add(caption, 0, row, 3, 1);
+
+    }
+
+    private void addSetting(GridPane gridPane, SettingElement element)
     {
 
         int pos = gridPane.getRowCount();
-        Label nameLabel = new Label(name);
-        gridPane.add(nameLabel, 0, pos);
+        Label name = new Label(element.getName());
+        gridPane.add(name, 0, pos);
 
-        gridPane.add(getSettingChangeElement(setting), 1, pos);
+        gridPane.add(getSettingChangeElement(element.getSetting()), 1, pos);
 
-        gridPane.add(new Label(setting.getInformationText()), 2, pos);
+        gridPane.add(new Label(element.getSetting().getInformationText()), 2, pos);
     }
 
     private Node getSettingChangeElement(SettingsProperty setting)

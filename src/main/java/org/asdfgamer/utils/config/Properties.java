@@ -6,7 +6,6 @@ import org.asdfgamer.utils.other.Utils;
 
 import java.io.*;
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -62,15 +61,13 @@ public class Properties
     /**
      * This Method add an new Value from the given SettingsProperty to the end of the File.
      *
-     * @param name    The Name of the Setting
      * @param setting The Setting that should be saved.
      */
-    public void add(String name, SettingsProperty setting)
+    public void add(SettingsProperty setting)
     {
-
         if (!setting.isInternalValue())
         {
-            settingsSorter.add(name, setting);
+            settingsSorter.add(setting);
             if (className == null)
             {
                 try
@@ -90,12 +87,12 @@ public class Properties
      *
      * @param settings A Map of names of Settings and the associated SettingsProperty.
      */
-    public void add(Map<String, SettingsProperty> settings)
+    public void add(List<SettingsProperty> settings)
     {
 
-        for (Map.Entry<String, SettingsProperty> setting : settings.entrySet())
+        for (SettingsProperty setting : settings)
         {
-            add(setting.getKey(), setting.getValue());
+            add(setting);
         }
         settingsSorter.add(className);
     }

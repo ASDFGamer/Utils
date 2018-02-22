@@ -23,15 +23,14 @@ public class SettingElement extends ListElement
     /**
      * This creates an new SettingElement
      *
-     * @param name    The Name of the Setting.
      * @param setting The Setting itself
      */
-    SettingElement(String name, SettingsProperty setting)
+    SettingElement(SettingsProperty setting)
     {
 
-        super(setting.getLineNumber(), "#" + setting.getInformationText() + "(" + bundle.getString("std_value") + " = " + setting.getDefaultValue() + ")" + "\n" + name + "=" + setting.get() + "\n");
+        super(setting.getLineNumber(), "#" + setting.getInformationText() + "(" + bundle.getString("std_value") + " = " + setting.getDefaultValue() + ")" + "\n" + setting.getSettingName() + "=" + setting.get() + "\n");
         this.SETTING = setting;
-        this.NAME = name;
+        this.NAME = setting.getSettingName();
     }
 
     /**

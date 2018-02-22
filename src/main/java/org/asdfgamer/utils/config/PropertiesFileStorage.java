@@ -3,6 +3,7 @@ package org.asdfgamer.utils.config;
 import org.asdfgamer.utils.other.Utils;
 
 import java.io.*;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -85,17 +86,16 @@ public class PropertiesFileStorage implements SettingsStorage
     /**
      * This Methode loads all Settings that are present in the map.
      *
-     * @param settings This are all settings that should be loaded as Map. The Key is the Name of the setting and the
-     *                 value is the setting itself.
+     * @param settings This are all settings that should be loaded as List.
      * @return false, if there was an error while loading, otherwise true.
      */
     @Override
-    public boolean load(Map<String, SettingsProperty> settings)
+    public boolean load(List<SettingsProperty> settings)
     {
 
         boolean result = true;
-        Map<String, Map<String, SettingsProperty>> classes = sortSettingsInClasses(settings);
-        for (Map.Entry<String, Map<String, SettingsProperty>> settingsSortedInClasses : classes.entrySet())
+        Map<String, List<SettingsProperty>> classes = sortSettingsInClasses(settings);
+        for (Map.Entry<String, List<SettingsProperty>> settingsSortedInClasses : classes.entrySet())
         {
             String name = settingsSortedInClasses.getKey().substring(settingsSortedInClasses.getKey().lastIndexOf('.') + 1);
             String path = createFile(name);
@@ -106,28 +106,19 @@ public class PropertiesFileStorage implements SettingsStorage
         return result;
     }
 
-    private boolean saveMYSettingProperties(Map<String, SettingsProperty> value, String path)
-    {
-
-        org.asdfgamer.utils.config.Properties myProperties = new org.asdfgamer.utils.config.Properties(path,PROGRAM_NAME);
-        myProperties.add(value);
-        return myProperties.save();
-    }
-
     /**
      * This methode lets you save Settings.
      *
-     * @param settings This are all settings that should be saved as Map. The Key is the Name of the setting and the
-     *                 value is the setting itself.
+     * @param settings This are all settings that should be saved as List.
      * @return true, if saving the settings was successful, otherwise false.
      */
     @Override
-    public boolean save(Map<String, SettingsProperty> settings)
+    public boolean save(List<SettingsProperty> settings)
     {
 
         boolean result = true;
-        Map<String, Map<String, SettingsProperty>> classes = sortSettingsInClasses(settings);
-        for (Map.Entry<String, Map<String, SettingsProperty>> settingsSortedInClasses : classes.entrySet())
+        Map<String, List<SettingsProperty>> classes = sortSettingsInClasses(settings);
+        for (Map.Entry<String, List<SettingsProperty>> settingsSortedInClasses : classes.entrySet())
         {
             String name = settingsSortedInClasses.getKey().substring(settingsSortedInClasses.getKey().lastIndexOf('.') + 1);
             String path = createFile(name);
@@ -145,14 +136,26 @@ public class PropertiesFileStorage implements SettingsStorage
     }
 
     /**
+     * @param value
+     * @param path
+     * @return
+     */
+    private boolean saveMYSettingProperties(List<SettingsProperty> value, String path)
+    {
+
+        org.asdfgamer.utils.config.Properties myProperties = new org.asdfgamer.utils.config.Properties(path, PROGRAM_NAME);
+        myProperties.add(value);
+        return myProperties.save();
+    }
+
+    /**
      * This saves all SettingsProperties from the given Map to the given file.
      *
-     * @param settings This are all settings that should be saved as Map. The Key is the Name of the setting and the
-     *                 value is the setting itself.
+     * @param settings This are all settings that should be saved as List.
      * @param path     This is the Path to the Config-file that should be used.
      * @return true, if there was no Problem during saving otherwise false.
      */
-    private boolean saveSettingsProperty(Map<String, SettingsProperty> settings, String path)
+    private boolean saveSettingsProperty(List<SettingsProperty> settings, String path)
     {
 
         if (checkForChanges)
@@ -169,11 +172,11 @@ public class PropertiesFileStorage implements SettingsStorage
         try
         {
             configFile = new FileOutputStream(path);
-            for (Map.Entry<String, SettingsProperty> setting : settings.entrySet())
+            for (SettingsProperty setting : settings)
             {
-                if (!setting.getValue().isInternalValue())
+                if (!setting.isInternalValue())
                 {
-                    properties.setProperty(setting.getKey(), setting.getValue().get());
+                    properties.setProperty(setting.getSettingName(), setting.get());
                 }
             }
 
@@ -201,18 +204,17 @@ public class PropertiesFileStorage implements SettingsStorage
     /**
      * This checks if there was no change in the whole Map.
      *
-     * @param settings This are all settings that should be checked as Map. The Key is the Name of the setting and the
-     *                 value is the setting itself.
+     * @param settings This are all settings that should be checked as List.
      * @return true, if there was no Change, otherwise false.
      */
-    private boolean noChanges(Map<String, SettingsProperty> settings)
+    private boolean noChanges(List<SettingsProperty> settings)
     {
 
         boolean settingChanged = false;
 
-        for (Map.Entry<String, SettingsProperty> entry : settings.entrySet())
+        for (SettingsProperty setting : settings)
         {
-            if (entry.getValue().getSettingChanged())
+            if (setting.getSettingChanged())
             {
                 settingChanged = true;
             }
@@ -246,12 +248,11 @@ public class PropertiesFileStorage implements SettingsStorage
      * This loads all SettingsProperties from a Class.
      * All Settings that are given must be from the same class.
      *
-     * @param settings This are all settings that should be loaded as Map. The Key is the Name of the setting and the
-     *                value is the setting itself. The settings can be from different classes but don't have to be.
+     * @param settings This are all settings that should be loaded as List.
      * @param path          The path to the file.
      * @return true, if the settings got loaded successful.
      */
-    private boolean loadSettingProperties(Map<String, SettingsProperty> settings, String path)
+    private boolean loadSettingProperties(List<SettingsProperty> settings, String path)
     {
 
         boolean result = true;
@@ -259,11 +260,11 @@ public class PropertiesFileStorage implements SettingsStorage
         InputStream configFile = null;
 
         //remove change listener
-        for (Map.Entry<String, SettingsProperty> setting : settings.entrySet())
+        for (SettingsProperty setting : settings)
         {
-            if (!setting.getValue().isInternalValue())
+            if (!setting.isInternalValue())
             {
-                setting.getValue().removeListener(SettingsListener.getSettingChange(setting.getValue()));
+                setting.removeListener(SettingsListener.getSettingChange(setting));
             }
         }
         //Load the settings
@@ -272,16 +273,16 @@ public class PropertiesFileStorage implements SettingsStorage
             configFile = new FileInputStream(path);
             properties.load(configFile);
 
-            for (Map.Entry<String, SettingsProperty> setting : settings.entrySet())
+            for (SettingsProperty setting : settings)
             {
-                if (properties.getProperty(setting.getKey()) == null && !setting.getValue().isInternalValue())
+                if (properties.getProperty(setting.getSettingName()) == null && !setting.isInternalValue())
                 {
                     result = false;
-                    LOG.warning(bundle.getString("problemLoadSetting_start")+" '"+ setting.getKey() + "' " +bundle.getString("problemLoadSetting_end"));
-                    SettingClassInfo.setProblemsWithLoading(setting.getValue().getClassName());
+                    LOG.warning(bundle.getString("problemLoadSetting_start") + " '" + setting.getSettingName() + "' " + bundle.getString("problemLoadSetting_end"));
+                    SettingClassInfo.setProblemsWithLoading(setting.getClassName());
                 }
-                setting.getValue().set(properties.getProperty(setting.getKey(), setting.getValue().getDefaultValue()));
-                SettingClassInfo.setSettingsLoaded(setting.getValue().getClassName());//This gets called to much -> performance loss
+                setting.set(properties.getProperty(setting.getSettingName(), setting.getDefaultValue()));
+                SettingClassInfo.setSettingsLoaded(setting.getClassName());//This gets called to much -> performance loss
             }
         } catch (IOException e)
         {
@@ -303,11 +304,11 @@ public class PropertiesFileStorage implements SettingsStorage
         }
 
         //add the change listener again
-        for (Map.Entry<String, SettingsProperty> setting : settings.entrySet())
+        for (SettingsProperty setting : settings)
         {
-            if (!setting.getValue().isInternalValue())
+            if (!setting.isInternalValue())
             {
-                setting.getValue().addListener(SettingsListener.getSettingChange(setting.getValue()));
+                setting.addListener(SettingsListener.getSettingChange(setting));
             }
         }
 

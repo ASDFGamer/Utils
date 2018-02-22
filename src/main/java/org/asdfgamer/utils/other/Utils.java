@@ -594,6 +594,7 @@ public class Utils
      *               Class-Objekt handeln, aber dann können nur statische Felder betrachtet werden.
      * @param <T>    Dies ist der Typ von dem die ausgelesenen Felder sein sollen.
      * @return Dies ist eine Liste mit allen Feldern des angegebenen Typs.
+     * Todo aufräumen, testen, falls ein String übergeben wird und nach SettingPropertys gescht wird treten anscheinend fehler auf.
      */
     public static <T> Map<String, T> getFields(Object klasse)
     {
@@ -617,22 +618,25 @@ public class Utils
 
                     if (klasse instanceof Class)
                     {
-                        try
+                        if (Modifier.isStatic(field.getModifiers()))//Da keine Instanz der Klasse da ist können nur sstatische Felder betrachtet werden.
                         {
-
-                            // Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
-                            felder.put(field.getName(), (T) field.get(null));
-                        } catch (NullPointerException e)
-                        {
-                            if (!((Class)klasse).isEnum() )//Damit die Meldung nicht zu oft ausgegeben wird, da es dort nicht verhindert werden kann.
+                            try
                             {
-                                LOG.fine("Wenn zum Abfragen der Felder einer Klasse nur ein Class-Objekt übergeben " +
-                                        "wird, dann können nur statische Felder betrachtet werden (bei der Klasse "
-                                        + ((Class) klasse).getSimpleName() + ").");//Falls ein Weg gefunden werden kann dies nicht auszugeben, falls T instanceof SettingsProperty, dann kann es wieder zu Info werden, aber ansonsten ist es zu oft ausgegeben.
+
+                                // Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
+                                felder.put(field.getName(), (T) field.get(null));
+                            } catch (NullPointerException e)
+                            {
+                                if (!((Class) klasse).isEnum())//Damit die Meldung nicht zu oft ausgegeben wird, da es dort nicht verhindert werden kann.
+                                {
+                                    LOG.fine("Wenn zum Abfragen der Felder einer Klasse nur ein Class-Objekt übergeben " +
+                                            "wird, dann können nur statische Felder betrachtet werden (bei der Klasse "
+                                            + ((Class) klasse).getSimpleName() + ").");//Falls ein Weg gefunden werden kann dies nicht auszugeben, falls T instanceof SettingsProperty, dann kann es wieder zu Info werden, aber ansonsten ist es zu oft ausgegeben.
+                                }
+                            } catch (Exception e)
+                            {
+                                LOG.fine("Unbekanntes Problem in getFields");
                             }
-                        } catch (Exception e)
-                        {
-                            LOG.fine("Unbekanntes Problem in getFields");
                         }
 
                     } else

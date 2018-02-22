@@ -3,13 +3,14 @@ package org.asdfgamer.utils.config;
 import org.asdfgamer.utils.other.Utils;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
 import static org.asdfgamer.utils.config.SettingUtils.bundle;
-import static org.asdfgamer.utils.config.SettingUtils.getSettingsFromEnum;
+import static org.asdfgamer.utils.config.SettingUtils.getSettingsFromObject;
 import static org.asdfgamer.utils.config.SettingsConfig.language;
 
 /**
@@ -46,7 +47,6 @@ public class Settings
     private final SettingsStorage STORAGE;
 
 
-
     /**
      * This creates a new Settings-object.
      * The used storage is a properties file in the systems standard configuration folder.
@@ -55,6 +55,7 @@ public class Settings
      */
     public Settings(String programName)
     {
+
         this.NAME = programName;
         this.STORAGE = new PropertiesFileStorage(programName);
         loadOwnSettings();
@@ -68,21 +69,10 @@ public class Settings
      */
     public Settings(String programName, SettingsStorage storage)
     {
+
         this.NAME = programName;
         this.STORAGE = storage;
         loadOwnSettings();
-    }
-
-    /**
-     * This loads the settings for the ConfigClasses.
-     */
-    private void loadOwnSettings()
-    {
-        if (!load(SettingsConfig.class))
-        {
-            save(SettingsConfig.class);//If the Settings aren't saved and the user program doesn't save all
-        }
-        language.SETTINGProperty().addListener(SettingsListener.getLanguageChangeListener());
     }
 
     /**
@@ -102,6 +92,7 @@ public class Settings
      * This takes an Array of Objects with undefined length and creates a setting from that.
      * This is only a convenience methode and forwards the args to the right methode.
      * This is the preferred methode if it should be used in a constructor of an enum.
+     *
      * @param args This is an array of objects which should be analyzed to create the new setting.
      * @return The new Setting
      */
@@ -122,12 +113,11 @@ public class Settings
             case 4:
                 return fourArguments(args);
             default:
-                LOG.warning(bundle.getString("toManyArgs")+ Arrays.toString(args));
+                LOG.warning(bundle.getString("toManyArgs") + Arrays.toString(args));
                 return newSetting();
 
         }
     }
-//
 
     /**
      * This transforms an Object to an SettingsProperty with the same Type as the argument.
@@ -155,6 +145,7 @@ public class Settings
         LOG.warning(bundle.getString("wrongTypeOneArg"));
         return newSetting();
     }
+//
 
     /**
      * This Methode interprets an Array with two Object in such a way that it creates an SettingsProperty.
@@ -174,32 +165,31 @@ public class Settings
         if (settings[0] instanceof String && settings[1] instanceof Boolean)
         {
             return newSetting((String) settings[0], (Boolean) settings[1]);
-        }else if (settings[0] instanceof String && settings[1] instanceof String)
+        } else if (settings[0] instanceof String && settings[1] instanceof String)
         {
             return newSetting((String) settings[0], (String) settings[1]);
-        }else if (settings[0] instanceof Integer && settings[1] instanceof Boolean)
+        } else if (settings[0] instanceof Integer && settings[1] instanceof Boolean)
         {
             return newSetting((Integer) settings[0], (Boolean) settings[1]);
-        }else if (settings[0] instanceof Integer && settings[1] instanceof String)
+        } else if (settings[0] instanceof Integer && settings[1] instanceof String)
         {
             return newSetting((Integer) settings[0], (String) settings[1]);
-        }else if (settings[0] instanceof Double && settings[1] instanceof Boolean)
+        } else if (settings[0] instanceof Double && settings[1] instanceof Boolean)
         {
             return newSetting((Double) settings[0], (Boolean) settings[1]);
-        }else if (settings[0] instanceof Double && settings[1] instanceof String)
+        } else if (settings[0] instanceof Double && settings[1] instanceof String)
         {
             return newSetting((Double) settings[0], (String) settings[1]);
         } else if (settings[0] instanceof Boolean && settings[1] instanceof Boolean)
         {
             return newSetting((Boolean) settings[0], (Boolean) settings[1]);
-        }else if (settings[0] instanceof Boolean && settings[1] instanceof String)
+        } else if (settings[0] instanceof Boolean && settings[1] instanceof String)
         {
             return newSetting((Boolean) settings[0], (String) settings[1]);
         }
         LOG.warning(bundle.getString("wrongTypeTwoArgs"));
         return newSetting();
     }
-//
 
     /**
      * This Methode interprets an Array with three Object in such a way that it creates an SettingsProperty.
@@ -224,20 +214,21 @@ public class Settings
             return newSetting((Double) settings[0], (Double) settings[1], (Double) settings[2]);
         } else if (settings[0] instanceof String && settings[1] instanceof Boolean && settings[2] instanceof String)
         {
-            return newSetting((String) settings[0], (Boolean) settings[1],(String) settings[2]);
-        }else if (settings[0] instanceof Integer && settings[1] instanceof Boolean && settings[2] instanceof String)
+            return newSetting((String) settings[0], (Boolean) settings[1], (String) settings[2]);
+        } else if (settings[0] instanceof Integer && settings[1] instanceof Boolean && settings[2] instanceof String)
         {
-            return newSetting((Integer) settings[0], (Boolean) settings[1],(String) settings[2]);
-        }else if (settings[0] instanceof Double && settings[1] instanceof Boolean && settings[2] instanceof String)
+            return newSetting((Integer) settings[0], (Boolean) settings[1], (String) settings[2]);
+        } else if (settings[0] instanceof Double && settings[1] instanceof Boolean && settings[2] instanceof String)
         {
-            return newSetting((Double) settings[0], (Boolean) settings[1],(String) settings[2]);
-        }else if (settings[0] instanceof Boolean && settings[1] instanceof Boolean && settings[2] instanceof String)
+            return newSetting((Double) settings[0], (Boolean) settings[1], (String) settings[2]);
+        } else if (settings[0] instanceof Boolean && settings[1] instanceof Boolean && settings[2] instanceof String)
         {
-            return newSetting((Boolean) settings[0], (Boolean) settings[1],(String) settings[2]);
+            return newSetting((Boolean) settings[0], (Boolean) settings[1], (String) settings[2]);
         }
         LOG.warning(bundle.getString("wrongTypeThreeArgs"));
         return newSetting();
     }
+//
 
     /**
      * This Methode interprets an Array with four  Object in such a way that it creates an SettingsProperty.
@@ -254,12 +245,12 @@ public class Settings
             return newSetting();
         }
 
-        if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer && settings[3] instanceof String  )
+        if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer && settings[3] instanceof String)
         {
             return newSetting((Integer) settings[0], (Integer) settings[1], (Integer) settings[2], (String) settings[3]);
         } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double && settings[3] instanceof String)
         {
-            return newSetting((Double) settings[0], (Double) settings[1], (Double) settings[2],(String)settings[3]);
+            return newSetting((Double) settings[0], (Double) settings[1], (Double) settings[2], (String) settings[3]);
         }
         LOG.warning(bundle.getString("wrongTypeFourArgs"));
         return newSetting();
@@ -395,8 +386,8 @@ public class Settings
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
-     * @param minimum  The lowest allowed value.
-     * @param maximum  The highest allowed value.
+     * @param minimum      The lowest allowed value.
+     * @param maximum      The highest allowed value.
      * @return The new setting
      */
     public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum)
@@ -415,8 +406,8 @@ public class Settings
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
-     * @param minimum  The lowest allowed value.
-     * @param maximum  The highest allowed value.
+     * @param minimum      The lowest allowed value.
+     * @param maximum      The highest allowed value.
      * @return The new setting
      */
     public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum)
@@ -434,10 +425,10 @@ public class Settings
      * This creates an SettingsProperty with a String as default value.
      *
      * @param defaultValue The default value
-     * @param description This is the description for the given Setting
+     * @param description  This is the description for the given Setting
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(String defaultValue,String description)
+    public static SettingsProperty newSetting(String defaultValue, String description)
     {
 
         SettingsProperty property = new SettingsProperty(defaultValue);
@@ -452,10 +443,10 @@ public class Settings
      * This creates an SettingsProperty with a Integer as default value.
      *
      * @param defaultValue The default value
-     * @param description This is the description for the given Setting
+     * @param description  This is the description for the given Setting
      * @return The new Setting.
      */
-    public static SettingsProperty newSetting(int defaultValue,String description)
+    public static SettingsProperty newSetting(int defaultValue, String description)
     {
 
         SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
@@ -469,10 +460,10 @@ public class Settings
      * This creates an SettingsProperty with a Double as default value.
      *
      * @param defaultValue The default value
-     * @param description This is the description for the given Setting
+     * @param description  This is the description for the given Setting
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(double defaultValue,String description)
+    public static SettingsProperty newSetting(double defaultValue, String description)
     {
 
         SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
@@ -487,10 +478,10 @@ public class Settings
      * This creates an SettingsProperty with a boolean as default value.
      *
      * @param defaultValue The default value.
-     * @param description This is the description for the given Setting
+     * @param description  This is the description for the given Setting
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(boolean defaultValue,String description)
+    public static SettingsProperty newSetting(boolean defaultValue, String description)
     {
 
         SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
@@ -506,10 +497,10 @@ public class Settings
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @param description This is the description for the given Setting
+     * @param description  This is the description for the given Setting
      * @return The new setting
      */
-    public static SettingsProperty newSetting(String defaultValue, boolean internal,String description)
+    public static SettingsProperty newSetting(String defaultValue, boolean internal, String description)
     {
 
         SettingsProperty property = new SettingsProperty(defaultValue, internal);
@@ -523,10 +514,10 @@ public class Settings
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @param description This is the description for the given Setting
+     * @param description  This is the description for the given Setting
      * @return The new setting
      */
-    public static SettingsProperty newSetting(int defaultValue, boolean internal,String description)
+    public static SettingsProperty newSetting(int defaultValue, boolean internal, String description)
     {
 
         SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
@@ -540,10 +531,10 @@ public class Settings
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @param description This is the description for the given Setting
+     * @param description  This is the description for the given Setting
      * @return The new setting
      */
-    public static SettingsProperty newSetting(double defaultValue, boolean internal,String description)
+    public static SettingsProperty newSetting(double defaultValue, boolean internal, String description)
     {
 
         SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
@@ -558,10 +549,10 @@ public class Settings
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @param description This is the description for the given Setting
+     * @param description  This is the description for the given Setting
      * @return The new setting
      */
-    public static SettingsProperty newSetting(boolean defaultValue, boolean internal,String description)
+    public static SettingsProperty newSetting(boolean defaultValue, boolean internal, String description)
     {
 
         SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
@@ -576,12 +567,12 @@ public class Settings
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
-     * @param minimum  The lowest allowed value.
-     * @param maximum  The highest allowed value.
-     * @param description This is the description for the given Setting
+     * @param minimum      The lowest allowed value.
+     * @param maximum      The highest allowed value.
+     * @param description  This is the description for the given Setting
      * @return The new setting
      */
-    public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum,String description)
+    public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum, String description)
     {
 
         SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
@@ -598,12 +589,12 @@ public class Settings
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
-     * @param minimum  The lowest allowed value.
-     * @param maximum  The highest allowed value.
-     * @param description This is the description for the given Setting
+     * @param minimum      The lowest allowed value.
+     * @param maximum      The highest allowed value.
+     * @param description  This is the description for the given Setting
      * @return The new setting
      */
-    public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum,String description)
+    public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum, String description)
     {
 
         SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
@@ -617,6 +608,7 @@ public class Settings
 
     /**
      * This adds the Class in which the setting ist declared to the list of all classes with settings.
+     *
      * @param property The Setting.
      */
     private static void addClass(SettingsProperty property)
@@ -626,12 +618,12 @@ public class Settings
         if (objArrayCreator)
         {
             className = Thread.currentThread().getStackTrace()[5].getClassName();
-            setLine(property,Thread.currentThread().getStackTrace()[6]);
+            setLine(property, Thread.currentThread().getStackTrace()[6]);
             objArrayCreator = false;
         } else
         {
             className = Thread.currentThread().getStackTrace()[3].getClassName();
-            setLine(property,Thread.currentThread().getStackTrace()[3]);
+            setLine(property, Thread.currentThread().getStackTrace()[3]);
         }
         property.setClassName(className);
         SettingClassInfo.add(className);
@@ -639,8 +631,9 @@ public class Settings
 
     /**
      * This gets the Line number of the property if it is can (the class is an enum) and saves it in the property.
+     *
      * @param property The Property where the linenumber should be added.
-     * @param element The Element from the stacktrace.
+     * @param element  The Element from the stacktrace.
      */
     private static void setLine(SettingsProperty property, StackTraceElement element)
     {
@@ -653,8 +646,21 @@ public class Settings
             }
         } catch (ClassNotFoundException e)
         {
-            LOG.fine(bundle.getString("classNotFound")+ element.getClassName() + "'.");
+            LOG.fine(bundle.getString("classNotFound") + element.getClassName() + "'.");
         }
+    }
+
+    /**
+     * This loads the settings for the ConfigClasses.
+     */
+    private void loadOwnSettings()
+    {
+
+        if (!load(SettingsConfig.class))
+        {
+            save(SettingsConfig.class);//If the Settings aren't saved and the user program doesn't save all
+        }
+        language.SETTINGProperty().addListener(SettingsListener.getLanguageChangeListener());
     }
 
     /**
@@ -666,11 +672,23 @@ public class Settings
     public boolean save(Object settings)
     {
 
-        if (Utils.isEnum(settings))
+        return STORAGE.save(getSettingsFromObject(settings));
+    }
+
+    /**
+     * This adds the Name of the Setting to the SettingProperty
+     *
+     * @param settings The Class with the settings.
+     */
+    private void setSettingNamesClass(Object settings)
+    {
+
+        Map<String, SettingsProperty> stringSettingsPropertyMap = Utils.getFields(settings);
+        for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
         {
-            return STORAGE.save(getSettingsFromEnum(settings));
+            entry.getValue().setSettingName(entry.getKey());
         }
-        return STORAGE.save(Utils.getFields(settings));
+
     }
 
     /**
@@ -687,23 +705,16 @@ public class Settings
         {
             try
             {
-                if (Utils.isEnum(Class.forName(classObj)))
-                {
-                    result = STORAGE.save(getSettingsFromEnum(classObj));
-                } else
-                {
-                    result = STORAGE.save(Utils.getFields(Class.forName(classObj))) && result;
-                }
+                result = STORAGE.save(getSettingsFromObject(Class.forName(classObj)));
             } catch (ClassNotFoundException e)
             {
-                LOG.warning(bundle.getString("classToSaveNotFound_start")+ classObj + bundle.getString("classToSaveNotFound_end"));
+                LOG.warning(bundle.getString("classToSaveNotFound_start") + classObj + bundle.getString("classToSaveNotFound_end"));
                 result = false;
             }
 
         }
         return result;
     }
-
 
 
     /**
@@ -715,11 +726,7 @@ public class Settings
     public boolean load(Object settings)
     {
 
-        if (Utils.isEnum(settings))
-        {
-            return STORAGE.load(getSettingsFromEnum(settings));
-        }
-        return STORAGE.load(Utils.getFields(settings));
+        return STORAGE.load(getSettingsFromObject(settings));
     }
 
     /**
@@ -739,23 +746,14 @@ public class Settings
         {
             try
             {
-                if (Utils.isEnum(Class.forName(className)))
+                List<SettingsProperty> settings = getSettingsFromObject(Class.forName(className));
+                if (!settings.isEmpty())
                 {
-                    Map<String,SettingsProperty> fields = getSettingsFromEnum(className);
-                    if (!fields.isEmpty()){
-                        result = STORAGE.load(fields) && result;
-                    }
-                } else
-                {
-                    Map<String,SettingsProperty> fields = Utils.getFields(Class.forName(className));
-                    if (!fields.isEmpty())
-                    {
-                        result = STORAGE.load(fields) && result;
-                    }
+                    result = STORAGE.load(settings) && result;
                 }
             } catch (ClassNotFoundException e)
             {
-                LOG.warning(bundle.getString("classToSaveNotFound_start")+ className + bundle.getString("classToSaveNotFound_end"));
+                LOG.warning(bundle.getString("classToSaveNotFound_start") + className + bundle.getString("classToSaveNotFound_end"));
                 result = false;
             }
         }

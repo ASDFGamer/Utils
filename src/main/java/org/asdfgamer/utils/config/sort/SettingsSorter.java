@@ -47,13 +47,12 @@ public class SettingsSorter
     /**
      * This adds an new Setting to the List
      *
-     * @param name    The Name of the Setting
      * @param setting The setting itself.
      */
-    public void add(String name, SettingsProperty setting)
+    public void add(SettingsProperty setting)
     {
 
-        content.add(new SettingElement(name, setting));
+        content.add(new SettingElement(setting));
         content.sort(comparator);
     }
 
@@ -78,6 +77,21 @@ public class SettingsSorter
                 }
             }
         });
+    }
+
+    /**
+     * This is used to add many Settings to the sorter.
+     *
+     * @param settings The List with all Settings that should be added.
+     */
+    public void add(List<SettingsProperty> settings)
+    {
+
+        for (SettingsProperty setting : settings)
+        {
+            content.add(new SettingElement(setting));
+        }
+        content.sort(comparator);
     }
 
     /**

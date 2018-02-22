@@ -95,6 +95,8 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
 
     private int lineNumber = 0;
 
+    private String name;
+
 
     /**
      * This is the default constructor, everything uses default values.
@@ -682,5 +684,27 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
         {
             return SettingsPropertyTypes.String;
         }
+    }
+
+    /**
+     * This returns the name of the Setting.
+     *
+     * @return The name of the Setting.
+     */
+    public String getSettingName()
+    {
+
+        return name;
+    }
+
+    /**
+     * This sets the name of the Setting (the name of the field it is declared)
+     *
+     * @param name The name of the setting.
+     */
+    public void setSettingName(String name)
+    {
+
+        this.name = name;
     }
 }
