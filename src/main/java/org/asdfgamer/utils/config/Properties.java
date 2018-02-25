@@ -1,6 +1,7 @@
 package org.asdfgamer.utils.config;
 
 import org.asdfgamer.utils.config.sort.ListElement;
+import org.asdfgamer.utils.config.sort.SettingElement;
 import org.asdfgamer.utils.config.sort.SettingsSorter;
 import org.asdfgamer.utils.other.Utils;
 
@@ -122,7 +123,14 @@ public class Properties
 
             for (ListElement element : content)
             {
-                writer.write(element.getContent());//TODO check if this clears the file.
+                if (element instanceof SettingElement)
+                {
+                    SettingsProperty setting = ((SettingElement) element).getSetting();
+                    writer.write("#" + setting.getInformationText() + "(" + bundle.getString("std_value") + " = " + setting.getDefaultValue() + ")" + "\n" + setting.getSettingName() + "=" + setting.get() + "\n");
+                } else//CaptionElement
+                {
+                    writer.write("\n#" + element.getContent() + "\n");
+                }
                 writer.write("\n");
             }
             writer.flush();

@@ -2,6 +2,8 @@ package org.asdfgamer.utils.config;
 
 import java.util.Locale;
 
+import static org.asdfgamer.utils.config.SettingUtils.bundle;
+
 /**
  * This are all Settings that are needed from the Configuration-management.
  *
@@ -14,12 +16,9 @@ import java.util.Locale;
 //@NoGUI
 public enum SettingsConfig
 {
+    @SuppressWarnings("SpellCheckingInspection")
     @Caption("Allgemein")
-    language(Locale.getDefault().toLanguageTag()),
-    test("Hallo"),
-    du("auch"),
-    @Caption("Spezifisch")
-    geanu("du");
+    language(Locale.getDefault().toLanguageTag(), bundle.getString("languageSettingInfo"));
 
     private final SettingsProperty SETTING;
 

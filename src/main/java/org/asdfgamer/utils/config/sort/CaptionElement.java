@@ -12,11 +12,11 @@ public class CaptionElement extends ListElement
      * This creates an {@link ListElement} for a Caption that can be sorted.
      *
      * @param lineNumber The Linenumber of the field that belongs to the Caption-annotation.
-     * @param content    The content of the Caption (The Value Element.
+     * @param caption    The Caption Element.
      */
-    CaptionElement(int lineNumber, Caption content)
+    CaptionElement(int lineNumber, Caption caption)
     {
 
-        super(lineNumber, "\n#"+content.value() + "\n");
+        super(lineNumber, caption.value());
     }
 }

@@ -11,7 +11,10 @@ import org.asdfgamer.utils.config.SettingsProperty;
 @SuppressWarnings("unused")
 public enum TestEnum
 {
-    test("test");
+    test("test"),
+    testInt(1),
+    testDouble(1.1),
+    testBoolean(true);
 
     private final SettingsProperty SETTING;
 
