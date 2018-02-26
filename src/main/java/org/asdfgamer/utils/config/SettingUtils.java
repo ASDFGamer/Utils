@@ -87,15 +87,11 @@ public class SettingUtils
     }
 
     /**
-     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
-     *
-     * @param newLocale The new locale
+     * This are all values that can be interpreted as 'true' TODO add possibility to edit this values
+     * This are the values true and the version in the used language (german:wahr)
      */
-    protected static void setLocale(Locale newLocale)
-    {
-
-        locale = newLocale;
-    }
+    @SuppressWarnings("SpellCheckingInspection")
+    public static String[] TRUE_VALUES = {"true"};
 
     public static List<SettingsProperty> getSettingsFromObject(Object object)
     {
@@ -127,5 +123,25 @@ public class SettingUtils
             LOG.severe(bundle.getString("cantLoadSetting") + object.getClass().getName());
             return new LinkedList<>();
         }
+    }
+
+    /**
+     * This are all values that can be interpreted as 'false'
+     * This are the values false and the version in the used language (german:falsch)
+     */
+    @SuppressWarnings("SpellCheckingInspection")
+    public static String[] FALSE_VALUES = {"false"};
+
+    /**
+     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
+     *
+     * @param newLocale The new locale
+     */
+    protected static void setLocale(Locale newLocale)
+    {
+
+        TRUE_VALUES = new String[]{TRUE_VALUES[0], bundle.getString("true_value")};
+        FALSE_VALUES = new String[]{FALSE_VALUES[0], bundle.getString("false_value")};
+        locale = newLocale;
     }
 }

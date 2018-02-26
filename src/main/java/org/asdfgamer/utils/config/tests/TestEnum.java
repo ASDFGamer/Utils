@@ -14,7 +14,19 @@ public enum TestEnum
     test("test"),
     testInt(1),
     testDouble(1.1),
-    testBoolean(true);
+    testBoolean(true),
+    qtest("test"),
+    qtestInt(1),
+    qtestDouble(1.1),
+    qtestBoolean(true),
+    wtest("test"),
+    wtestInt(1),
+    wtestDouble(1.1),
+    wtestBoolean(true),
+    etest("test"),
+    etestInt(1),
+    etestDouble(1.1),
+    etestBoolean(true),;
 
     private final SettingsProperty SETTING;
 

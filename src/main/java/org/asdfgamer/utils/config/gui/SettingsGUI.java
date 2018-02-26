@@ -1,22 +1,28 @@
 package org.asdfgamer.utils.config.gui;
 
+import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import org.asdfgamer.utils.config.*;
+import org.asdfgamer.utils.config.Caption;
+import org.asdfgamer.utils.config.SettingClassInfo;
+import org.asdfgamer.utils.config.Settings;
+import org.asdfgamer.utils.config.SettingsProperty;
 import org.asdfgamer.utils.config.sort.CaptionElement;
 import org.asdfgamer.utils.config.sort.ListElement;
 import org.asdfgamer.utils.config.sort.SettingElement;
 import org.asdfgamer.utils.config.sort.SettingsSorter;
+import org.asdfgamer.utils.other.Convertible;
+import org.asdfgamer.utils.other.Utils;
 
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
-import static org.asdfgamer.utils.config.SettingUtils.bundle;
-import static org.asdfgamer.utils.config.SettingUtils.getSettingsFromObject;
+import static org.asdfgamer.utils.config.SettingUtils.*;
 
 /**
  * This returns a Scene that can be used to view and change the Settings.
@@ -25,26 +31,48 @@ import static org.asdfgamer.utils.config.SettingUtils.getSettingsFromObject;
 public class SettingsGUI
 {
 
+    /**
+     * This is the used logger.
+     */
     private final static Logger LOG = getLogger(SettingsGUI.class.getName());
 
+    /**
+     * This is the Settings Object used to save the Settings.
+     */
     private final Settings SETTINGS;
 
+    /**
+     * This is the array that holds the css styles. //TODO should it be an normal string?
+     */
     private String[] css = new String[5];
 
+    /**
+     * This is the scene that gets created.
+     */
     private Scene scene = null;
 
+    /**
+     * This creates a new SettingsGui.
+     *
+     * @param settings The Settings that should be used to save the Settings.
+     */
     public SettingsGUI(Settings settings)
     {
 
         this.SETTINGS = settings;
     }
 
+    //TODO
     public void addCSS(String[] CSS)
     {
 
         this.css = CSS;
     }
 
+    /**
+     * This returns the Scene for the settings.
+     * @return A scene where you can change the settings.
+     */
     public Scene getScene()
     {
 
@@ -55,15 +83,24 @@ public class SettingsGUI
         return scene;
     }
 
+    /**
+     * This creates the scene if it isn't present.
+     * @return The new Scene.
+     */
     private Scene createScene()
     {
-
+        //TODO check if there is only one Class pictured and remove the Tabpane then.
         TabPane tabPane = new TabPane();
         addTabs(tabPane);
         Scene scene = new Scene(tabPane);
+        //TODO add CSS
         return scene;
     }
 
+    /**
+     * This Adds Tabs on the Tabpane for every Class and fills them.
+     * @param tabPane The tabPane that should get the Settings.
+     */
     private void addTabs(TabPane tabPane)
     {
 
@@ -73,7 +110,7 @@ public class SettingsGUI
             if (showClass(classname))
             {
                 Tab tab = createTab(classname);
-                if (tab.getContent() instanceof GridPane && ((GridPane) tab.getContent()).getRowCount() > 0)
+                if (tab.getContent() instanceof GridPane && ((GridPane) tab.getContent()).getRowCount() > 1)
                 {
                     tabPane.getTabs().add(tab);
                 }
@@ -81,6 +118,11 @@ public class SettingsGUI
         }
     }
 
+    /**
+     * This checks if the given Class should be shown on the GUI.
+     * @param classname The Class that should be checked.
+     * @return true, if it should be shown, otherwise false.
+     */
     private boolean showClass(String classname)
     {
 
@@ -94,8 +136,13 @@ public class SettingsGUI
         }
     }
 
+    /**
+     * This creates an Tab for a Class.
+     * @param classname The Class for the Tab.
+     * @return The created tab.
+     */
     private Tab createTab(String classname)
-    {
+    { //TODO add possibility to scroll
 
         Tab tab = new Tab();
         tab.setText(getClassNameView(classname));
@@ -103,7 +150,6 @@ public class SettingsGUI
         try
         {
             List<SettingsProperty> settings = getSettingsFromObject(Class.forName(classname));
-            //TODO sort settings, add Captions
             SettingsSorter sorter = new SettingsSorter();
             sorter.add(settings);
             sorter.add(Class.forName(classname));
@@ -118,6 +164,7 @@ public class SettingsGUI
                     addSetting(gridPane, (SettingElement) element);
                 }
             }
+            addBottomLine(gridPane, Class.forName(classname));
         } catch (ClassNotFoundException e)
         {
             LOG.warning(bundle.getString("classNotFound") + classname);
@@ -127,50 +174,240 @@ public class SettingsGUI
         return tab;
     }
 
-    private void addCaption(GridPane gridPane, CaptionElement element)
+    /**
+     * This adds an bottom Line to the Tab where you can save the Settings and load the default Settings.
+     *
+     * @param gridPane  The Gridpane from the Tab
+     * @param classname The Classname of the Tab.
+     */
+    private void addBottomLine(GridPane gridPane, Object classname)
+    {
+
+        Button save = new Button(bundle.getString("save"));//TODO
+        save.setDefaultButton(true);
+        save.setOnAction(event -> SETTINGS.save(classname));
+        int row = gridPane.getRowCount();
+        gridPane.add(save, 0, row);
+
+        Button defaultSettings = new Button(bundle.getString("defaultSettings"));//TODO
+        defaultSettings.setOnAction(event -> loadDefaultSettings(gridPane));
+        gridPane.add(defaultSettings, gridPane.getColumnCount() - 1, row);
+    }
+
+    /**
+     * This loads the default Settings for all Textfield and Checkbox elements on the gridpane
+     *
+     * @param gridPane The Gridpane with the Settings.
+     */
+    private void loadDefaultSettings(GridPane gridPane)
+    {
+
+        ObservableList<Node> children = gridPane.getChildren();
+        DefaultValue defaultValue = new DefaultValue();
+        for (Node child : children)
+        {
+            if (child instanceof TextField || child instanceof CheckBox)
+            {
+                child.fireEvent(defaultValue);
+            }
+        }
+
+    }
+
+    /**
+     * This adds an Caption to the GridPane.
+     *
+     * @param gridPane       The GridPane that should get the Caption.
+     * @param captionElement The CaptionElement that should be added.
+     */
+    private void addCaption(GridPane gridPane, CaptionElement captionElement)
     {
 
         int row = gridPane.getRowCount();
-        Label caption = new Label(element.getContent());
+        Label caption = new Label(captionElement.getContent());
         gridPane.add(caption, 0, row, 3, 1);
 
     }
 
-    private void addSetting(GridPane gridPane, SettingElement element)
+    /**
+     * This adds an Setting to the GridPane.
+     *
+     * @param gridPane       The GridPane that should get the Setting.
+     * @param settingElement The Setting that should be added.
+     */
+    private void addSetting(GridPane gridPane, SettingElement settingElement)
     {
 
         int pos = gridPane.getRowCount();
-        Label name = new Label(element.getName());
+        Label name = new Label(settingElement.getName());
         gridPane.add(name, 0, pos);
 
-        gridPane.add(getSettingChangeElement(element.getSetting()), 1, pos);
+        gridPane.add(getSettingChangeElement(settingElement.getSetting()), 1, pos);
 
-        gridPane.add(new Label(element.getSetting().getInformationText()), 2, pos);
+        gridPane.add(new Label(settingElement.getSetting().getInformationText()), 2, pos);
     }
 
-    private Node getSettingChangeElement(SettingsProperty setting)
+    /**
+     * This selects the right control element for every setting and creates it.
+     *
+     * @param setting The Setting that should get the control element..
+     * @return The new control element..
+     */
+    private Control getSettingChangeElement(SettingsProperty setting)
     {
-
         switch (setting.getType())
         {
             case Double:
+                return createDoubleElement(setting);
             case Integer:
-                TextField number = new TextField();
-                //TODO set content
-                return number;
+                return createIntegerElement(setting);
             case Boolean:
-                CheckBox checkBox = new CheckBox();
-                checkBox.setSelected(setting.getBoolean());
-                return checkBox;
+                return createBooleanElement(setting);
             case String:
-                TextField text = new TextField();
-                return text;
+                return createStringElement(setting);
             case Enum:
             default:
-                return new Label(bundle.getString("internalError"));//TODO add
+                return new Label(bundle.getString("internalError"));
         }
     }
 
+    /**
+     * This creates an new TextField to edit an String Setting.
+     *
+     * @param setting The Setting that should be edited.
+     * @return The newly created TextField.
+     */
+    private TextField createStringElement(SettingsProperty setting)
+    {
+
+        TextField text = new TextField();
+        text.setText(setting.get());
+        text.focusedProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if (!newValue)
+            {
+                setting.set(text.getText());
+            }
+        });
+        text.setOnAction(event ->
+        {
+            if (event instanceof DefaultValue)
+            {
+                text.setText(setting.getDefaultValue());
+            }
+        });
+        return text;
+    }
+
+    /**
+     * This creates an new CheckBox to change an Boolean Setting.
+     *
+     * @param setting The Setting that should be edited.
+     * @return The newly created CheckBox.
+     */
+    private CheckBox createBooleanElement(SettingsProperty setting)
+    {
+
+        CheckBox checkBox = new CheckBox();
+        checkBox.setSelected(setting.getBoolean());
+        checkBox.focusedProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if (!newValue)
+            {
+                setting.setBoolean(checkBox.isSelected());
+            }
+        });
+        checkBox.setOnAction(event ->
+        {
+            if (event instanceof DefaultValue)
+            {
+                checkBox.setSelected(Utils.isTrue(setting.getDefaultValue(), TRUE_VALUES));
+            }
+        });
+        return checkBox;
+    }
+
+    /**
+     * This creates an new TextField to edit an double Setting.
+     *
+     * @param setting The Setting that should be edited.
+     * @return The newly created TextField.
+     */
+    private TextField createDoubleElement(SettingsProperty setting)
+    {
+
+        TextField number = new TextField();
+        number.setText(setting.get());
+        number.focusedProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if (!newValue && Convertible.toDouble(number.getText()))
+            {
+                setting.set(number.getText());
+            }
+        });
+        number.textProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if (!Convertible.toDouble(newValue))
+            {
+                number.setStyle("-fx-text-fill: red");
+            } else
+            {
+                number.setStyle("-fx-text-fill: black");//TODO set the color that is defined in the given CSS
+            }
+        });
+        number.setOnAction(event ->
+        {
+            if (event instanceof DefaultValue)
+            {
+                number.setText(setting.getDefaultValue());
+            }
+        });
+        return number;
+    }
+
+    /**
+     * This creates an new TextField to edit an integer Setting.
+     *
+     * @param setting The Setting that should be edited.
+     * @return The newly created TextField.
+     */
+    private TextField createIntegerElement(SettingsProperty setting)
+    {
+
+        TextField number = new TextField();
+        number.setText(setting.get());
+        number.focusedProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if (!newValue && Convertible.toInt(number.getText()))
+            {
+                setting.set(number.getText());
+            }
+        });
+        number.textProperty().addListener((observable, oldValue, newValue) ->
+        {
+            if (!Convertible.toInt(newValue))
+            {
+                number.setStyle("-fx-text-fill: red");
+            } else
+            {
+                number.setStyle("-fx-text-fill: black");//TODO set the color that is defined in the given CSS
+            }
+        });
+        number.setOnAction(event ->
+        {
+            if (event instanceof DefaultValue)
+            {
+                number.setText(setting.getDefaultValue());
+            }
+        });
+        return number;
+    }
+
+    /**
+     * This gets the Name of the Class Name that should be shown.
+     * @param classname The Classname that is in question.
+     * @return The Name that gets shown.
+     */
     private String getClassNameView(String classname)
     {
 
@@ -179,7 +416,7 @@ public class SettingsGUI
             Caption caption = Class.forName(classname).getAnnotation(Caption.class);
             if (caption != null)
             {
-                return caption.value();
+                return caption.value();//TODO add methode to localize, maybe the user can give an Bundle and this is the Key.
             }
 
         } catch (ClassNotFoundException e)
@@ -188,4 +425,10 @@ public class SettingsGUI
         }
         return classname;
     }
+
+    /**
+     * This is used to reset the values to the default value.
+     */
+    private class DefaultValue extends ActionEvent
+    {}
 }

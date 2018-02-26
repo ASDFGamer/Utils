@@ -48,12 +48,14 @@ public class SettingsListener
         };
     }
 
+    /**
+     * This returns the SettingsChange Listener.
+     *
+     * @return The SettingsChanged Listener.
+     */
     public static ChangeListener<String> getLanguageChangeListener()
     {
-        return (observable, oldValue, newValue) ->
-        {
-            SettingsProperty.setLocale(Locale.forLanguageTag(newValue));
-            SettingUtils.setLocale(Locale.forLanguageTag(newValue));
-        };
+
+        return (observable, oldValue, newValue) -> SettingUtils.setLocale(Locale.forLanguageTag(newValue));
     }
 }

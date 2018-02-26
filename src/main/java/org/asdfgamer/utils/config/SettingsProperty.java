@@ -4,10 +4,9 @@ import javafx.beans.property.SimpleStringProperty;
 import org.asdfgamer.utils.other.Convertible;
 import org.asdfgamer.utils.other.Utils;
 
-import java.util.Locale;
 import java.util.logging.Logger;
 
-import static org.asdfgamer.utils.config.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.SettingUtils.*;
 
 /**
  * This is the Property in which the setting gets saved.
@@ -24,19 +23,6 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
      */
     private static final Logger LOG = Logger.getLogger(SettingsProperty.class.getName());
 
-    /**
-     * This are all values that can be interpreted as 'true' TODO add possibility to edit this values
-     * This are the values true and the version in the used language (german:wahr)
-     */
-    @SuppressWarnings("SpellCheckingInspection")
-    private static String[] TRUE_VALUES = {"true"};
-
-    /**
-     * This are all values that can be interpreted as 'false'
-     * This are the values false and the version in the used language (german:falsch)
-     */
-    @SuppressWarnings("SpellCheckingInspection")
-    private static String[] FALSE_VALUES = {"false"};
 
     /**
      * This notes that something changed in some setting. TODO check if some way is implemented to see this for a class.
@@ -153,17 +139,6 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     {
 
         return somethingChanged;
-    }
-
-    /**
-     * This is needed, because to initialise the Setting that saves the language this needs to be initialised.
-     *
-     * @param newLocale The new locale
-     */
-    protected static void setLocale(Locale newLocale)
-    {
-        TRUE_VALUES = new String[]{TRUE_VALUES[0], bundle.getString("true_value")};
-        FALSE_VALUES = new String[]{FALSE_VALUES[0], bundle.getString("false_value")};
     }
 
     /**
