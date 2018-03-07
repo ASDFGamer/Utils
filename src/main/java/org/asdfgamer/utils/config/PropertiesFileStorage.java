@@ -100,7 +100,7 @@ public class PropertiesFileStorage implements SettingsStorage
             String name = settingsSortedInClasses.getKey().substring(settingsSortedInClasses.getKey().lastIndexOf('.') + 1);
             String path = createFile(name);
 
-                result = loadSettingProperties(settingsSortedInClasses.getValue(), path) && result;
+            result = loadSettingProperties(settingsSortedInClasses.getValue(), path) && result;
 
         }
         return result;
@@ -125,8 +125,8 @@ public class PropertiesFileStorage implements SettingsStorage
 
             if (MY_PROPERTIES)
             {
-                result = saveMYSettingProperties(settingsSortedInClasses.getValue(),path) && result;
-            }else
+                result = saveMYSettingProperties(settingsSortedInClasses.getValue(), path) && result;
+            } else
             {
                 result = saveSettingsProperty(settingsSortedInClasses.getValue(), path) && result;
             }
@@ -136,9 +136,11 @@ public class PropertiesFileStorage implements SettingsStorage
     }
 
     /**
-     * @param value
-     * @param path
-     * @return
+     * This saves the given list of properties to the given Path with my own Properties implementation that can save
+     * comments and extracts the captions from the classes and adds them to the file.
+     * @param value The List with all Settings that should be saved.
+     * @param path The Path to the file.
+     * @return true, if the settings got saved, otherwise false.
      */
     private boolean saveMYSettingProperties(List<SettingsProperty> value, String path)
     {
@@ -176,11 +178,17 @@ public class PropertiesFileStorage implements SettingsStorage
             {
                 if (!setting.isInternalValue())
                 {
-                    properties.setProperty(setting.getSettingName(), setting.get());
+                    if (setting.getType().equals(SettingsPropertyTypes.String))
+                    {
+                        properties.setProperty(setting.getSettingName(), "\"" + setting.get() + "\"");
+                    } else
+                    {
+                        properties.setProperty(setting.getSettingName(), setting.get());
+                    }
                 }
             }
 
-            properties.store(new OutputStreamWriter(configFile, "UTF-8"), bundle.getString("fileHeader")+ PROGRAM_NAME + "'.");
+            properties.store(new OutputStreamWriter(configFile, "UTF-8"), bundle.getString("fileHeader") + PROGRAM_NAME + "'.");
         } catch (IOException e)
         {
             LOG.log(Level.WARNING, bundle.getString("problemOpen"), e);
@@ -229,11 +237,11 @@ public class PropertiesFileStorage implements SettingsStorage
     }
 
 
-
     /**
      * This Methode searches for  a File with the given Name. If it exists it returns the path ro it and if it doesn't
      * it attempts to create the file. If this is successful this will also return the path and if it can't create the
      * file it returns null.
+     *
      * @param fileName The name of the file that should be created.
      * @return The path to the config file or 'null' if the file doesn't exists and can't be created.
      */
@@ -249,7 +257,7 @@ public class PropertiesFileStorage implements SettingsStorage
      * All Settings that are given must be from the same class.
      *
      * @param settings This are all settings that should be loaded as List.
-     * @param path          The path to the file.
+     * @param path     The path to the file.
      * @return true, if the settings got loaded successful.
      */
     private boolean loadSettingProperties(List<SettingsProperty> settings, String path)
@@ -281,7 +289,14 @@ public class PropertiesFileStorage implements SettingsStorage
                     LOG.warning(bundle.getString("problemLoadSetting_start") + " '" + setting.getSettingName() + "' " + bundle.getString("problemLoadSetting_end"));
                     SettingClassInfo.setProblemsWithLoading(setting.getClassName());
                 }
-                setting.set(properties.getProperty(setting.getSettingName(), setting.getDefaultValue()));
+                if (setting.getType().equals(SettingsPropertyTypes.String))
+                {
+                    String longtext = properties.getProperty(setting.getSettingName(), setting.getDefaultValue());
+                    setting.set(longtext.substring(1, longtext.length() - 1));//remove '"'
+                } else
+                {
+                    setting.set(properties.getProperty(setting.getSettingName(), setting.getDefaultValue()));
+                }
                 SettingClassInfo.setSettingsLoaded(setting.getClassName());//This gets called to much -> performance loss
             }
         } catch (IOException e)

@@ -682,4 +682,13 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
 
         this.name = name;
     }
+
+    /**
+     * This resets the setting to the default value.
+     */
+    public void setToDefaultValue()
+    {
+
+        set(getDefaultValue());
+    }
 }

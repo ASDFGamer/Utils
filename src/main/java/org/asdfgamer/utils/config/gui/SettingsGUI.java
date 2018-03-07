@@ -52,6 +52,11 @@ public class SettingsGUI
     private Scene scene = null;
 
     /**
+     * This is the text on the Save Button.
+     */
+    private String saveText;
+
+    /**
      * This creates a new SettingsGui.
      *
      * @param settings The Settings that should be used to save the Settings.
@@ -183,13 +188,14 @@ public class SettingsGUI
     private void addBottomLine(GridPane gridPane, Object classname)
     {
 
-        Button save = new Button(bundle.getString("save"));//TODO
+        saveText = bundle.getString("save");
+        Button save = new Button(saveText);
         save.setDefaultButton(true);
         save.setOnAction(event -> SETTINGS.save(classname));
         int row = gridPane.getRowCount();
         gridPane.add(save, 0, row);
 
-        Button defaultSettings = new Button(bundle.getString("defaultSettings"));//TODO
+        Button defaultSettings = new Button(bundle.getString("defaultSettings"));
         defaultSettings.setOnAction(event -> loadDefaultSettings(gridPane));
         gridPane.add(defaultSettings, gridPane.getColumnCount() - 1, row);
     }
@@ -204,14 +210,28 @@ public class SettingsGUI
 
         ObservableList<Node> children = gridPane.getChildren();
         DefaultValue defaultValue = new DefaultValue();
+        Button save = null;
         for (Node child : children)
         {
-            if (child instanceof TextField || child instanceof CheckBox)
+            if (child instanceof Button)
+            {
+                if (((Button) child).getText().equals(saveText))
+                {
+                    save = (Button) child;
+                }
+            } else if (child instanceof TextField || child instanceof CheckBox)
             {
                 child.fireEvent(defaultValue);
             }
         }
-
+        if (save == null)
+        {
+            LOG.warning(bundle.getString("cantFindSaveButton"));
+        } else
+        {
+            LOG.warning("SettingsGUI.loadDefaultSettings Zeile 234");
+            save.fire();
+        }
     }
 
     /**
@@ -294,6 +314,7 @@ public class SettingsGUI
             if (event instanceof DefaultValue)
             {
                 text.setText(setting.getDefaultValue());
+                setting.setToDefaultValue();
             }
         });
         return text;
@@ -322,6 +343,7 @@ public class SettingsGUI
             if (event instanceof DefaultValue)
             {
                 checkBox.setSelected(Utils.isTrue(setting.getDefaultValue(), TRUE_VALUES));
+                setting.setToDefaultValue();
             }
         });
         return checkBox;
@@ -360,6 +382,7 @@ public class SettingsGUI
             if (event instanceof DefaultValue)
             {
                 number.setText(setting.getDefaultValue());
+                setting.setToDefaultValue();
             }
         });
         return number;
@@ -376,7 +399,7 @@ public class SettingsGUI
 
         TextField number = new TextField();
         number.setText(setting.get());
-        number.focusedProperty().addListener((observable, oldValue, newValue) ->
+        number.focusedProperty().addListener((observable, oldValue, newValue) -> //TODO save on change or save on save button click?
         {
             if (!newValue && Convertible.toInt(number.getText()))
             {
@@ -398,6 +421,7 @@ public class SettingsGUI
             if (event instanceof DefaultValue)
             {
                 number.setText(setting.getDefaultValue());
+                setting.setToDefaultValue();
             }
         });
         return number;

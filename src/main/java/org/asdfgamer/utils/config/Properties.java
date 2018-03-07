@@ -126,7 +126,15 @@ public class Properties
                 if (element instanceof SettingElement)
                 {
                     SettingsProperty setting = ((SettingElement) element).getSetting();
-                    writer.write("#" + setting.getInformationText() + "(" + bundle.getString("std_value") + " = " + setting.getDefaultValue() + ")" + "\n" + setting.getSettingName() + "=" + setting.get() + "\n");
+                    String settingtext;
+                    if (setting.getType().equals(SettingsPropertyTypes.String))
+                    {
+                        settingtext = "\"" + setting.get() + "\"";
+                    } else
+                    {
+                        settingtext = setting.get();
+                    }
+                    writer.write("#" + setting.getInformationText() + "(" + bundle.getString("std_value") + " = " + setting.getDefaultValue() + ")" + "\n" + setting.getSettingName() + "=" + settingtext + "\n");
                 } else//CaptionElement
                 {
                     writer.write("\n#" + element.getContent() + "\n");
