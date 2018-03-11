@@ -159,7 +159,19 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
         } else if (Convertible.toDouble(initialValue))
         {
             this.valueDouble = Double.parseDouble(initialValue);
-        }
+        } /*else
+        {
+            try
+            {
+                if (Utils.isEnum(Class.forName(initialValue)))
+                {
+                    this.valueEnum = Class.forName(initialValue);
+                }
+            } catch (ClassNotFoundException e)
+            {
+                LOG.fine(bundle.getString("setting_is_string"));//TODO
+            }
+        }*/
     }
 
     /**
