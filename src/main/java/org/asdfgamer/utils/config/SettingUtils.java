@@ -40,7 +40,7 @@ public class SettingUtils
                         try
                         {
                             SettingsProperty setting = (SettingsProperty) method.invoke(enumConstant);
-                            setting.setSettingName(((Enum) enumConstant).name());
+                            //setting.setSettingName(((Enum) enumConstant).name());
                             if (!settings.contains(setting))
                             {
                                 settings.add(setting);
@@ -114,7 +114,7 @@ public class SettingUtils
             Map<String, SettingsProperty> stringSettingsPropertyMap = Utils.getFields(object);
             for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
             {
-                entry.getValue().setSettingName(entry.getKey());
+                //entry.getValue().setSettingName(entry.getKey());
                 settings.add(entry.getValue());
             }
             return settings;

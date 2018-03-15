@@ -1,10 +1,7 @@
 package org.asdfgamer.utils.config;
 
-import org.asdfgamer.utils.other.Utils;
-
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -18,7 +15,7 @@ import static org.asdfgamer.utils.config.SettingsConfig.language;
  * <p>
  * <b> Every SettingsProperty has to be public.</b>
  * Otherwise are there problems while saving and loading.
- *
+ * TODO add all Possibilities for combinations of values
  * @author ASDFGamer
  * @version 0.9
  */
@@ -83,9 +80,7 @@ public class Settings
     public static SettingsProperty newSetting()
     {
 
-        SettingsProperty property = new SettingsProperty();
-        property.addListener(SettingsListener.getSettingChange(property));
-        return property;
+        return new SettingsBuilder().build();
     }
 
     /**
@@ -99,19 +94,19 @@ public class Settings
     public static SettingsProperty newSetting(Object[] args)
     {
 
-        objArrayCreator = true;
+        //objArrayCreator = true;TODO problem because this is always called. maybe check if some element is from this class.
         switch (args.length)
         {
             case 0:
-                return new SettingsProperty();
+                return new SettingsBuilder().build();
             case 1:
-                return oneArgument(args[0]);
+                return firstArgument(args[0]).build();
             case 2:
-                return twoArguments(args);
+                return twoArguments(args).build();
             case 3:
-                return threeArguments(args);
+                return threeArguments(args).build();
             case 4:
-                return fourArguments(args);
+                return fourArguments(args).build();
             default:
                 LOG.warning(bundle.getString("toManyArgs") + Arrays.toString(args));
                 return newSetting();
@@ -125,25 +120,23 @@ public class Settings
      * @param setting The argument for the setting as String, Integer, Double or Boolean.
      * @return The new Setting.
      */
-    public static SettingsProperty oneArgument(Object setting)
+    public static SettingsBuilder firstArgument(Object setting)
     {
-
 
         if (setting instanceof String)
         {
-            return newSetting((String) setting);
-        } else if (setting instanceof Integer)
+            return new SettingsBuilder().setDefaultValue((String) setting);
+        }
+        if (setting instanceof Integer | setting instanceof Double | setting instanceof Boolean)
         {
-            return newSetting((Integer) setting);
-        } else if (setting instanceof Double)
+            return new SettingsBuilder().setDefaultValue(String.valueOf(setting));
+        }
+        if (setting instanceof Enum)
         {
-            return newSetting((Double) setting);
-        } else if (setting instanceof Boolean)
-        {
-            return newSetting((Boolean) setting);
+            return new SettingsBuilder().setDefaultValue(setting.toString());
         }
         LOG.warning(bundle.getString("wrongTypeOneArg"));
-        return newSetting();
+        return new SettingsBuilder();
     }
 //
 
@@ -153,16 +146,23 @@ public class Settings
      * @param settings The array with two arguments.
      * @return The new Setting.
      */
-    private static SettingsProperty twoArguments(Object[] settings)
+    private static SettingsBuilder twoArguments(Object[] settings)
     {
 
         if (settings.length < 2)
         {
             LOG.warning(bundle.getString("lessThenTwoArgs"));
-            return newSetting();
+            return new SettingsBuilder();
         }
-
-        if (settings[0] instanceof String && settings[1] instanceof Boolean)
+        SettingsBuilder builder = firstArgument(settings[0]);
+        if (settings[1] instanceof Boolean)
+        {
+            builder.setInternalValue((Boolean) settings[1]);
+        } else if (settings[1] instanceof String)
+        {
+            builder.setInformationText((String) settings[1]);
+        }
+        /*if (settings[0] instanceof String && settings[1] instanceof Boolean)
         {
             return newSetting((String) settings[0], (Boolean) settings[1]);
         } else if (settings[0] instanceof String && settings[1] instanceof String)
@@ -186,9 +186,12 @@ public class Settings
         } else if (settings[0] instanceof Boolean && settings[1] instanceof String)
         {
             return newSetting((Boolean) settings[0], (String) settings[1]);
+        }*/
+        else
+        {
+            LOG.warning(bundle.getString("wrongTypeTwoArgs"));
         }
-        LOG.warning(bundle.getString("wrongTypeTwoArgs"));
-        return newSetting();
+        return builder;
     }
 
     /**
@@ -197,22 +200,33 @@ public class Settings
      * @param settings The array with three arguments.
      * @return The new Setting.
      */
-    private static SettingsProperty threeArguments(Object[] settings)
+    private static SettingsBuilder threeArguments(Object[] settings)
     {
 
         if (settings.length < 3)
         {
             LOG.warning(bundle.getString("lessThenThreeArgs"));
-            return newSetting();
+            return new SettingsBuilder();
         }
-
+        SettingsBuilder builder = firstArgument(settings[0]);
         if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer)
         {
-            return newSetting((Integer) settings[0], (Integer) settings[1], (Integer) settings[2]);
+            builder.setMaximumValue((Integer) settings[1]);
+            builder.setMaximumValue((Integer) settings[2]);
         } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double)
         {
-            return newSetting((Double) settings[0], (Double) settings[1], (Double) settings[2]);
-        } else if (settings[0] instanceof String && settings[1] instanceof Boolean && settings[2] instanceof String)
+            builder.setMaximumValue((Double) settings[1]);
+            builder.setMaximumValue((Double) settings[2]);
+        } else if (settings[1] instanceof Boolean && settings[2] instanceof String)
+        {
+            builder.setInternalValue((Boolean) settings[1]);
+            builder.setInformationText((String) settings[2]);
+        } else
+        {
+            LOG.warning(bundle.getString("wrongTypeThreeArgs"));
+        }
+
+        /*else if (settings[0] instanceof String && settings[1] instanceof Boolean && settings[2] instanceof String)
         {
             return newSetting((String) settings[0], (Boolean) settings[1], (String) settings[2]);
         } else if (settings[0] instanceof Integer && settings[1] instanceof Boolean && settings[2] instanceof String)
@@ -224,9 +238,8 @@ public class Settings
         } else if (settings[0] instanceof Boolean && settings[1] instanceof Boolean && settings[2] instanceof String)
         {
             return newSetting((Boolean) settings[0], (Boolean) settings[1], (String) settings[2]);
-        }
-        LOG.warning(bundle.getString("wrongTypeThreeArgs"));
-        return newSetting();
+        }*/
+        return builder;
     }
 //
 
@@ -236,24 +249,35 @@ public class Settings
      * @param settings The array with four arguments.
      * @return The new Setting.
      */
-    private static SettingsProperty fourArguments(Object[] settings)
+    private static SettingsBuilder fourArguments(Object[] settings)
     {
 
         if (settings.length < 4)
         {
             LOG.warning(bundle.getString("lessThenFourArgs"));
-            return newSetting();
+            return new SettingsBuilder();
         }
-
-        if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer && settings[3] instanceof String)
+        SettingsBuilder builder = firstArgument(settings[0]);
+        if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer)
         {
-            return newSetting((Integer) settings[0], (Integer) settings[1], (Integer) settings[2], (String) settings[3]);
-        } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double && settings[3] instanceof String)
+            builder.setMaximumValue((Integer) settings[1]);
+            builder.setMaximumValue((Integer) settings[2]);
+        } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double)
         {
-            return newSetting((Double) settings[0], (Double) settings[1], (Double) settings[2], (String) settings[3]);
+            builder.setMaximumValue((Double) settings[1]);
+            builder.setMaximumValue((Double) settings[2]);
+        } else
+        {
+            LOG.warning(bundle.getString("wrongTypeFourArgs"));
         }
-        LOG.warning(bundle.getString("wrongTypeFourArgs"));
-        return newSetting();
+        if (settings[3] instanceof String)
+        {
+            builder.setInformationText((String) settings[3]);
+        } else if (settings[3] instanceof Boolean)
+        {
+            builder.setInternalValue((Boolean) settings[3]);
+        }
+        return builder;
     }
 
     /**
@@ -265,11 +289,11 @@ public class Settings
     public static SettingsProperty newSetting(String defaultValue)
     {
 
-        SettingsProperty property = new SettingsProperty(defaultValue);
-        property.addListener(SettingsListener.getSettingChange(property));
-        addClass(property);
+        return newSetting(new Object[]{defaultValue});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(defaultValue);
 
-        return property;
+        return builder.build();*/
     }
 
     /**
@@ -281,10 +305,10 @@ public class Settings
     public static SettingsProperty newSetting(int defaultValue)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.addListener(SettingsListener.getSettingChange(property));
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        return builder.build();*/
     }
 
     /**
@@ -296,11 +320,11 @@ public class Settings
     public static SettingsProperty newSetting(double defaultValue)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.setDouble(defaultValue);
-        property.addListener(SettingsListener.getSettingChange(property));
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        //property.setDouble(defaultValue);//TODO why?? test if this runs without this line.
+        return builder.build();*/
     }
 
     /**
@@ -312,11 +336,11 @@ public class Settings
     public static SettingsProperty newSetting(boolean defaultValue)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.setBoolean(defaultValue);
-        property.addListener(SettingsListener.getSettingChange(property));
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        //property.setBoolean(defaultValue);//TODO why?
+        return builder.build();*/
     }
 
     /**
@@ -329,9 +353,11 @@ public class Settings
     public static SettingsProperty newSetting(String defaultValue, boolean internal)
     {
 
-        SettingsProperty property = new SettingsProperty(defaultValue, internal);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, internal});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(defaultValue);
+        builder.setInternalValue(internal);
+        return builder.build();*/
     }
 
     /**
@@ -344,9 +370,11 @@ public class Settings
     public static SettingsProperty newSetting(int defaultValue, boolean internal)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, internal});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        builder.setInternalValue(internal);
+        return builder.build();*/
     }
 
     /**
@@ -359,10 +387,12 @@ public class Settings
     public static SettingsProperty newSetting(double defaultValue, boolean internal)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
-        property.setDouble(defaultValue);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, internal});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        builder.setInternalValue(internal);
+        //property.setDouble(defaultValue);TODO why?
+        return builder.build();*/
     }
 
     /**
@@ -375,10 +405,11 @@ public class Settings
     public static SettingsProperty newSetting(boolean defaultValue, boolean internal)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
-        property.setBoolean(defaultValue);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, internal});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue)).setInternalValue(internal);
+        //property.setBoolean(defaultValue);TODO why?
+        return builder.build();*/
     }
 
     /**
@@ -393,12 +424,12 @@ public class Settings
     public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.setMinimumValue(minimum);
-        property.setMaximumValue(maximum);
-        property.addListener(SettingsListener.getSettingChange(property));
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, minimum, maximum});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        builder.setMinimumValue(minimum);
+        builder.setMaximumValue(maximum);
+        return builder.build();*/
     }
 
     /**
@@ -413,12 +444,12 @@ public class Settings
     public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.setMinimumValue(minimum);
-        property.setMaximumValue(maximum);
-        property.addListener(SettingsListener.getSettingChange(property));
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, minimum, maximum});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        builder.setMinimumValue(minimum);
+        builder.setMaximumValue(maximum);
+        return builder.build();*/
     }
 
     /**
@@ -431,12 +462,11 @@ public class Settings
     public static SettingsProperty newSetting(String defaultValue, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(defaultValue);
-        property.addListener(SettingsListener.getSettingChange(property));
-        property.setInformationText(description);
-        addClass(property);
-
-        return property;
+        return newSetting(new Object[]{defaultValue, description});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(defaultValue);
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
     /**
@@ -449,11 +479,11 @@ public class Settings
     public static SettingsProperty newSetting(int defaultValue, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.addListener(SettingsListener.getSettingChange(property));
-        property.setInformationText(description);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, description});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
     /**
@@ -466,12 +496,12 @@ public class Settings
     public static SettingsProperty newSetting(double defaultValue, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.setDouble(defaultValue);
-        property.addListener(SettingsListener.getSettingChange(property));
-        property.setInformationText(description);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, description});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        //property.setDouble(defaultValue);TODO why?
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
     /**
@@ -484,12 +514,12 @@ public class Settings
     public static SettingsProperty newSetting(boolean defaultValue, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.setBoolean(defaultValue);
-        property.addListener(SettingsListener.getSettingChange(property));
-        property.setInformationText(description);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, description});/*
+        SettingsBuilder builder = new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        //property.setBoolean(defaultValue);TODO why?
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
     /**
@@ -503,10 +533,11 @@ public class Settings
     public static SettingsProperty newSetting(String defaultValue, boolean internal, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(defaultValue, internal);
-        property.setInformationText(description);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, internal, description});/*
+        SettingsBuilder builder =new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(defaultValue).setInternalValue(internal);
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
     /**
@@ -520,10 +551,12 @@ public class Settings
     public static SettingsProperty newSetting(int defaultValue, boolean internal, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
-        property.setInformationText(description);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, internal, description});
+        /*
+        SettingsBuilder builder =new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue)).setInternalValue(internal);
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
     /**
@@ -537,11 +570,13 @@ public class Settings
     public static SettingsProperty newSetting(double defaultValue, boolean internal, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
-        property.setDouble(defaultValue);
-        property.setInformationText(description);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, internal, description});
+        /*
+        SettingsBuilder builder =new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue)).setInternalValue(internal);
+        //property.setDouble(defaultValue);TODO why?
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
     /**
@@ -555,11 +590,13 @@ public class Settings
     public static SettingsProperty newSetting(boolean defaultValue, boolean internal, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue), internal);
-        property.setBoolean(defaultValue);
-        property.setInformationText(description);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, internal, description});
+        /*
+        SettingsBuilder builder =new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue)).setInternalValue(internal);
+        //property.setBoolean(defaultValue);TODO why?
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
     /**
@@ -575,13 +612,14 @@ public class Settings
     public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.setMinimumValue(minimum);
-        property.setMaximumValue(maximum);
-        property.addListener(SettingsListener.getSettingChange(property));
-        property.setInformationText(description);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, minimum, maximum, description});
+
+        /*SettingsBuilder builder =new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        builder.setMinimumValue(minimum);
+        builder.setMaximumValue(maximum);
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
     /**
@@ -597,58 +635,15 @@ public class Settings
     public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum, String description)
     {
 
-        SettingsProperty property = new SettingsProperty(String.valueOf(defaultValue));
-        property.setMinimumValue(minimum);
-        property.setMaximumValue(maximum);
-        property.addListener(SettingsListener.getSettingChange(property));
-        property.setInformationText(description);
-        addClass(property);
-        return property;
+        return newSetting(new Object[]{defaultValue, minimum, maximum, description});
+        /*SettingsBuilder builder =new SettingsBuilder(objArrayCreator);
+        builder.setDefaultValue(String.valueOf(defaultValue));
+        builder.setMinimumValue(minimum);
+        builder.setMaximumValue(maximum);
+        builder.setInformationText(description);
+        return builder.build();*/
     }
 
-    /**
-     * This adds the Class in which the setting ist declared to the list of all classes with settings.
-     *
-     * @param property The Setting.
-     */
-    private static void addClass(SettingsProperty property)
-    {
-
-        String className;
-        if (objArrayCreator)
-        {
-            className = Thread.currentThread().getStackTrace()[5].getClassName();
-            setLine(property, Thread.currentThread().getStackTrace()[6]);
-            objArrayCreator = false;
-        } else
-        {
-            className = Thread.currentThread().getStackTrace()[3].getClassName();
-            setLine(property, Thread.currentThread().getStackTrace()[3]);
-        }
-        property.setClassName(className);
-        SettingClassInfo.add(className);
-    }
-
-    /**
-     * This gets the Line number of the property if it is can (the class is an enum) and saves it in the property.
-     *
-     * @param property The Property where the linenumber should be added.
-     * @param element  The Element from the stacktrace.
-     */
-    private static void setLine(SettingsProperty property, StackTraceElement element)
-    {
-
-        try
-        {
-            if (Class.forName(element.getClassName()).isEnum())//Test if this can work with normal classes. (It cant find the declaration only the initialisation).
-            {
-                property.setLine(element.getLineNumber());
-            }
-        } catch (ClassNotFoundException e)
-        {
-            LOG.fine(bundle.getString("classNotFound") + element.getClassName() + "'.");
-        }
-    }
 
     /**
      * This loads the settings for the ConfigClasses.
@@ -675,21 +670,6 @@ public class Settings
         return STORAGE.save(getSettingsFromObject(settings));
     }
 
-    /**
-     * This adds the Name of the Setting to the SettingProperty
-     *
-     * @param settings The Class with the settings.
-     */
-    private void setSettingNamesClass(Object settings)
-    {
-
-        Map<String, SettingsProperty> stringSettingsPropertyMap = Utils.getFields(settings);
-        for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
-        {
-            entry.getValue().setSettingName(entry.getKey());
-        }
-
-    }
 
     /**
      * This Methode saves all Settings to the given Storage.

@@ -24,10 +24,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     private static final Logger LOG = Logger.getLogger(SettingsProperty.class.getName());
 
 
-    /**
-     * This notes that something changed in some setting. TODO check if some way is implemented to see this for a class.
-     */
-    private static boolean somethingChanged = false;
+
 
     /**
      * This is the default value for the Setting, interpreted as String.
@@ -38,6 +35,11 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
      * This shows if this setting is only for internally use and shouldn't be saved, etc.
      */
     private final boolean internalValue;
+
+    /**
+     * This contains all information about this Setting that isn't connected to the value.
+     */
+    private SettingsInformation info;
 
     /**
      * This is the Value of the Setting as boolean, if existent. If it is not existent that this is null.
@@ -69,19 +71,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
      */
     private boolean changed = false;
 
-    /**
-     * This is the name of the class n which this setting is defined.
-     */
-    private String CLASS_NAME;
-
-    /**
-     * This is an short text that gives Information about the Setting
-     */
-    private String INFO_TEXT = "";
-
-    private int lineNumber = 0;
-
-    private String name;
+    //private String name;
 
 
     /**
@@ -138,7 +128,18 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     public static boolean getAnySettingChanged()
     {
 
-        return somethingChanged;
+        return SettingsInformation.isAnySettingChanged();
+    }
+
+    public boolean setSettingsInformation(SettingsInformation info)
+    {
+
+        if (this.info == null)
+        {
+            this.info = info;
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -556,7 +557,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     {
 
         changed = true;
-        somethingChanged = true;
+        SettingsInformation.setAnySettingChanged();
     }
 
     /**
@@ -579,7 +580,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     String getClassName()
     {
 
-        return CLASS_NAME;
+        return info.getClassName();
     }
 
     /**
@@ -589,6 +590,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
      * @param className This is the complete name of the defining class.
      * @return true, if the name wasn't already set, otherwise false
      */
+    /*This is done at creation time in the info Object.
     protected boolean setClassName(String className)
     {
 
@@ -598,7 +600,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
             return true;
         }
         return false;
-    }
+    }*/
 
     /**
      * This is used to set the information text for this setting. This can only be set one time.
@@ -606,6 +608,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
      * @param text Information about this setting
      * @return true, if there wasn't any text set, otherwise false.
      */
+    /*This is done at creation time in the info Object.
     protected boolean setInformationText(String text)
     {
 
@@ -615,7 +618,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
             return true;
         }
         return false;
-    }
+    }*/
 
     /**
      * This returns the information text or null if it isn't set.
@@ -625,7 +628,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     public String getInformationText()
     {
 
-        return INFO_TEXT;
+        return info.getInformationText();
     }
 
     /**
@@ -636,7 +639,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     public int getLineNumber()
     {
 
-        return lineNumber;
+        return info.getLineNumber();
     }
 
     /**
@@ -644,11 +647,12 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
      *
      * @param lineNumber The Line number.
      */
+    /*This is done at creation time in the info Object.
     protected void setLine(int lineNumber)
     {
 
         this.lineNumber = lineNumber;
-    }
+    }*/
 
     /**
      * This return the Type of the Setting.
@@ -681,7 +685,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     public String getSettingName()
     {
 
-        return name;
+        return info.getSettingName();
     }
 
     /**
@@ -689,11 +693,12 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
      *
      * @param name The name of the setting.
      */
+    /*This is done at creation time in the info Object.
     public void setSettingName(String name)
     {
 
         this.name = name;
-    }
+    }*/
 
     /**
      * This resets the setting to the default value.
@@ -703,4 +708,125 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
 
         set(getDefaultValue());
     }
+
+    /**
+     * This Methode returns the Setting as String. If there are more entries, then the first entry is returned.
+     *
+     * @return The value of the Setting as String
+     */
+    public String getString()
+    {
+
+        return get();
+    }
+
+    /**
+     * This return the Value of the Setting at the given index as String. The first index is 0.
+     * If there is no value at that index it returns null
+     *
+     * @param index The index of the Setting
+     * @return The value at the index
+     */
+    public String getString(int index)
+    {
+
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This return the Value of the Setting at the given index as Boolean. The first index is 0.
+     * If there is no value at that index or it isn't boolean this returns null
+     *
+     * @param index The index of the Setting
+     * @return The value at the index
+     */
+    public Boolean getBoolean(int index)
+    {
+
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This return the Value of the Setting at the given index as Double. The first index is 0.
+     * If there is no value at that index or it isn't a double this returns null
+     *
+     * @param index The index of the Setting
+     * @return The value at the index
+     */
+    public Double getDouble(int index)
+    {
+
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This return the Value of the Setting at the given index as Integer. The first index is 0.
+     * If there is no value at that index or it isn't an integer this returns null
+     *
+     * @param index The index of the Setting
+     * @return The value at the index
+     */
+    public Integer getInt(int index)
+    {
+
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This return the Value of the Setting as Enum value. If this Setting has no Enum value this returns null.
+     *
+     * @return The value at the index
+     */
+    public Enum getEnum()
+    {
+
+        return getEnum(0);
+    }
+
+    /**
+     * This return the Value of the Setting at the given index as Enum value. The first index is 0.
+     * If there is no value at that index or it isn't Enum this returns null
+     *
+     * @param index The index of the Setting
+     * @return The value at the index
+     */
+    public Enum getEnum(int index)
+    {
+
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This returns the number of elements in this setting.
+     *
+     * @return The Number of elements in this setting.
+     */
+    public int getLength()
+    {
+
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This shows if the value of the Setting is an Enum.
+     *
+     * @return true, if this is an Enum, otherwise false.
+     */
+    public boolean hasEnumValue()
+    {
+
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This shows if this setting is an List with more than one element or just a setting with one value.
+     *
+     * @return true, if the Setting is an list, otherwise false.
+     */
+    public boolean isList()
+    {
+
+        return getLength() > 1;
+    }
+
 }

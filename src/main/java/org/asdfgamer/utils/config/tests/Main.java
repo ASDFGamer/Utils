@@ -14,7 +14,6 @@ public class Main
     {
         SettingsTest settingsTest = new SettingsTest();
         settingsTest.newSetting();
-
         try
         {
             LOG.warning(Utils.isEnum(Class.forName("org.asdfgamer.utils.config.SettingsConfig.language")) + "");
