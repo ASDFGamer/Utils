@@ -295,7 +295,11 @@ public class PropertiesFileStorage implements SettingsStorage
                 if (setting.getType().equals(SettingsPropertyTypes.String))
                 {
                     String longtext = properties.getProperty(setting.getSettingName(), setting.getDefaultValue());
-                    setting.set(longtext.substring(1, longtext.length() - 1));//remove '"'
+                    if (longtext.startsWith("\"") && longtext.endsWith("\""))
+                    {
+                        longtext = longtext.substring(1, longtext.length() - 1);//remove '"'
+                    }
+                    setting.set(longtext);
                 } else
                 {
                     setting.set(properties.getProperty(setting.getSettingName(), setting.getDefaultValue()));

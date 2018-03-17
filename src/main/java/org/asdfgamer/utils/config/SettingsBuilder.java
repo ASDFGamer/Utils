@@ -47,12 +47,10 @@ class SettingsBuilder
         {
 
             className = Thread.currentThread().getStackTrace()[5].getClassName();
-            LOG.warning("1" + className);
             setLine(Thread.currentThread().getStackTrace()[5]);
         } else
         {
             className = Thread.currentThread().getStackTrace()[4].getClassName();
-            LOG.warning("2" + className);
             setLine(Thread.currentThread().getStackTrace()[4]);
         }
 

@@ -6,10 +6,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import org.asdfgamer.utils.config.Caption;
-import org.asdfgamer.utils.config.SettingClassInfo;
-import org.asdfgamer.utils.config.Settings;
-import org.asdfgamer.utils.config.SettingsProperty;
+import org.asdfgamer.utils.config.*;
 import org.asdfgamer.utils.config.sort.CaptionElement;
 import org.asdfgamer.utils.config.sort.ListElement;
 import org.asdfgamer.utils.config.sort.SettingElement;
@@ -189,17 +186,28 @@ public class SettingsGUI
      */
     private void addBottomLine(GridPane gridPane, Object classname)
     {
-
-        saveText = bundle.getString("save");
-        Button save = new Button(saveText);
-        save.setDefaultButton(true);
-        save.setOnAction(event -> SETTINGS.save(classname));
+        int next = 0;
+        Button ok = new Button("OK");
         int row = gridPane.getRowCount();
-        gridPane.add(save, 0, row);
+        if (!SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
+        {
+            saveText = bundle.getString("save");
+            Button save = new Button(saveText);
+            save.setDefaultButton(true);
+            save.setOnAction(event -> SETTINGS.save(classname));
 
+            gridPane.add(save, next, row);
+            next++;
+        } else
+        {
+            ok.setDefaultButton(true);
+        }
+        //ok.setOnAction();TODO how can i signalize, that the scene can be changed?
+        gridPane.add(ok, next, row);
+        next++;
         Button defaultSettings = new Button(bundle.getString("defaultSettings"));
         defaultSettings.setOnAction(event -> loadDefaultSettings(gridPane));
-        gridPane.add(defaultSettings, gridPane.getColumnCount() - 1, row);
+        gridPane.add(defaultSettings, next, row);
     }
 
     /**
@@ -304,13 +312,16 @@ public class SettingsGUI
 
         TextField text = new TextField();
         text.setText(setting.get());
-        text.focusedProperty().addListener((observable, oldValue, newValue) ->
+        if (SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
         {
-            if (!newValue)
+            text.focusedProperty().addListener((observable, oldValue, newValue) ->
             {
-                setting.set(text.getText());
-            }
-        });
+                if (!newValue)
+                {
+                    setting.set(text.getText());
+                }
+            });
+        }
         text.setOnAction(event ->
         {
             if (event instanceof DefaultValue)
@@ -333,13 +344,16 @@ public class SettingsGUI
 
         CheckBox checkBox = new CheckBox();
         checkBox.setSelected(setting.getBoolean());
-        checkBox.focusedProperty().addListener((observable, oldValue, newValue) ->
+        if (SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
         {
-            if (!newValue)
+            checkBox.focusedProperty().addListener((observable, oldValue, newValue) ->
             {
-                setting.setBoolean(checkBox.isSelected());
-            }
-        });
+                if (!newValue)
+                {
+                    setting.setBoolean(checkBox.isSelected());
+                }
+            });
+        }
         checkBox.setOnAction(event ->
         {
             if (event instanceof DefaultValue)
@@ -362,13 +376,16 @@ public class SettingsGUI
 
         TextField number = new TextField();
         number.setText(setting.get());
-        number.focusedProperty().addListener((observable, oldValue, newValue) ->
+        if (SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
         {
-            if (!newValue && Convertible.toDouble(number.getText()))
+            number.focusedProperty().addListener((observable, oldValue, newValue) ->
             {
-                setting.set(number.getText());
-            }
-        });
+                if (!newValue && Convertible.toDouble(number.getText()))
+                {
+                    setting.set(number.getText());
+                }
+            });
+        }
         number.textProperty().addListener((observable, oldValue, newValue) ->
         {
             if (!Convertible.toDouble(newValue))
@@ -401,13 +418,16 @@ public class SettingsGUI
 
         TextField number = new TextField();
         number.setText(setting.get());
-        number.focusedProperty().addListener((observable, oldValue, newValue) -> //TODO save on change or save on save button click?
+        if (SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
         {
-            if (!newValue && Convertible.toInt(number.getText()))
+            number.focusedProperty().addListener((observable, oldValue, newValue) -> //TODO save on change or save on save button click?
             {
-                setting.set(number.getText());
-            }
-        });
+                if (!newValue && Convertible.toInt(number.getText()))
+                {
+                    setting.set(number.getText());
+                }
+            });
+        }
         number.textProperty().addListener((observable, oldValue, newValue) ->
         {
             if (!Convertible.toInt(newValue))
