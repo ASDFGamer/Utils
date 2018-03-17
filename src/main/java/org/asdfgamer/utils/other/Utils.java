@@ -598,6 +598,11 @@ public class Utils
      */
     public static <T> Map<String, T> getFields(Object klasse)
     {
+        if (isEnum(klasse))
+        {
+            LOG.warning("getFields doesn't work with Enums, because it adds Enum Fields to the Map even if they are not from Type T");//TODO ask StackOverflow
+            return new HashMap<String, T>();
+        }
         Field[] fields;
         if (klasse instanceof Class)
         {

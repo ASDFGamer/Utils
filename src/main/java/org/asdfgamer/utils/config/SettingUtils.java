@@ -2,6 +2,8 @@ package org.asdfgamer.utils.config;
 
 import org.asdfgamer.utils.other.Utils;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.logging.Logger;
@@ -16,6 +18,60 @@ public class SettingUtils
     private static Locale locale = Locale.getDefault();
 
     public final static ResourceBundle bundle = ResourceBundle.getBundle("config/Settings", locale);//TODO test if a change in language works
+
+    public static Map<String, SettingsProperty> getFields(Object settings)
+    {
+        if (Utils.isEnum(settings))
+        {
+            return getFieldsFromEnum(settings);
+        } else
+        {
+            return Utils.getFields(settings);
+        }
+    }
+
+    private static Map<String, SettingsProperty> getFieldsFromEnum(Object object)
+    {
+        Field[] enumConstants;
+        if (object instanceof Class)
+        {
+            enumConstants = ((Class) object).getFields();
+            //LOG.warning(Arrays.toString(enumConstants));
+        } else
+        {
+            enumConstants = object.getClass().getFields();
+        }
+        //LOG.warning(enumConstants.length + "");
+        Map<String, SettingsProperty> settings = new HashMap<>();
+        for (Field enumConstant : enumConstants)
+        {
+            try
+            {
+                if (enumConstant.get(null) != null)
+                    try
+                    {
+                        //LOG.warning(enumConstant.get(null) + "");
+                        Method[] methods = enumConstant.get(null).getClass().getMethods();
+                        for (Method method : methods)
+                        {
+                            if (method.getReturnType().equals(SettingsProperty.class))
+                            {
+                                //LOG.warning("name" +enumConstant.getName());
+                                //LOG.warning("Value" + method.invoke(enumConstant.get(null)) + "");
+                                settings.put(enumConstant.getName(), (SettingsProperty) method.invoke(enumConstant.get(null)));
+                            }
+                        }
+                    } catch (IllegalAccessException | InvocationTargetException e)
+                    {
+                        e.printStackTrace();
+                    }
+            } catch (IllegalAccessException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        return settings;
+    }
 
     /**
      * This finds all SettingsProperties from the given Enum and returns them as List.

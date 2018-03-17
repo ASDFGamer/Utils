@@ -31,7 +31,7 @@ public class Settings
     /**
      * This shows if {@link Settings#newSetting(Object[])} was used to initiate the construction of the last Setting
      */
-    private static boolean objArrayCreator = false;
+    //private static boolean objArrayCreator = false;
 
     /**
      * The name of the program that creates the settings.
@@ -109,7 +109,7 @@ public class Settings
                 return fourArguments(args).build();
             default:
                 LOG.warning(bundle.getString("toManyArgs") + Arrays.toString(args));
-                return newSetting();
+                return new SettingsBuilder().build();
 
         }
     }
@@ -211,11 +211,11 @@ public class Settings
         SettingsBuilder builder = firstArgument(settings[0]);
         if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer)
         {
-            builder.setMaximumValue((Integer) settings[1]);
+            builder.setMinimumValue((Integer) settings[1]);
             builder.setMaximumValue((Integer) settings[2]);
         } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double)
         {
-            builder.setMaximumValue((Double) settings[1]);
+            builder.setMinimumValue((Double) settings[1]);
             builder.setMaximumValue((Double) settings[2]);
         } else if (settings[1] instanceof Boolean && settings[2] instanceof String)
         {
@@ -260,11 +260,11 @@ public class Settings
         SettingsBuilder builder = firstArgument(settings[0]);
         if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer)
         {
-            builder.setMaximumValue((Integer) settings[1]);
+            builder.setMinimumValue((Integer) settings[1]);
             builder.setMaximumValue((Integer) settings[2]);
         } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double)
         {
-            builder.setMaximumValue((Double) settings[1]);
+            builder.setMinimumValue((Double) settings[1]);
             builder.setMaximumValue((Double) settings[2]);
         } else
         {

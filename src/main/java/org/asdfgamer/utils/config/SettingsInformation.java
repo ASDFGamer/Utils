@@ -1,5 +1,10 @@
 package org.asdfgamer.utils.config;
 
+import java.util.logging.Logger;
+
+import static java.util.logging.Logger.getLogger;
+import static org.asdfgamer.utils.config.SettingUtils.bundle;
+
 /**
  * This Class holds all Information of an Setting that belongs to the Setting, but isn't related to the value of the Setting.
  * TODO internalize Outputs
@@ -7,7 +12,7 @@ package org.asdfgamer.utils.config;
  */
 public class SettingsInformation
 {
-
+    private final static Logger LOG = getLogger(SettingsInformation.class.getName());
     /**
      * This notes that something changed in some setting. TODO check if some way is implemented to see this for a class.
      */
@@ -31,7 +36,7 @@ public class SettingsInformation
     /**
      * This is the Name of the Setting.
      */
-    private final String settingName;
+    private String settingName;
 
     /**
      * @param informationText
@@ -46,6 +51,17 @@ public class SettingsInformation
         this.className = className;
         this.lineNumber = lineNumber;
         this.settingName = settingName;
+    }
+
+    void setSettingName(String name)
+    {
+        if (settingName.isEmpty())
+        {
+            this.settingName = name;
+        } else
+        {
+            LOG.warning(bundle.getString("NameAlreadySet"));//TODO
+        }
     }
 
     /**

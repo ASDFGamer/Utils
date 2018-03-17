@@ -1,8 +1,5 @@
 package org.asdfgamer.utils.config;
 
-import org.asdfgamer.utils.other.Utils;
-
-import java.util.Map;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -36,10 +33,6 @@ public class SettingsBuilder
      */
     private void addClass()
     {
-        //LOG.warning("2" + Thread.currentThread().getStackTrace()[2].getClassName());
-        //LOG.warning("3" + Thread.currentThread().getStackTrace()[3].getClassName());
-        //LOG.warning("4" + Thread.currentThread().getStackTrace()[4].getClassName());
-        //LOG.warning("5" + Thread.currentThread().getStackTrace()[5].getClassName());
         if (Thread.currentThread().getStackTrace()[4].getClassName().equals(Settings.class.getName()))
         {
 
@@ -76,28 +69,6 @@ public class SettingsBuilder
         }
     }
 
-
-    /**
-     * This adds the Name of the Setting to the SettingProperty
-     *
-     * @param settings The Class with the settings.
-     */
-    private void setSettingNamesClass(Object settings, SettingsProperty property)//TODO recreate this function in SettingsBuilder.
-    {
-
-        Map<String, SettingsProperty> stringSettingsPropertyMap = Utils.getFields(settings);
-        for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
-        {
-            //LOG.warning("SettingsBuilder.setSettingNamesClass Zeile 91");
-            if (entry.getValue() != null && entry.getValue().equals(property))
-            {
-                LOG.warning("settingsname for" + property.toString() + " = " + entry.getKey());
-                settingName = entry.getKey();
-            }
-        }
-
-    }
-
     public SettingsProperty build()
     {
 
@@ -110,18 +81,11 @@ public class SettingsBuilder
         {
             setting.addListener(SettingsListener.getSettingChange(setting));
         }
-        if (!className.isEmpty())
-        {
-            try
-            {
-                setSettingNamesClass(Class.forName(className), setting);
-            } catch (ClassNotFoundException e)
-            {
-                LOG.warning(bundle.getString("classNotFound") + className);
-            }
-        }
-        SettingsInformation info = new SettingsInformation(informationText, settingName, className, lineNumber);
+        SettingsInformation info = new SettingsInformation(informationText, "", className, lineNumber);
         setting.setSettingsInformation(info);
+        SettingsName name = new SettingsName(setting, info);
+        //Start new Thread to get Name.
+        new Thread(name).start();
         return setting;
     }
 
