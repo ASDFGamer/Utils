@@ -22,7 +22,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
-import static org.asdfgamer.utils.config.SettingUtils.*;
+import static org.asdfgamer.utils.config.internal.SettingUtils.*;
 
 /**
  * This returns a Scene that can be used to view and change the Settings.
@@ -151,6 +151,7 @@ public class SettingsGUI
 
         Tab tab = new Tab();
         tab.setText(getClassNameView(classname));
+        tab.setClosable(false);
         GridPane gridPane = new GridPane();
         try
         {

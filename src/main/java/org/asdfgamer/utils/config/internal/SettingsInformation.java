@@ -1,9 +1,9 @@
-package org.asdfgamer.utils.config;
+package org.asdfgamer.utils.config.internal;
 
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
-import static org.asdfgamer.utils.config.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
 /**
  * This Class holds all Information of an Setting that belongs to the Setting, but isn't related to the value of the Setting.

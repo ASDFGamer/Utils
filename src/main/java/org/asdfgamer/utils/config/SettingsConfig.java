@@ -2,7 +2,7 @@ package org.asdfgamer.utils.config;
 
 import java.util.Locale;
 
-import static org.asdfgamer.utils.config.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
 /**
  * This are all Settings that are needed from the Configuration-management.

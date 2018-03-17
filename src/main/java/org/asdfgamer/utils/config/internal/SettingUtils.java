@@ -1,5 +1,6 @@
-package org.asdfgamer.utils.config;
+package org.asdfgamer.utils.config.internal;
 
+import org.asdfgamer.utils.config.SettingsProperty;
 import org.asdfgamer.utils.other.Utils;
 
 import java.lang.reflect.Field;
@@ -36,12 +37,10 @@ public class SettingUtils
         if (object instanceof Class)
         {
             enumConstants = ((Class) object).getFields();
-            //LOG.warning(Arrays.toString(enumConstants));
         } else
         {
             enumConstants = object.getClass().getFields();
         }
-        //LOG.warning(enumConstants.length + "");
         Map<String, SettingsProperty> settings = new HashMap<>();
         for (Field enumConstant : enumConstants)
         {
@@ -50,14 +49,11 @@ public class SettingUtils
                 if (enumConstant.get(null) != null)
                     try
                     {
-                        //LOG.warning(enumConstant.get(null) + "");
                         Method[] methods = enumConstant.get(null).getClass().getMethods();
                         for (Method method : methods)
                         {
                             if (method.getReturnType().equals(SettingsProperty.class))
                             {
-                                //LOG.warning("name" +enumConstant.getName());
-                                //LOG.warning("Value" + method.invoke(enumConstant.get(null)) + "");
                                 settings.put(enumConstant.getName(), (SettingsProperty) method.invoke(enumConstant.get(null)));
                             }
                         }
@@ -170,7 +166,6 @@ public class SettingUtils
             Map<String, SettingsProperty> stringSettingsPropertyMap = Utils.getFields(object);
             for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
             {
-                //entry.getValue().setSettingName(entry.getKey());
                 settings.add(entry.getValue());
             }
             return settings;
@@ -193,7 +188,7 @@ public class SettingUtils
      *
      * @param newLocale The new locale
      */
-    protected static void setLocale(Locale newLocale)
+    public static void setLocale(Locale newLocale)
     {
 
         TRUE_VALUES = new String[]{TRUE_VALUES[0], bundle.getString("true_value")};

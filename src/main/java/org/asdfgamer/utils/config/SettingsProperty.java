@@ -1,12 +1,13 @@
 package org.asdfgamer.utils.config;
 
 import javafx.beans.property.SimpleStringProperty;
+import org.asdfgamer.utils.config.internal.SettingsInformation;
 import org.asdfgamer.utils.other.Convertible;
 import org.asdfgamer.utils.other.Utils;
 
 import java.util.logging.Logger;
 
-import static org.asdfgamer.utils.config.SettingUtils.*;
+import static org.asdfgamer.utils.config.internal.SettingUtils.*;
 
 /**
  * This is the Property in which the setting gets saved.
@@ -22,9 +23,6 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
      * The used Logger
      */
     private static final Logger LOG = Logger.getLogger(SettingsProperty.class.getName());
-
-
-
 
     /**
      * This is the default value for the Setting, interpreted as String.
@@ -70,9 +68,6 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
      * This shows if the value of this Setting changed.
      */
     private boolean changed = false;
-
-    //private String name;
-
 
     /**
      * This is the default constructor, everything uses default values.
@@ -131,6 +126,7 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
         return SettingsInformation.isAnySettingChanged();
     }
 
+    @SuppressWarnings("ClassEscapesDefinedScope")
     public boolean setSettingsInformation(SettingsInformation info)
     {
 
@@ -143,36 +139,14 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     }
 
     /**
-     * This Methode gets called from the Constructor to check if the initial value convertible to boolean, integer or
-     * double. If so it saves the value in that format.
+     * This returns the Classname of this Property.
      *
-     * @param initialValue The initial Value of the setting.
+     * @return the Classname of the class that created this property.
      */
-    private void init(String initialValue)
+    public String getClassName()
     {
 
-        if (Convertible.toBoolean(initialValue, TRUE_VALUES, FALSE_VALUES))
-        {
-            this.valueBoolean = Utils.isTrue(initialValue, TRUE_VALUES);
-        } else if (Convertible.toInt(initialValue))
-        {
-            this.valueInteger = Integer.parseInt(initialValue);
-        } else if (Convertible.toDouble(initialValue))
-        {
-            this.valueDouble = Double.parseDouble(initialValue);
-        } /*else
-        {
-            try
-            {
-                if (Utils.isEnum(Class.forName(initialValue)))
-                {
-                    this.valueEnum = Class.forName(initialValue);
-                }
-            } catch (ClassNotFoundException e)
-            {
-                LOG.fine(bundle.getString("setting_is_string"));//TODO
-            }
-        }*/
+        return info.getClassName();
     }
 
     /**
@@ -573,52 +547,25 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
     }
 
     /**
-     * This returns the Classname of this Property.
+     * This Methode gets called from the Constructor to check if the initial value convertible to boolean, integer or
+     * double. If so it saves the value in that format.
      *
-     * @return the Classname of the class that created this property.
+     * @param initialValue The initial Value of the setting.
      */
-    String getClassName()
+    private void init(String initialValue)
     {
 
-        return info.getClassName();
+        if (Convertible.toBoolean(initialValue, TRUE_VALUES, FALSE_VALUES))
+        {
+            this.valueBoolean = Utils.isTrue(initialValue, TRUE_VALUES);
+        } else if (Convertible.toInt(initialValue))
+        {
+            this.valueInteger = Integer.parseInt(initialValue);
+        } else if (Convertible.toDouble(initialValue))
+        {
+            this.valueDouble = Double.parseDouble(initialValue);
+        }
     }
-
-    /**
-     * This is used to set the name of the class that declared this Setting. For example {@link SettingsConfig} and not
-     * {@link Settings}.
-     *
-     * @param className This is the complete name of the defining class.
-     * @return true, if the name wasn't already set, otherwise false
-     */
-    /*This is done at creation time in the info Object.
-    protected boolean setClassName(String className)
-    {
-
-        if (this.CLASS_NAME == null)
-        {
-            this.CLASS_NAME = className;
-            return true;
-        }
-        return false;
-    }*/
-
-    /**
-     * This is used to set the information text for this setting. This can only be set one time.
-     *
-     * @param text Information about this setting
-     * @return true, if there wasn't any text set, otherwise false.
-     */
-    /*This is done at creation time in the info Object.
-    protected boolean setInformationText(String text)
-    {
-
-        if (this.INFO_TEXT.isEmpty())
-        {
-            this.INFO_TEXT = text;
-            return true;
-        }
-        return false;
-    }*/
 
     /**
      * This returns the information text or null if it isn't set.
@@ -641,18 +588,6 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
 
         return info.getLineNumber();
     }
-
-    /**
-     * This sets the Line Number of the property in the class where it is defined.
-     *
-     * @param lineNumber The Line number.
-     */
-    /*This is done at creation time in the info Object.
-    protected void setLine(int lineNumber)
-    {
-
-        this.lineNumber = lineNumber;
-    }*/
 
     /**
      * This return the Type of the Setting.
@@ -687,18 +622,6 @@ public class SettingsProperty extends SimpleStringProperty //TODO add Name of se
 
         return info.getSettingName();
     }
-
-    /**
-     * This sets the name of the Setting (the name of the field it is declared)
-     *
-     * @param name The name of the setting.
-     */
-    /*This is done at creation time in the info Object.
-    public void setSettingName(String name)
-    {
-
-        this.name = name;
-    }*/
 
     /**
      * This resets the setting to the default value.

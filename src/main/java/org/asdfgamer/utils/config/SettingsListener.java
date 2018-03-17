@@ -2,6 +2,7 @@ package org.asdfgamer.utils.config;
 
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import org.asdfgamer.utils.config.internal.SettingUtils;
 
 import java.util.Locale;
 
@@ -11,7 +12,7 @@ import java.util.Locale;
  * @author ASDFGamer
  */
 @SuppressWarnings("WeakerAccess")
-public class SettingsListener
+class SettingsListener
 {
 
     /**

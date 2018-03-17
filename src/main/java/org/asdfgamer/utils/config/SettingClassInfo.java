@@ -6,7 +6,7 @@ import java.util.Set;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
-import static org.asdfgamer.utils.config.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
 /**
  * In this Class are different information about the whole Class/Enum with Settings, because they are for the Class/Enum

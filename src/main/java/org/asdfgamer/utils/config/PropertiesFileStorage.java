@@ -9,8 +9,8 @@ import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import static org.asdfgamer.utils.config.SettingUtils.bundle;
-import static org.asdfgamer.utils.config.SettingUtils.sortSettingsInClasses;
+import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.internal.SettingUtils.sortSettingsInClasses;
 
 /**
  * This class lets you save Settings in a Properties-File.

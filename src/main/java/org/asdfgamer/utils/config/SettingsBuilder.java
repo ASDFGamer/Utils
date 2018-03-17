@@ -1,11 +1,14 @@
 package org.asdfgamer.utils.config;
 
+import org.asdfgamer.utils.config.internal.SettingsInformation;
+import org.asdfgamer.utils.config.internal.SettingsName;
+
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
-import static org.asdfgamer.utils.config.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
-public class SettingsBuilder
+class SettingsBuilder
 {
 
     private final static Logger LOG = getLogger(SettingsBuilder.class.getName());
@@ -81,7 +84,7 @@ public class SettingsBuilder
         {
             setting.addListener(SettingsListener.getSettingChange(setting));
         }
-        SettingsInformation info = new SettingsInformation(informationText, "", className, lineNumber);
+        SettingsInformation info = new SettingsInformation(informationText, settingName, className, lineNumber);
         setting.setSettingsInformation(info);
         SettingsName name = new SettingsName(setting, info);
         //Start new Thread to get Name.

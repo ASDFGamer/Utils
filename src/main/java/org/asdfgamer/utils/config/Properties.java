@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
-import static org.asdfgamer.utils.config.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
 /**
  * This class saves the given values in a file. It can also add Captions and Comments to specific values.
@@ -126,15 +126,15 @@ public class Properties
                 if (element instanceof SettingElement)
                 {
                     SettingsProperty setting = ((SettingElement) element).getSetting();
-                    String settingtext;
+                    String settingText;
                     if (setting.getType().equals(SettingsPropertyTypes.String))
                     {
-                        settingtext = "\"" + setting.get() + "\"";
+                        settingText = "\"" + setting.get() + "\"";
                     } else
                     {
-                        settingtext = setting.get();
+                        settingText = setting.get();
                     }
-                    writer.write("#" + setting.getInformationText() + "(" + bundle.getString("std_value") + " = " + setting.getDefaultValue() + ")" + "\n" + setting.getSettingName() + "=" + settingtext + "\n");
+                    writer.write("#" + setting.getInformationText() + "(" + bundle.getString("std_value") + " = " + setting.getDefaultValue() + ")" + "\n" + setting.getSettingName() + "=" + settingText + "\n");
                 } else//CaptionElement
                 {
                     writer.write("\n#" + element.getContent() + "\n");

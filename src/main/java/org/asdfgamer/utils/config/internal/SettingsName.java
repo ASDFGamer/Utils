@@ -1,10 +1,12 @@
-package org.asdfgamer.utils.config;
+package org.asdfgamer.utils.config.internal;
+
+import org.asdfgamer.utils.config.SettingsProperty;
 
 import java.util.Map;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
-import static org.asdfgamer.utils.config.SettingUtils.bundle;
+import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
 public class SettingsName implements Runnable
 {
@@ -57,13 +59,10 @@ public class SettingsName implements Runnable
         Map<String, SettingsProperty> stringSettingsPropertyMap = SettingUtils.getFields(settings);
         for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
         {
-            //LOG.warning("SettingsBuilder.setSettingNamesClass Zeile 91");
             if (entry.getValue() != null)
             {
-                //LOG.warning(entry.getValue() + " = " + property + entry.getValue().equals(property));
                 if (entry.getValue().equals(property))
                 {
-                    //LOG.warning("settingsname for" + property.toString() + " = " + entry.getKey());
                     INFO.setSettingName(entry.getKey());
                 }
             }
