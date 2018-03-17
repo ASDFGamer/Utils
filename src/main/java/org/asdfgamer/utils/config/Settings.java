@@ -2,6 +2,7 @@ package org.asdfgamer.utils.config;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -29,6 +30,8 @@ public class Settings
      */
     private final static Logger LOG = getLogger(Settings.class.getName());
 
+    private static ResourceBundle RESOURCE_BUNDLE;
+
     /**
      * The name of the program that creates the settings.
      */
@@ -48,46 +51,64 @@ public class Settings
      */
     public Settings(String programName)
     {
-
+        RESOURCE_BUNDLE = null;
         this.NAME = programName;
         this.STORAGE = new PropertiesFileStorage(programName);
         loadOwnSettings();
     }
 
     /**
-     * This creates an SettingsProperty with a String as default value.
-     *
-     * @param defaultValue The default value
-     * @return The new Setting
+     * This loads the settings for the ConfigClasses.
      */
-    public static SettingsProperty newSetting(String defaultValue)
+    private void loadOwnSettings()
     {
 
-        return newSetting(new Object[]{defaultValue});
+        if (!load(SettingsConfig.class))
+        {
+            save(SettingsConfig.class);//If the Settings aren't saved and the user program doesn't save all
+        }
+        language.SETTINGProperty().addListener(SettingsListener.getLanguageChangeListener());
     }
 
     /**
-     * This creates an SettingsProperty with a Integer as default value.
+     * This loads all values for the Settings in the given Class.
      *
-     * @param defaultValue The default value
-     * @return The new Setting.
+     * @param settings The Class with the settings.
+     * @return true, if the settings got loaded successfully, otherwise false.
      */
-    public static SettingsProperty newSetting(int defaultValue)
+    public boolean load(Object settings)
     {
 
-        return newSetting(new Object[]{defaultValue});
+        return STORAGE.load(getSettingsFromObject(settings));
     }
 
     /**
-     * This creates an SettingsProperty with a Double as default value.
+     * This Methode saves the Settings from the given Class.
      *
-     * @param defaultValue The default value
-     * @return The new Setting
+     * @param settings This ist the Class with the settings.
+     * @return true, if saving was successful, otherwise false.
      */
-    public static SettingsProperty newSetting(double defaultValue)
+    public boolean save(Object settings)
     {
 
-        return newSetting(new Object[]{defaultValue});
+        return STORAGE.save(getSettingsFromObject(settings));
+    }
+//
+
+    /**
+     * This creates a new Settings-object.
+     * The used storage is a properties file in the systems standard configuration folder.
+     *
+     * @param programName    The Name of the program that creates the settings.
+     * @param resourceBundle This is an ResourceBundle which contains translations for all Setting names, Class names or
+     *                       Information texts.
+     */
+    public Settings(String programName, ResourceBundle resourceBundle)
+    {
+        RESOURCE_BUNDLE = resourceBundle;
+        this.NAME = programName;
+        this.STORAGE = new PropertiesFileStorage(programName);
+        loadOwnSettings();
     }
 
     /**
@@ -98,31 +119,35 @@ public class Settings
      */
     public Settings(String programName, SettingsStorage storage)
     {
-
+        RESOURCE_BUNDLE = null;
         this.NAME = programName;
         this.STORAGE = storage;
         loadOwnSettings();
     }
-//
 
     /**
-     * This creates a simple SettingsProperty without any predefined value.
+     * This creates a new Settings-object.
      *
-     * @return The new Setting
+     * @param programName    The Name of the program that creates the settings.
+     * @param storage        The Methode that saves the Settings persistent.
+     * @param resourceBundle This is an ResourceBundle which contains translations for all Setting names, Class names or
+     *                       Information texts.
      */
-    public static SettingsProperty newSetting()
+    public Settings(String programName, SettingsStorage storage, ResourceBundle resourceBundle)
     {
-
-        return new SettingsBuilder().build();
+        RESOURCE_BUNDLE = resourceBundle;
+        this.NAME = programName;
+        this.STORAGE = storage;
+        loadOwnSettings();
     }
 
     /**
-     * This creates an SettingsProperty with a boolean as default value.
+     * This creates an SettingsProperty with a String as default value.
      *
-     * @param defaultValue The default value.
+     * @param defaultValue The default value
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(boolean defaultValue)
+    public static SettingsProperty newSetting(String defaultValue)
     {
 
         return newSetting(new Object[]{defaultValue});
@@ -157,28 +182,27 @@ public class Settings
     }
 
     /**
-     * This creates an SettingsProperty with a String as default value.
+     * This creates an SettingsProperty with a Integer as default value.
      *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @return The new setting
+     * @param defaultValue The default value
+     * @return The new Setting.
      */
-    public static SettingsProperty newSetting(String defaultValue, boolean internal)
+    public static SettingsProperty newSetting(int defaultValue)
     {
 
-        return newSetting(new Object[]{defaultValue, internal});
+        return newSetting(new Object[]{defaultValue});
     }
 
     /**
-     * This creates an SettingsProperty with a Integer as default value.
+     * This creates an SettingsProperty with a Double as default value.
      *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @return The new setting
+     * @param defaultValue The default value
+     * @return The new Setting
      */
-    public static SettingsProperty newSetting(int defaultValue, boolean internal)
+    public static SettingsProperty newSetting(double defaultValue)
     {
-        return newSetting(new Object[]{defaultValue, internal});
+
+        return newSetting(new Object[]{defaultValue});
     }
 
     /**
@@ -248,6 +272,92 @@ public class Settings
         } else if (settings[3] instanceof Boolean)
         {
             builder.setInternalValue((Boolean) settings[3]);
+        }
+        return builder;
+    }
+
+    /**
+     * This creates a simple SettingsProperty without any predefined value.
+     *
+     * @return The new Setting
+     */
+    public static SettingsProperty newSetting()
+    {
+
+        return new SettingsBuilder().build();
+    }
+
+    /**
+     * This creates an SettingsProperty with a boolean as default value.
+     *
+     * @param defaultValue The default value.
+     * @return The new Setting
+     */
+    public static SettingsProperty newSetting(boolean defaultValue)
+    {
+
+        return newSetting(new Object[]{defaultValue});
+    }
+
+    /**
+     * This creates an SettingsProperty with a String as default value.
+     *
+     * @param defaultValue The default Value
+     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+     * @return The new setting
+     */
+    public static SettingsProperty newSetting(String defaultValue, boolean internal)
+    {
+
+        return newSetting(new Object[]{defaultValue, internal});
+    }
+
+    /**
+     * This creates an SettingsProperty with a Integer as default value.
+     *
+     * @param defaultValue The default Value
+     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+     * @return The new setting
+     */
+    public static SettingsProperty newSetting(int defaultValue, boolean internal)
+    {
+        return newSetting(new Object[]{defaultValue, internal});
+    }
+
+    /**
+     * This returns the given ResourceBundle or null if no ResourceBundle was given.
+     *
+     * @return The given ResourceBundle or null if no ResourceBundle was given.
+     */
+    public static ResourceBundle getResourceBundle()
+    {
+        return RESOURCE_BUNDLE;
+    }
+
+    /**
+     * This Methode interprets an Array with two Object in such a way that it creates an SettingsProperty.
+     *
+     * @param settings The array with two arguments.
+     * @return The new Setting.
+     */
+    private static SettingsBuilder twoArguments(Object[] settings)
+    {
+
+        if (settings.length < 2)
+        {
+            LOG.warning(bundle.getString("lessThenTwoArgs"));
+            return new SettingsBuilder();
+        }
+        SettingsBuilder builder = firstArgument(settings[0]);
+        if (settings[1] instanceof Boolean)
+        {
+            builder.setInternalValue((Boolean) settings[1]);
+        } else if (settings[1] instanceof String)
+        {
+            builder.setInformationText((String) settings[1]);
+        } else
+        {
+            LOG.warning(bundle.getString("wrongTypeTwoArgs"));
         }
         return builder;
     }
@@ -372,96 +482,6 @@ public class Settings
     {
 
         return newSetting(new Object[]{defaultValue, internal, description});
-    }
-
-    /**
-     * This Methode interprets an Array with two Object in such a way that it creates an SettingsProperty.
-     *
-     * @param settings The array with two arguments.
-     * @return The new Setting.
-     */
-    private static SettingsBuilder twoArguments(Object[] settings)
-    {
-
-        if (settings.length < 2)
-        {
-            LOG.warning(bundle.getString("lessThenTwoArgs"));
-            return new SettingsBuilder();
-        }
-        SettingsBuilder builder = firstArgument(settings[0]);
-        if (settings[1] instanceof Boolean)
-        {
-            builder.setInternalValue((Boolean) settings[1]);
-        } else if (settings[1] instanceof String)
-        {
-            builder.setInformationText((String) settings[1]);
-        } else
-        {
-            LOG.warning(bundle.getString("wrongTypeTwoArgs"));
-        }
-        return builder;
-    }
-
-    /**
-     * This transforms an Object to an SettingsProperty with the same Type as the argument.
-     *
-     * @param setting The argument for the setting as String, Integer, Double or Boolean.
-     * @return The new Setting.
-     */
-    private static SettingsBuilder firstArgument(Object setting)
-    {
-
-        if (setting instanceof String)
-        {
-            return new SettingsBuilder().setDefaultValue((String) setting);
-        }
-        if (setting instanceof Integer | setting instanceof Double | setting instanceof Boolean)
-        {
-            return new SettingsBuilder().setDefaultValue(String.valueOf(setting));
-        }
-        if (setting instanceof Enum)
-        {
-            return new SettingsBuilder().setDefaultValue(setting.toString());
-        }
-        LOG.warning(bundle.getString("wrongTypeOneArg"));
-        return new SettingsBuilder();
-    }
-
-    /**
-     * This loads the settings for the ConfigClasses.
-     */
-    private void loadOwnSettings()
-    {
-
-        if (!load(SettingsConfig.class))
-        {
-            save(SettingsConfig.class);//If the Settings aren't saved and the user program doesn't save all
-        }
-        language.SETTINGProperty().addListener(SettingsListener.getLanguageChangeListener());
-    }
-
-    /**
-     * This loads all values for the Settings in the given Class.
-     *
-     * @param settings The Class with the settings.
-     * @return true, if the settings got loaded successfully, otherwise false.
-     */
-    public boolean load(Object settings)
-    {
-
-        return STORAGE.load(getSettingsFromObject(settings));
-    }
-
-    /**
-     * This Methode saves the Settings from the given Class.
-     *
-     * @param settings This ist the Class with the settings.
-     * @return true, if saving was successful, otherwise false.
-     */
-    public boolean save(Object settings)
-    {
-
-        return STORAGE.save(getSettingsFromObject(settings));
     }
 
     /**
@@ -594,4 +614,28 @@ public class Settings
         return result;
     }
 
+    /**
+     * This transforms an Object to an SettingsProperty with the same Type as the argument.
+     *
+     * @param setting The argument for the setting as String, Integer, Double or Boolean.
+     * @return The new Setting.
+     */
+    private static SettingsBuilder firstArgument(Object setting)
+    {
+
+        if (setting instanceof String)
+        {
+            return new SettingsBuilder().setDefaultValue((String) setting);
+        }
+        if (setting instanceof Integer | setting instanceof Double | setting instanceof Boolean)
+        {
+            return new SettingsBuilder().setDefaultValue(String.valueOf(setting));
+        }
+        if (setting instanceof Enum)
+        {
+            return new SettingsBuilder().setDefaultValue(setting.toString());
+        }
+        LOG.warning(bundle.getString("wrongTypeOneArg"));
+        return new SettingsBuilder();
+    }
 }

@@ -53,20 +53,15 @@ public class SettingsName implements Runnable
      *
      * @param settings The Class with the settings.
      */
-    private void setSettingNamesClass(Object settings, SettingsProperty property)//TODO recreate this function in SettingsBuilder.
+    private void setSettingNamesClass(Object settings, SettingsProperty property)
     {
-
         Map<String, SettingsProperty> stringSettingsPropertyMap = SettingUtils.getFields(settings);
         for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
         {
-            if (entry.getValue() != null)
+            if (entry.getValue() != null && entry.getValue().equals(property))
             {
-                if (entry.getValue().equals(property))
-                {
-                    INFO.setSettingName(entry.getKey());
-                }
+                INFO.setSettingName(entry.getKey());
             }
         }
-
     }
 }

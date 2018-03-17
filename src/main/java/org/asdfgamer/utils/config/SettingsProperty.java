@@ -16,7 +16,7 @@ import static org.asdfgamer.utils.config.internal.SettingUtils.*;
  * @version 0.9
  */
 @SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
-public class SettingsProperty extends SimpleStringProperty //TODO add Name of setting and refactor code after that change
+public class SettingsProperty extends SimpleStringProperty
 {
 
     /**

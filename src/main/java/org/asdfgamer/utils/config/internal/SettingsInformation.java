@@ -1,5 +1,7 @@
 package org.asdfgamer.utils.config.internal;
 
+import org.asdfgamer.utils.config.Settings;
+
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -7,14 +9,13 @@ import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
 /**
  * This Class holds all Information of an Setting that belongs to the Setting, but isn't related to the value of the Setting.
- * TODO internalize Outputs
- * TODO add JavaDoc
  */
 public class SettingsInformation
 {
     private final static Logger LOG = getLogger(SettingsInformation.class.getName());
+
     /**
-     * This notes that something changed in some setting. TODO check if some way is implemented to see this for a class.
+     * This notes that something changed in some setting.
      */
     private static boolean anySettingChanged = false;
 
@@ -33,16 +34,19 @@ public class SettingsInformation
      */
     private final int lineNumber;
 
+
     /**
      * This is the Name of the Setting.
      */
     private String settingName;
 
     /**
-     * @param informationText
-     * @param settingName
-     * @param className
-     * @param lineNumber
+     * This creates an new Information Object for a Setting.
+     *
+     * @param informationText This is the Information Text for the setting, if there is any.
+     * @param settingName     This is the Name of the Setting.
+     * @param className       This is the Name of the Class of the Setting.
+     * @param lineNumber      This is the Line number of the Setting.
      */
     public SettingsInformation(String informationText, String settingName, String className, int lineNumber)
     {
@@ -53,19 +57,10 @@ public class SettingsInformation
         this.settingName = settingName;
     }
 
-    void setSettingName(String name)
-    {
-        if (settingName.isEmpty())
-        {
-            this.settingName = name;
-        } else
-        {
-            LOG.warning(bundle.getString("NameAlreadySet"));//TODO
-        }
-    }
-
     /**
-     * @return
+     * This returns if any Setting is changed.
+     *
+     * @return If any Setting is changed.
      */
     public static boolean isAnySettingChanged()
     {
@@ -74,7 +69,7 @@ public class SettingsInformation
     }
 
     /**
-     *
+     * This gets called if a setting was changed.
      */
     public static void setAnySettingChanged()
     {
@@ -83,25 +78,42 @@ public class SettingsInformation
     }
 
     /**
-     * @return
+     * This returns the Information Text for the Setting. If it can be localized with the ResourceBundle given to
+     * {@link Settings} it returns the localized version.
+     *
+     * @return The Information Text for the Setting. If it can be localized with the ResourceBundle given to
+     * {@link Settings} it returns the localized version.
      */
     public String getInformationText()
     {
-
+        if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(informationText))
+        {
+            return Settings.getResourceBundle().getString(informationText);
+        }
         return informationText;
     }
 
     /**
-     * @return
+     * This returns the Class Name for the Setting. If it can be localized with the ResourceBundle given to
+     * {@link Settings} it returns the localized version.
+     *
+     * @return The Class Name for the Setting. If it can be localized with the ResourceBundle given to
+     * {@link Settings} it returns the localized version.
      */
     public String getClassName()
     {
 
+        if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(className))
+        {
+            return Settings.getResourceBundle().getString(className);
+        }
         return className;
     }
 
     /**
-     * @return
+     * This returns the LineNumber of the setting. If this can't be determined, then this returns -1.
+     *
+     * @return The LineNumber of the setting. If this can't be determined, then this returns -1.
      */
     public int getLineNumber()
     {
@@ -110,11 +122,37 @@ public class SettingsInformation
     }
 
     /**
-     * @return
+     * This returns the Name for the Setting. If it can be localized with the ResourceBundle given to
+     * {@link Settings} it returns the localized version.
+     *
+     * @return The Name for the Setting. If it can be localized with the ResourceBundle given to
+     * {@link Settings} it returns the localized version.
      */
     public String getSettingName()
     {
-
+        if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(settingName))
+        {
+            return Settings.getResourceBundle().getString(settingName);
+        }
         return settingName;
+    }
+
+    /**
+     * This sets the name of the Setting, if no name already exists
+     *
+     * @param name This is the name of the Setting.
+     * @return true, if the name could be set, otherwise false.
+     */
+    boolean setSettingName(String name)
+    {
+        if (settingName == null || settingName.isEmpty())
+        {
+            this.settingName = name;
+            return true;
+        } else
+        {
+            LOG.warning(bundle.getString("nameAlreadySet"));
+            return false;
+        }
     }
 }

@@ -30,9 +30,9 @@ public class PropertiesFileStorage implements SettingsStorage
     private static final Logger LOG = Logger.getLogger(PropertiesFileStorage.class.getName());
 
     /**
-     * This is the file extension if there is no Extension given. TODO add possibility to change the extension.
+     * This is the file extension if there is no Extension given.
      */
-    private static final String STD_EXTENSION = ".cfg";
+    private final String STD_EXTENSION;
 
     /**
      * This is the name of the program that saves the Settings.
@@ -60,7 +60,7 @@ public class PropertiesFileStorage implements SettingsStorage
      */
     public PropertiesFileStorage(String programName)
     {
-
+        this.STD_EXTENSION = SettingsConfig.fileEnding.getSETTING();
         this.PROGRAM_NAME = programName;
         this.MY_PROPERTIES = true;
     }
@@ -69,17 +69,17 @@ public class PropertiesFileStorage implements SettingsStorage
      * This creates a new SettingsStorage with the given arguments.
      *
      * @param programName         Tha name of the program that saves the settings.
-     * @param checkForChanges     This shows if the Settings should only be saved if they changed.
-     *                            By default this is false.TODO change to true
+     * @param dontCheckForChanges This shows if the Settings should only be saved if they changed.
+     *                            By default this is true.
      * @param useBetterProperties This is used to choose the way the Properties get saved into the file. If this is true it
      *                            uses a implementation of the Properties that can write comments, and a few other handy
      *                            things. If it is false it uses the default implementation to save the properties.
      */
-    public PropertiesFileStorage(String programName, boolean checkForChanges, boolean useBetterProperties)
+    public PropertiesFileStorage(String programName, boolean dontCheckForChanges, boolean useBetterProperties)
     {
-
+        this.STD_EXTENSION = SettingsConfig.fileEnding.getSETTING();
         this.PROGRAM_NAME = programName;
-        this.checkForChanges = checkForChanges;
+        this.checkForChanges = !dontCheckForChanges;
         this.MY_PROPERTIES = useBetterProperties;
     }
 
@@ -248,8 +248,11 @@ public class PropertiesFileStorage implements SettingsStorage
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private String createFile(String fileName)
     {
-
-        return Utils.getConfigFile(PROGRAM_NAME, fileName + STD_EXTENSION);//TODO check if the filename has already an extension
+        if (fileName.contains("."))//Extension is in filename
+        {
+            return Utils.getConfigFile(PROGRAM_NAME, fileName);
+        }
+        return Utils.getConfigFile(PROGRAM_NAME, fileName + STD_EXTENSION);
     }
 
     /**

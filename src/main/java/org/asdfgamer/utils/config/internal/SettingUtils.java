@@ -139,7 +139,7 @@ public class SettingUtils
     }
 
     /**
-     * This are all values that can be interpreted as 'true' TODO add possibility to edit this values
+     * This are all values that can be interpreted as 'true'
      * This are the values true and the version in the used language (german:wahr)
      */
     @SuppressWarnings("SpellCheckingInspection")

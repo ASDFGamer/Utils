@@ -18,6 +18,7 @@ import org.asdfgamer.utils.other.Convertible;
 import org.asdfgamer.utils.other.Utils;
 
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.logging.Logger;
 
@@ -441,7 +442,12 @@ public class SettingsGUI
             Caption caption = Class.forName(classname).getAnnotation(Caption.class);
             if (caption != null)
             {
-                return caption.value();//TODO add methode to localize, maybe the user can give an Bundle and this is the Key.
+                ResourceBundle bundle = Settings.getResourceBundle();
+                if (bundle != null && bundle.containsKey(caption.value()))
+                {
+                    return bundle.getString(caption.value());
+                }
+                return caption.value();
             }
 
         } catch (ClassNotFoundException e)

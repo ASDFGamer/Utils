@@ -19,6 +19,9 @@ public @interface Caption
     /**
      * This is the Name of the Caption
      *
+     * If the Settings-Object has an ResourceBundle and that contains an String with this name, than the translated
+     * version is used.
+     *
      * @return The Name of the Caption
      */
     String value();

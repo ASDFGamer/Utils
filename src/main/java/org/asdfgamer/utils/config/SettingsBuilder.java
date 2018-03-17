@@ -32,6 +32,13 @@ class SettingsBuilder
     private double maximumValue;
 
     /**
+     * This builder can only be used by classes from this package.
+     */
+    SettingsBuilder()
+    {
+    }
+
+    /**
      * This adds the Class in which the setting ist declared to the list of all classes with settings.
      */
     private void addClass()
@@ -39,7 +46,7 @@ class SettingsBuilder
         if (Thread.currentThread().getStackTrace()[4].getClassName().equals(Settings.class.getName()))
         {
 
-            className = Thread.currentThread().getStackTrace()[5].getClassName();//TODO update the Numbers
+            className = Thread.currentThread().getStackTrace()[5].getClassName();
             LOG.warning("1" + className);
             setLine(Thread.currentThread().getStackTrace()[5]);
         } else
