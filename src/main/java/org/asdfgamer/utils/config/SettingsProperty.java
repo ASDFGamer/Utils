@@ -69,6 +69,8 @@ public class SettingsProperty extends SimpleStringProperty
      */
     private boolean changed = false;
 
+    private Enum valueEnum;
+
     /**
      * This is the default constructor, everything uses default values.
      */
@@ -94,6 +96,28 @@ public class SettingsProperty extends SimpleStringProperty
         this.defaultValue = initialValue;
         this.init(initialValue);
         internalValue = false;
+    }
+
+    /**
+     * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
+     * This is exactly the same as the {@link SettingsProperty#set(String)} methode but if that methode throws an
+     * exception this methode returns false.
+     *
+     * @param newValue The new value that should be assigned.
+     * @return false, if the setting has for example an integer value an the new value is a 'pure' string or boolean
+     * or double.
+     */
+    public boolean setString(String newValue)
+    {
+
+        try
+        {
+            set(newValue);
+        } catch (IllegalArgumentException e)
+        {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -124,6 +148,149 @@ public class SettingsProperty extends SimpleStringProperty
     {
 
         return SettingsInformation.isAnySettingChanged();
+    }
+
+    /**
+     * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
+     * The methode {@link SettingsProperty#setString(String)} does exactly the same thing, but returns an boolean value
+     * instead of the exception.
+     *
+     * @param newValue The new value that should be assigned.
+     * @throws IllegalArgumentException This happens if the setting has for example an integer value and
+     *                                  the new value is a 'pure' string or boolean or double.
+     */
+    @Override
+    public void set(String newValue) throws IllegalArgumentException
+    {
+
+        if (this.valueBoolean != null)
+        {
+            if (Convertible.toBoolean(newValue, TRUE_VALUES, FALSE_VALUES))
+            {
+                this.valueBoolean = Utils.isTrue(newValue, TRUE_VALUES);
+            } else
+            {
+                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_boolean"));
+            }
+        }
+
+        if (this.valueInteger != null)
+        {
+            if (Convertible.toInt(newValue))
+            {
+                setInteger(Integer.parseInt(newValue));
+            } else
+            {
+                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_integer"));
+            }
+        }
+
+        if (this.valueDouble != null)
+        {
+            if (Convertible.toDouble(newValue))
+            {
+                setDouble(Double.valueOf(newValue));
+            } else
+            {
+                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_double"));
+            }
+        }
+
+        if (this.valueEnum != null)
+        {
+            if (Utils.isEnum(newValue))
+            {
+                setEnum(Utils.getEnumElement(newValue));
+            } else
+            {
+                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_enum"));
+            }
+        }
+
+        super.set(newValue);
+    }
+
+    /**
+     * This sets the Enum value of the setting and updates the String-value.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as an Enum.
+     *
+     * @param newValue The new value.
+     * @return true, if the value changed, otherwise false.
+     */
+    public boolean setEnum(Enum newValue)
+    {
+        if (this.valueEnum != null)
+        {
+            this.valueEnum = newValue;
+            super.set(String.valueOf(newValue));
+            return true;
+        } else
+        {
+            LOG.warning(bundle.getString("noEnumValue"));
+            return false;
+        }
+    }
+
+    /**
+     * This sets the integer value of the setting and updates the String-value.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as a integer.
+     *
+     * @param newValue The new value.
+     * @return true, if the value changed, otherwise false.
+     */
+    public boolean setInteger(int newValue)
+    {
+
+        if (this.valueInteger != null)
+        {
+            if (this.maximum != null && this.maximum < newValue)
+            {
+                newValue = this.maximum.intValue();
+            } else if (this.minimum != null && this.minimum > newValue)
+            {
+                newValue = this.minimum.intValue();
+            }
+            this.valueInteger = newValue;
+            super.set(String.valueOf(newValue));
+            return true;
+        } else
+        {
+            LOG.warning(bundle.getString("noIntegerValue"));
+            return false;
+        }
+    }
+
+    /**
+     * This sets the double value of the setting and updates the String-value.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as double
+     * (and not as integer).
+     *
+     * @param newValue The new value.
+     * @return true, if the value changed, otherwise false.
+     */
+    public boolean setDouble(double newValue)
+    {
+
+        if (this.valueDouble != null)
+        {
+            if (this.maximum != null && this.maximum < newValue)
+            {
+                newValue = this.maximum;
+            } else if (this.minimum != null && this.minimum > newValue)
+            {
+                newValue = this.minimum;
+            }
+            this.valueDouble = newValue;
+            super.set(String.valueOf(newValue));
+            return true;
+        } else
+        {
+            LOG.warning(bundle.getString("noDoubleValue"));
+            return false;
+        }
     }
 
     @SuppressWarnings("ClassEscapesDefinedScope")
@@ -159,17 +326,6 @@ public class SettingsProperty extends SimpleStringProperty
     {
 
         return internalValue;
-    }
-
-    /**
-     * This returns the default value.
-     *
-     * @return The default value.
-     */
-    public String getDefaultValue()
-    {
-
-        return defaultValue;
     }
 
     /**
@@ -244,6 +400,46 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
+     * This returns the class of the Enum Value, if one is set.
+     *
+     * @return The class of the Enum Value, if one is set.
+     */
+    public Class<? extends Enum> getEnumType()
+    {
+        if (valueEnum != null)
+        {
+            return valueEnum.getClass();
+        }
+        return null;
+    }
+
+    /**
+     * This return the Type of the Setting.
+     *
+     * @return The Type of the Setting.
+     */
+    public SettingsPropertyTypes getType()
+    {
+
+        if (hasBooleanValue())
+        {
+            return SettingsPropertyTypes.Boolean;
+        } else if (hasDoubleValue())
+        {
+            return SettingsPropertyTypes.Double;
+        } else if (hasIntegerValue())
+        {
+            return SettingsPropertyTypes.Integer;
+        } else if (hasEnumValue())
+        {
+            return SettingsPropertyTypes.Enum;
+        } else
+        {
+            return SettingsPropertyTypes.String;
+        }
+    }
+
+    /**
      * This shows if the setting has an boolean value.
      *
      * @return true, if there is an boolean value, otherwise false.
@@ -255,135 +451,47 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
-     * The methode {@link SettingsProperty#setString(String)} does exactly the same thing, but returns an boolean value
-     * instead of the exception.
+     * This returns if the Setting has an Double-value.
+     * If the setting has only an integer value this returns false.
      *
-     * @param newValue The new value that should be assigned.
-     * @throws IllegalArgumentException This happens if the setting has for example an integer value and
-     *                                  the new value is a 'pure' string or boolean or double.
+     * @return true, falls a double-value exists, otherwise false.
      */
-    @Override
-    public void set(String newValue) throws IllegalArgumentException
+    public boolean hasDoubleValue()
     {
 
-        if (this.valueBoolean != null)
-        {
-            if (Convertible.toBoolean(newValue, TRUE_VALUES, FALSE_VALUES))
-            {
-                this.valueBoolean = Utils.isTrue(newValue, TRUE_VALUES);
-            } else
-            {
-                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_boolean"));
-            }
-        }
-
-        if (this.valueInteger != null)
-        {
-            if (Convertible.toInt(newValue))
-            {
-                setInteger(Integer.parseInt(newValue));
-            } else
-            {
-                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_integer"));
-            }
-        }
-
-        if (this.valueDouble != null)
-        {
-            if (Convertible.toDouble(newValue))
-            {
-                setDouble(Double.valueOf(newValue));
-            } else
-            {
-                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_double"));
-            }
-        }
-
-        super.set(newValue);
+        return this.valueDouble != null;
     }
 
     /**
-     * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
-     * This is exactly the same as the {@link SettingsProperty#set(String)} methode but if that methode throws an
-     * exception this methode returns false.
+     * This returns if the Setting has an Integer-value.
      *
-     * @param newValue The new value that should be assigned.
-     * @return false, if the setting has for example an integer value an the new value is a 'pure' string or boolean
-     * or double.
+     * @return true, if a integer-value exists, otherwise false.
      */
-    public boolean setString(String newValue)
+    public boolean hasIntegerValue()
     {
 
-        try
-        {
-            set(newValue);
-        } catch (IllegalArgumentException e)
-        {
-            return false;
-        }
-        return true;
+        return this.valueInteger != null;
     }
 
     /**
-     * This sets the integer value of the setting and updates the String-value.
-     * <p>
-     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as a integer.
+     * This shows if the value of the Setting is an Enum.
      *
-     * @param newValue The new value.
-     * @return true, if the value changed, otherwise false.
+     * @return true, if this is an Enum, otherwise false.
      */
-    public boolean setInteger(int newValue)
+    public boolean hasEnumValue()
     {
-
-        if (this.valueInteger != null)
-        {
-            if (this.maximum != null && this.maximum < newValue)
-            {
-                newValue = this.maximum.intValue();
-            } else if (this.minimum != null && this.minimum > newValue)
-            {
-                newValue = this.minimum.intValue();
-            }
-            this.valueInteger = newValue;
-            super.set(String.valueOf(newValue));
-            return true;
-        } else
-        {
-            LOG.warning(bundle.getString("noIntegerValue"));
-            return false;
-        }
+        return this.valueEnum != null;
     }
 
     /**
-     * This sets the double value of the setting and updates the String-value.
-     * <p>
-     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as double
-     * (and not as integer).
+     * This returns the default value.
      *
-     * @param newValue The new value.
-     * @return true, if the value changed, otherwise false.
+     * @return The default value.
      */
-    public boolean setDouble(double newValue)
+    public String getDefaultValue()
     {
 
-        if (this.valueDouble != null)
-        {
-            if (this.maximum != null && this.maximum < newValue)
-            {
-                newValue = this.maximum;
-            } else if (this.minimum != null && this.minimum > newValue)
-            {
-                newValue = this.minimum;
-            }
-            this.valueDouble = newValue;
-            super.set(String.valueOf(newValue));
-            return true;
-        } else
-        {
-            LOG.warning(bundle.getString("noDoubleValue"));
-            return false;
-        }
+        return defaultValue;
     }
 
     /**
@@ -410,29 +518,6 @@ public class SettingsProperty extends SimpleStringProperty
         }
 
         return true;
-    }
-
-    /**
-     * This returns if the Setting has an Double-value.
-     * If the setting has only an integer value this returns false.
-     *
-     * @return true, falls a double-value exists, otherwise false.
-     */
-    public boolean hasDoubleValue()
-    {
-
-        return this.valueDouble != null;
-    }
-
-    /**
-     * This returns if the Setting has an Integer-value.
-     *
-     * @return true, if a integer-value exists, otherwise false.
-     */
-    public boolean hasIntegerValue()
-    {
-
-        return this.valueInteger != null;
     }
 
     /**
@@ -525,16 +610,6 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This sets that this setting was changed. Moreover it sets that any setting was changed. This can't be reversed.
-     */
-    protected void setSettingChanged()
-    {
-
-        changed = true;
-        SettingsInformation.setAnySettingChanged();
-    }
-
-    /**
      * This shows if this Setting was changed, while the ChangeListener was active.
      * By default it is always active, except when this setting gets loaded.
      *
@@ -544,27 +619,6 @@ public class SettingsProperty extends SimpleStringProperty
     {
 
         return changed;
-    }
-
-    /**
-     * This Methode gets called from the Constructor to check if the initial value convertible to boolean, integer or
-     * double. If so it saves the value in that format.
-     *
-     * @param initialValue The initial Value of the setting.
-     */
-    private void init(String initialValue)
-    {
-
-        if (Convertible.toBoolean(initialValue, TRUE_VALUES, FALSE_VALUES))
-        {
-            this.valueBoolean = Utils.isTrue(initialValue, TRUE_VALUES);
-        } else if (Convertible.toInt(initialValue))
-        {
-            this.valueInteger = Integer.parseInt(initialValue);
-        } else if (Convertible.toDouble(initialValue))
-        {
-            this.valueDouble = Double.parseDouble(initialValue);
-        }
     }
 
     /**
@@ -590,29 +644,6 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This return the Type of the Setting.
-     *
-     * @return The Type of the Setting.
-     */
-    public SettingsPropertyTypes getType()
-    {
-
-        if (hasBooleanValue())
-        {
-            return SettingsPropertyTypes.Boolean;
-        } else if (hasDoubleValue())
-        {
-            return SettingsPropertyTypes.Double;
-        } else if (hasIntegerValue())
-        {
-            return SettingsPropertyTypes.Integer;
-        } else
-        {
-            return SettingsPropertyTypes.String;
-        }
-    }
-
-    /**
      * This returns the name of the Setting.
      *
      * @return The name of the Setting.
@@ -630,6 +661,28 @@ public class SettingsProperty extends SimpleStringProperty
     {
 
         set(getDefaultValue());
+    }
+
+    /**
+     * This return the Value of the Setting as Enum value. If this Setting has no Enum value this returns null.
+     *
+     * @return The value at the index
+     */
+    public Enum getEnum()
+    {
+        return this.valueEnum;
+        //return getEnum(0);
+    }
+
+    /**
+     * This shows if this setting is an List with more than one element or just a setting with one value.
+     *
+     * @return true, if the Setting is an list, otherwise false.
+     */
+    public boolean isList()
+    {
+
+        return getLength() > 1;
     }
 
     /**
@@ -696,14 +749,38 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This return the Value of the Setting as Enum value. If this Setting has no Enum value this returns null.
+     * This returns the number of elements in this setting.
      *
-     * @return The value at the index
+     * @return The Number of elements in this setting.
      */
-    public Enum getEnum()
+    public int getLength()
     {
 
-        return getEnum(0);
+        throw new UnsupportedOperationException();
+    }
+
+    /**
+     * This Methode gets called from the Constructor to check if the initial value convertible to boolean, integer or
+     * double. If so it saves the value in that format.
+     *
+     * @param initialValue The initial Value of the setting.
+     */
+    private void init(String initialValue)
+    {
+
+        if (Convertible.toBoolean(initialValue, TRUE_VALUES, FALSE_VALUES))
+        {
+            this.valueBoolean = Utils.isTrue(initialValue, TRUE_VALUES);
+        } else if (Convertible.toInt(initialValue))
+        {
+            this.valueInteger = Integer.parseInt(initialValue);
+        } else if (Convertible.toDouble(initialValue))
+        {
+            this.valueDouble = Double.parseDouble(initialValue);
+        } else if (Utils.isEnum(initialValue))
+        {
+            this.valueEnum = Utils.getEnumElement(initialValue);
+        }
     }
 
     /**
@@ -720,36 +797,13 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This returns the number of elements in this setting.
-     *
-     * @return The Number of elements in this setting.
+     * This sets that this setting was changed. Moreover it sets that any setting was changed. This can't be reversed.
      */
-    public int getLength()
+    protected void setSettingChanged()
     {
 
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * This shows if the value of the Setting is an Enum.
-     *
-     * @return true, if this is an Enum, otherwise false.
-     */
-    public boolean hasEnumValue()
-    {
-
-        throw new UnsupportedOperationException();
-    }
-
-    /**
-     * This shows if this setting is an List with more than one element or just a setting with one value.
-     *
-     * @return true, if the Setting is an list, otherwise false.
-     */
-    public boolean isList()
-    {
-
-        return getLength() > 1;
+        changed = true;
+        SettingsInformation.setAnySettingChanged();
     }
 
 }

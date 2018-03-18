@@ -115,64 +115,6 @@ public class Utils
     }
 
     /**
-     * Dies gibt einen guten Pfad für Windows zurück. Hierbei wird davon
-     * ausgegangen das mindestens Win Vista eingesetzt wird, da der Ordner in
-     * 'User\AppData\Roaming' liegt.
-     *
-     * @param name Der Name des Ordners (sinnvollerweise der Programmname).
-     * @return Den Pfad des Ordners.
-     */
-    private static String getConfigFolderWin(String name)
-    {
-
-        String userpath = System.getProperty("user.home");
-        userpath += SEPERATOR + "AppData" + SEPERATOR + "Roaming" + SEPERATOR + name + SEPERATOR;
-        return userpath;
-    }
-
-    /**
-     * Dies gibt einen guten Pfad für Linux zurück. Dieser Pfad ligt in
-     * '~\.config'.
-     *
-     * @param name Der Name des Ordners (sinnvollerweise der Programmname).
-     * @return Den Pfad des Ordners.
-     */
-    private static String getConfigFolderLinux(String name)
-    {
-
-        String userpath = System.getProperty("user.home");
-        userpath += SEPERATOR + ".config" + SEPERATOR + name + SEPERATOR;
-        return userpath;
-    }
-
-    /**
-     * Dies gibt einen guten Pfad für MacOS zurück.
-     *
-     * @param name Der Name des Ordners (sinnvollerweise der Programmname).
-     * @return Den Pfad des Ordners.
-     */
-    private static String getConfigFolderMacOS(String name)
-    {
-
-        String userpath = System.getProperty("user.home");
-        userpath += SEPERATOR + name + SEPERATOR;
-        return userpath;
-    }
-
-    /**
-     * Dies gibt einen ordentlichen Pfad für alle anderen Betriebssysteme
-     * zurück.
-     *
-     * @param name Der Name des Ordners (sinnvollerweise der Programmname).
-     * @return Den Pfad des Ordners.
-     */
-    private static String getConfigFolderNormal(String name)
-    {
-
-        return System.getProperty("user.home") + SEPERATOR + name + SEPERATOR;
-    }
-
-    /**
      * Dies gibt den Pfad zu der gesuchten Einstellungsdatei zurück und erstellt eine leere Datei an der Stelle.
      *
      * @param progname Der Name des Programms ({@link Utils#getConfigFolder(java.lang.String)
@@ -189,7 +131,7 @@ public class Utils
         {
             if (!createFile(file))
             {
-                LOG.warning("Die Configdatei "+ sfile+ " konnte nicht erstellt werden.");
+                LOG.warning("Die Configdatei " + sfile + " konnte nicht erstellt werden.");
                 return null;
             }
         }
@@ -601,7 +543,7 @@ public class Utils
         if (isEnum(klasse))
         {
             LOG.warning("getFields doesn't work with Enums, because it adds Enum Fields to the Map even if they are not from Type T");//TODO ask StackOverflow
-            return new HashMap<String, T>();
+            return new HashMap<>();
         }
         Field[] fields;
         if (klasse instanceof Class)
@@ -629,6 +571,7 @@ public class Utils
                             {
 
                                 // Ist nicht zu vermeiden, da ein vorheriger Typecheck mit einem Generic nicht möglich ist.
+                                //noinspection unchecked
                                 felder.put(field.getName(), (T) field.get(null));
                             } catch (NullPointerException e)
                             {
@@ -663,14 +606,121 @@ public class Utils
     }
 
     /**
-     * This tests if the given object is the Class-object of an enum.
+     * This tests if the given object is an Enum, or an Class object of an Enum or a String that represents an Enum.
      *
      * @param enumObject The Object that should be checked.
      * @return true, if it ist an enum, otherwise false.
      */
     public static boolean isEnum(Object enumObject)
     {
+        if (enumObject instanceof String)
+        {
+            try
+            {
+                return Class.forName((String) enumObject).isEnum();
+            } catch (ClassNotFoundException e)
+            {
+                return false;
+            }
+        } else if (enumObject instanceof Class)
+        {
+            return ((Class) enumObject).isEnum();
+        } else
+        {
+            return enumObject.getClass().isEnum();
+        }
+    }
 
-        return (enumObject instanceof Class) && (((Class) enumObject).isEnum());
+    /**
+     * Diese Methode gibt ein Enumelement zurück, welches durch einen String angegeben wurde. Dieser String muss der
+     * gesamte Name sein, z.B. java.lang.annotation.ElementType.ANNOTATION_TYPE
+     *
+     * @param enumElement Der String der das Enumelement angibt.
+     * @return Entweder das Enumelement oder null, falls es nicht gefunden werden konnte.
+     */
+    public static Enum getEnumElement(String enumElement)
+    {
+        String classname = enumElement.substring(0, enumElement.lastIndexOf("."));
+        String elementName = enumElement.substring(enumElement.lastIndexOf(".") + 1);
+        try
+        {
+            Class classelement = Class.forName(classname);
+            if (classelement.isEnum())
+            {
+                @SuppressWarnings("unchecked") Class<Enum> enumclass = (Class<Enum>) classelement;
+                Enum[] enumConstants = enumclass.getEnumConstants();
+                for (Enum enumConstant : enumConstants)
+                {
+                    if (classelement.isInstance(enumConstant) && enumConstant.name().equals(elementName))
+                    {
+                        return enumConstant;
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e)
+        {
+            LOG.warning("Die im String angegebene Klasse " + classname + " existiert nicht.");
+            return null;
+        }
+        LOG.warning("das element " + elementName + " wurde nicht in " + classname + " gefunden.");
+        return null;
+    }
+
+    /**
+     * Dies gibt einen guten Pfad für Windows zurück. Hierbei wird davon
+     * ausgegangen das mindestens Win Vista eingesetzt wird, da der Ordner in
+     * 'User\AppData\Roaming' liegt.
+     *
+     * @param name Der Name des Ordners (sinnvollerweise der Programmname).
+     * @return Den Pfad des Ordners.
+     */
+    private static String getConfigFolderWin(String name)
+    {
+
+        String userpath = System.getProperty("user.home");
+        userpath += SEPERATOR + "AppData" + SEPERATOR + "Roaming" + SEPERATOR + name + SEPERATOR;
+        return userpath;
+    }
+
+    /**
+     * Dies gibt einen guten Pfad für Linux zurück. Dieser Pfad ligt in
+     * '~\.config'.
+     *
+     * @param name Der Name des Ordners (sinnvollerweise der Programmname).
+     * @return Den Pfad des Ordners.
+     */
+    private static String getConfigFolderLinux(String name)
+    {
+
+        String userpath = System.getProperty("user.home");
+        userpath += SEPERATOR + ".config" + SEPERATOR + name + SEPERATOR;
+        return userpath;
+    }
+
+    /**
+     * Dies gibt einen guten Pfad für MacOS zurück.
+     *
+     * @param name Der Name des Ordners (sinnvollerweise der Programmname).
+     * @return Den Pfad des Ordners.
+     */
+    private static String getConfigFolderMacOS(String name)
+    {
+
+        String userpath = System.getProperty("user.home");
+        userpath += SEPERATOR + name + SEPERATOR;
+        return userpath;
+    }
+
+    /**
+     * Dies gibt einen ordentlichen Pfad für alle anderen Betriebssysteme
+     * zurück.
+     *
+     * @param name Der Name des Ordners (sinnvollerweise der Programmname).
+     * @return Den Pfad des Ordners.
+     */
+    private static String getConfigFolderNormal(String name)
+    {
+
+        return System.getProperty("user.home") + SEPERATOR + name + SEPERATOR;
     }
 }
