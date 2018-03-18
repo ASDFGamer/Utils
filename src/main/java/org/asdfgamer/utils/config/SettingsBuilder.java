@@ -8,6 +8,10 @@ import java.util.logging.Logger;
 import static java.util.logging.Logger.getLogger;
 import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
+/**
+ * This builder is used to create settings and add all necessary values.
+ */
+@SuppressWarnings({"UnusedReturnValue", "unused"})
 class SettingsBuilder
 {
 
@@ -31,11 +35,53 @@ class SettingsBuilder
 
     private double maximumValue;
 
+    private boolean maximumInt;
+
+    private boolean minimumInt;
+
     /**
      * This builder can only be used by classes from this package.
      */
     SettingsBuilder()
     {
+    }
+
+    /**
+     * This builds an SettingsProperty form the given values.
+     *
+     * @return A new SettingsProperty
+     */
+    public SettingsProperty build()
+    {
+
+        addClass();
+
+        SettingsProperty setting = new SettingsProperty(defaultValue, internalValue);
+        if (maximumInt)
+        {
+            setting.setMaximumValue((int) maximumValue);
+        } else
+        {
+            setting.setMaximumValue(maximumValue);
+        }
+        if (minimumInt)
+        {
+            setting.setMinimumValue((int) minimumValue);
+        } else
+        {
+            setting.setMinimumValue(minimumValue);
+        }
+
+        if (changeListener)
+        {
+            setting.addListener(SettingsListener.getSettingChange(setting));
+        }
+        SettingsInformation info = new SettingsInformation(informationText, settingName, className, lineNumber);
+        setting.setSettingsInformation(info);
+        SettingsName name = new SettingsName(setting, info);
+        //Start new Thread to get Name.
+        new Thread(name).start();
+        return setting;
     }
 
     /**
@@ -77,26 +123,12 @@ class SettingsBuilder
         }
     }
 
-    public SettingsProperty build()
-    {
-
-        addClass();
-
-        SettingsProperty setting = new SettingsProperty(defaultValue, internalValue);
-        setting.setMaximumValue(maximumValue);
-        setting.setMinimumValue(minimumValue);
-        if (changeListener)
-        {
-            setting.addListener(SettingsListener.getSettingChange(setting));
-        }
-        SettingsInformation info = new SettingsInformation(informationText, settingName, className, lineNumber);
-        setting.setSettingsInformation(info);
-        SettingsName name = new SettingsName(setting, info);
-        //Start new Thread to get Name.
-        new Thread(name).start();
-        return setting;
-    }
-
+    /**
+     * This sets the default value
+     *
+     * @param value The default value of the Setting
+     * @return The used SettingsBuilder
+     */
     public SettingsBuilder setDefaultValue(String value)
     {
 
@@ -104,6 +136,12 @@ class SettingsBuilder
         return this;
     }
 
+    /**
+     * This sets the Name of the Setting
+     *
+     * @param name The name of the Setting
+     * @return The used SettingsBuilder
+     */
     public SettingsBuilder setName(String name)
     {
 
@@ -111,7 +149,12 @@ class SettingsBuilder
         return this;
     }
 
-
+    /**
+     * This sets the information text of the Setting
+     *
+     * @param info The information text of the Setting
+     * @return The used SettingsBuilder
+     */
     public SettingsBuilder setInformationText(String info)
     {
 
@@ -119,6 +162,13 @@ class SettingsBuilder
         return this;
     }
 
+    /**
+     * This sets if this setting is an internal value.
+     * By default this is false.
+     *
+     * @param internal This sets if this setting is an internal value
+     * @return The used SettingsBuilder
+     */
     public SettingsBuilder setInternalValue(boolean internal)
     {
 
@@ -126,6 +176,13 @@ class SettingsBuilder
         return this;
     }
 
+    /**
+     * This sets if this setting should have the ChangeListener.
+     * By default this is true.
+     *
+     * @param add This sets if this setting should haven the ChangeListener.
+     * @return The used SettingsBuilder
+     */
     public SettingsBuilder addChangeListener(boolean add)
     {
 
@@ -133,17 +190,59 @@ class SettingsBuilder
         return this;
     }
 
+    /**
+     * This sets the Minimum value for this Setting.
+     *
+     * @param minimum The minimum value for this Setting.
+     * @return The used SettingsBuilder
+     */
+    public SettingsBuilder setMinimumValue(int minimum)
+    {
+
+        this.minimumValue = minimum;
+        this.minimumInt = true;
+        return this;
+    }
+
+    /**
+     * This sets the Maximum value for this Setting.
+     *
+     * @param maximum The maximum value for this Setting.
+     * @return The used SettingsBuilder
+     */
+    public SettingsBuilder setMaximumValue(int maximum)
+    {
+
+        this.maximumValue = maximum;
+        this.maximumInt = true;
+        return this;
+    }
+
+    /**
+     * This sets the Minimum value for this Setting.
+     *
+     * @param minimum The minimum value for this Setting.
+     * @return The used SettingsBuilder
+     */
     public SettingsBuilder setMinimumValue(double minimum)
     {
 
         this.minimumValue = minimum;
+        this.minimumInt = false;
         return this;
     }
 
+    /**
+     * This sets the maximum value for this Setting.
+     *
+     * @param maximum The maximum value for this Setting.
+     * @return The used SettingsBuilder
+     */
     public SettingsBuilder setMaximumValue(double maximum)
     {
 
         this.maximumValue = maximum;
+        this.maximumInt = false;
         return this;
     }
 }
