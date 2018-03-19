@@ -1,7 +1,6 @@
 package org.asdfgamer.utils.config;
 
 import org.asdfgamer.utils.config.internal.SettingsInformation;
-import org.asdfgamer.utils.config.internal.SettingsName;
 
 import java.util.logging.Logger;
 
@@ -78,9 +77,6 @@ class SettingsBuilder
         }
         SettingsInformation info = new SettingsInformation(informationText, settingName, className, lineNumber);
         setting.setSettingsInformation(info);
-        SettingsName name = new SettingsName(setting, info);
-        //Start new Thread to get Name.
-        new Thread(name).start();
         return setting;
     }
 

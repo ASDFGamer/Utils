@@ -651,6 +651,10 @@ public class SettingsProperty extends SimpleStringProperty
     public String getSettingName()
     {
 
+        if (info.getSettingName() == null || info.getSettingName().isEmpty())
+        {
+            info.setSettingsName(this);
+        }
         return info.getSettingName();
     }
 

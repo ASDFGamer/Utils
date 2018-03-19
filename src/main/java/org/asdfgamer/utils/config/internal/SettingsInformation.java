@@ -1,7 +1,9 @@
 package org.asdfgamer.utils.config.internal;
 
 import org.asdfgamer.utils.config.Settings;
+import org.asdfgamer.utils.config.SettingsProperty;
 
+import java.util.Map;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -12,6 +14,7 @@ import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
  */
 public class SettingsInformation
 {
+
     private final static Logger LOG = getLogger(SettingsInformation.class.getName());
 
     /**
@@ -86,6 +89,7 @@ public class SettingsInformation
      */
     public String getInformationText()
     {
+
         if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(informationText))
         {
             return Settings.getResourceBundle().getString(informationText);
@@ -130,6 +134,7 @@ public class SettingsInformation
      */
     public String getSettingName()
     {
+
         if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(settingName))
         {
             return Settings.getResourceBundle().getString(settingName);
@@ -143,8 +148,9 @@ public class SettingsInformation
      * @param name This is the name of the Setting.
      * @return true, if the name could be set, otherwise false.
      */
-    boolean setSettingName(String name)
+    private boolean setSettingName(String name)
     {
+
         if (settingName == null || settingName.isEmpty())
         {
             this.settingName = name;
@@ -154,5 +160,49 @@ public class SettingsInformation
             LOG.warning(bundle.getString("nameAlreadySet"));
             return false;
         }
+    }
+
+    /**
+     * This searches for the name of the Setting and sets it.
+     *
+     * @param setting The setting that should get the Name.
+     * @return true, if everything was successful, otherwise false.
+     */
+    public boolean setSettingsName(SettingsProperty setting)
+    {
+
+        if (!getClassName().isEmpty())
+        {
+            try
+            {
+                return setSettingNamesClass(Class.forName(getClassName()), setting);
+            } catch (ClassNotFoundException e)
+            {
+                LOG.warning(bundle.getString("classNotFound") + getClassName());
+                return false;
+            }
+        }
+        LOG.warning(bundle.getString("classNameIsEmpty"));
+        return false;
+    }
+
+    /**
+     * This adds the Name of the Setting to the SettingProperty
+     *
+     * @param settings The Class with the settings.
+     * @return true, if it was successful, otherwise false.
+     */
+    private boolean setSettingNamesClass(Object settings, SettingsProperty property)
+    {
+
+        Map<String, SettingsProperty> stringSettingsPropertyMap = SettingUtils.getFields(settings);
+        for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
+        {
+            if (entry.getValue() != null && entry.getValue().equals(property))
+            {
+                return setSettingName(entry.getKey());
+            }
+        }
+        return false;
     }
 }
