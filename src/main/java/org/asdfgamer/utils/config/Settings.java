@@ -633,7 +633,7 @@ public class Settings
         }
         if (setting instanceof Enum)
         {
-            return new SettingsBuilder().setDefaultValue(setting.toString());
+            return new SettingsBuilder().setDefaultValue(((Enum) setting).getDeclaringClass().getName() + "." + setting.toString());
         }
         LOG.warning(bundle.getString("wrongTypeOneArg"));
         return new SettingsBuilder();

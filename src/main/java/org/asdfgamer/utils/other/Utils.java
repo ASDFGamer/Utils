@@ -620,6 +620,16 @@ public class Utils
                 return Class.forName((String) enumObject).isEnum();
             } catch (ClassNotFoundException e)
             {
+                if (((String) enumObject).contains("."))
+                {
+                    try
+                    {
+                        return Class.forName(((String) enumObject).substring(0, ((String) enumObject).lastIndexOf("."))).isEnum();
+                    } catch (ClassNotFoundException ex)
+                    {
+                        return false;
+                    }
+                }
                 return false;
             }
         } else if (enumObject instanceof Class)
@@ -663,6 +673,18 @@ public class Utils
             return null;
         }
         LOG.warning("das element " + elementName + " wurde nicht in " + classname + " gefunden.");
+        return null;
+    }
+
+    public static Enum[] getAllEnumElements(Enum setting)
+    {
+
+        Class superclass = setting.getDeclaringClass();
+        if (superclass.isEnum())
+        {
+            @SuppressWarnings("unchecked") Class<Enum> enumClass = (Class<Enum>) superclass;
+            return enumClass.getEnumConstants();
+        }
         return null;
     }
 

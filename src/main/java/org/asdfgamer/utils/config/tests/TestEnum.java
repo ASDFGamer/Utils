@@ -3,6 +3,8 @@ package org.asdfgamer.utils.config.tests;
 import org.asdfgamer.utils.config.Settings;
 import org.asdfgamer.utils.config.SettingsProperty;
 
+import java.lang.annotation.ElementType;
+
 /**
  * This Enum gets Used in the tests
  *
@@ -15,7 +17,8 @@ public enum TestEnum
     testInt(1),
     testDouble(1.1),
     testBoolean(true),
-    qtest("test"),
+    testEnum(ElementType.ANNOTATION_TYPE),
+    /*qtest("test"),
     qtestInt(1),
     qtestDouble(1.1),
     qtestBoolean(true),
@@ -26,7 +29,7 @@ public enum TestEnum
     etest("test"),
     etestInt(1),
     etestDouble(1.1),
-    etestBoolean(true),;
+    etestBoolean(true),*/;
 
     private final SettingsProperty SETTING;
 

@@ -19,8 +19,7 @@ public enum SettingsConfig
     @SuppressWarnings("SpellCheckingInspection")
     @Caption("Allgemein")
     language(Locale.getDefault().toLanguageTag(), bundle.getString("languageSettingInfo")),
-    fileEnding(".cfg", bundle.getString("fileEndingInfo")),
-    saveOnChange(false, bundle.getString("saveOnChangeInfo"));
+    fileEnding(".cfg", bundle.getString("fileEndingInfo"));
 
     private final SettingsProperty SETTING;
 

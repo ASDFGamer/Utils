@@ -6,5 +6,5 @@ public enum SettingsPropertyTypes
     Integer,
     Double,
     Boolean,
-    Enum//TODO add Enum
+    Enum
 }

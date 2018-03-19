@@ -99,28 +99,6 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
-     * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
-     * This is exactly the same as the {@link SettingsProperty#set(String)} methode but if that methode throws an
-     * exception this methode returns false.
-     *
-     * @param newValue The new value that should be assigned.
-     * @return false, if the setting has for example an integer value an the new value is a 'pure' string or boolean
-     * or double.
-     */
-    public boolean setString(String newValue)
-    {
-
-        try
-        {
-            set(newValue);
-        } catch (IllegalArgumentException e)
-        {
-            return false;
-        }
-        return true;
-    }
-
-    /**
      * This constructor receives the default/initial value and if this setting is internal, everything else uses
      * default values.
      *
@@ -148,6 +126,28 @@ public class SettingsProperty extends SimpleStringProperty
     {
 
         return SettingsInformation.isAnySettingChanged();
+    }
+
+    /**
+     * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
+     * This is exactly the same as the {@link SettingsProperty#set(String)} methode but if that methode throws an
+     * exception this methode returns false.
+     *
+     * @param newValue The new value that should be assigned.
+     * @return false, if the setting has for example an integer value an the new value is a 'pure' string or boolean
+     * or double.
+     */
+    public boolean setString(String newValue)
+    {
+
+        try
+        {
+            set(newValue);
+        } catch (IllegalArgumentException e)
+        {
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -218,12 +218,70 @@ public class SettingsProperty extends SimpleStringProperty
      * @param newValue The new value.
      * @return true, if the value changed, otherwise false.
      */
+    public boolean set(Enum newValue)
+    {
+
+        return setEnum(newValue);
+    }
+
+    /**
+     * This sets the boolean value of the setting and updates the String-value.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as boolean.
+     *
+     * @param newValue The new value.
+     * @return true, if the value changed, otherwise false.
+     */
+    public boolean set(Boolean newValue)
+    {
+
+        return setBoolean(newValue);
+    }
+
+    /**
+     * This sets the integer value of the setting and updates the String-value.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as a integer.
+     *
+     * @param newValue The new value.
+     * @return true, if the value changed, otherwise false.
+     */
+    public boolean set(Integer newValue)
+    {
+
+        return setInteger(newValue);
+    }
+
+    /**
+     * This sets the double value of the setting and updates the String-value.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as double
+     * (and not as integer).
+     *
+     * @param newValue The new value.
+     * @return true, if the value changed, otherwise false.
+     */
+    public boolean set(Double newValue)
+    {
+
+        return setDouble(newValue);
+    }
+
+    /**
+     * This sets the Enum value of the setting and updates the String-value.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as an Enum.
+     *
+     * @param newValue The new value.
+     * @return true, if the value changed, otherwise false.
+     */
     public boolean setEnum(Enum newValue)
     {
+
         if (this.valueEnum != null)
         {
             this.valueEnum = newValue;
-            super.set(String.valueOf(newValue));
+            super.set(String.valueOf(newValue.getDeclaringClass() + "." + newValue));
             return true;
         } else
         {
@@ -406,6 +464,7 @@ public class SettingsProperty extends SimpleStringProperty
      */
     public Class<? extends Enum> getEnumType()
     {
+
         if (valueEnum != null)
         {
             return valueEnum.getClass();
@@ -480,6 +539,7 @@ public class SettingsProperty extends SimpleStringProperty
      */
     public boolean hasEnumValue()
     {
+
         return this.valueEnum != null;
     }
 
@@ -674,6 +734,7 @@ public class SettingsProperty extends SimpleStringProperty
      */
     public Enum getEnum()
     {
+
         return this.valueEnum;
         //return getEnum(0);
     }

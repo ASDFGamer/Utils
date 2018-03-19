@@ -6,7 +6,10 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
-import org.asdfgamer.utils.config.*;
+import org.asdfgamer.utils.config.Caption;
+import org.asdfgamer.utils.config.SettingClassInfo;
+import org.asdfgamer.utils.config.Settings;
+import org.asdfgamer.utils.config.SettingsProperty;
 import org.asdfgamer.utils.config.sort.CaptionElement;
 import org.asdfgamer.utils.config.sort.ListElement;
 import org.asdfgamer.utils.config.sort.SettingElement;
@@ -74,6 +77,7 @@ public class SettingsGUI
 
     /**
      * This returns the Scene for the settings.
+     *
      * @return A scene where you can change the settings.
      */
     public Scene getScene()
@@ -88,6 +92,7 @@ public class SettingsGUI
 
     /**
      * This creates the scene if it isn't present.
+     *
      * @return The new Scene.
      */
     private Scene createScene()
@@ -102,6 +107,7 @@ public class SettingsGUI
 
     /**
      * This Adds Tabs on the Tabpane for every Class and fills them.
+     *
      * @param tabPane The tabPane that should get the Settings.
      */
     private void addTabs(TabPane tabPane)
@@ -123,6 +129,7 @@ public class SettingsGUI
 
     /**
      * This checks if the given Class should be shown on the GUI.
+     *
      * @param classname The Class that should be checked.
      * @return true, if it should be shown, otherwise false.
      */
@@ -141,6 +148,7 @@ public class SettingsGUI
 
     /**
      * This creates an Tab for a Class.
+     *
      * @param classname The Class for the Tab.
      * @return The created tab.
      */
@@ -186,10 +194,10 @@ public class SettingsGUI
      */
     private void addBottomLine(GridPane gridPane, Object classname)
     {
+
         int next = 0;
         Button ok = new Button("OK");
         int row = gridPane.getRowCount();
-        if (!SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
         {
             saveText = bundle.getString("save");
             Button save = new Button(saveText);
@@ -198,11 +206,7 @@ public class SettingsGUI
 
             gridPane.add(save, next, row);
             next++;
-        } else
-        {
-            ok.setDefaultButton(true);
-        }
-        //ok.setOnAction();TODO how can i signalize, that the scene can be changed?
+        } //TODO how can i signalize, that the scene can be changed?
         gridPane.add(ok, next, row);
         next++;
         Button defaultSettings = new Button(bundle.getString("defaultSettings"));
@@ -229,7 +233,7 @@ public class SettingsGUI
                 {
                     save = (Button) child;
                 }
-            } else if (child instanceof TextField || child instanceof CheckBox)
+            } else if (child instanceof TextField || child instanceof CheckBox || child instanceof ComboBox)
             {
                 child.fireEvent(defaultValue);
             }
@@ -285,6 +289,7 @@ public class SettingsGUI
      */
     private Control getSettingChangeElement(SettingsProperty setting)
     {
+
         switch (setting.getType())
         {
             case Double:
@@ -296,9 +301,36 @@ public class SettingsGUI
             case String:
                 return createStringElement(setting);
             case Enum:
+                return createEnumElement(setting);
             default:
                 return new Label(bundle.getString("internalError"));
         }
+    }
+
+    private ComboBox<Enum> createEnumElement(SettingsProperty setting)
+    {
+
+        ComboBox<Enum> comboBox = new ComboBox<>();
+        Enum[] elements = Utils.getAllEnumElements(setting.getEnum());
+        comboBox.getItems().addAll(elements);
+        comboBox.getSelectionModel().select(setting.getEnum());
+        comboBox.valueProperty().addListener((observable, oldValue, newValue) ->
+        {
+            LOG.warning("SettingsGUI.createEnumElement Zeile 319");
+            setting.set(comboBox.getValue());
+
+        });
+
+        comboBox.setOnAction(event ->
+        {
+            if (event instanceof DefaultValue)
+            {
+                LOG.info(Utils.getEnumElement(setting.getDefaultValue()) + "");
+                comboBox.getSelectionModel().select(Utils.getEnumElement(setting.getDefaultValue()));
+                setting.setToDefaultValue();
+            }
+        });
+        return comboBox;
     }
 
     /**
@@ -312,16 +344,15 @@ public class SettingsGUI
 
         TextField text = new TextField();
         text.setText(setting.get());
-        if (SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
+
+        text.focusedProperty().addListener((observable, oldValue, newValue) ->
         {
-            text.focusedProperty().addListener((observable, oldValue, newValue) ->
+            if (!newValue)
             {
-                if (!newValue)
-                {
-                    setting.set(text.getText());
-                }
-            });
-        }
+                setting.set(text.getText());
+            }
+        });
+
         text.setOnAction(event ->
         {
             if (event instanceof DefaultValue)
@@ -344,16 +375,15 @@ public class SettingsGUI
 
         CheckBox checkBox = new CheckBox();
         checkBox.setSelected(setting.getBoolean());
-        if (SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
+
+        checkBox.focusedProperty().addListener((observable, oldValue, newValue) ->
         {
-            checkBox.focusedProperty().addListener((observable, oldValue, newValue) ->
+            if (!newValue)
             {
-                if (!newValue)
-                {
-                    setting.setBoolean(checkBox.isSelected());
-                }
-            });
-        }
+                setting.setBoolean(checkBox.isSelected());
+            }
+        });
+
         checkBox.setOnAction(event ->
         {
             if (event instanceof DefaultValue)
@@ -376,16 +406,15 @@ public class SettingsGUI
 
         TextField number = new TextField();
         number.setText(setting.get());
-        if (SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
+
+        number.focusedProperty().addListener((observable, oldValue, newValue) ->
         {
-            number.focusedProperty().addListener((observable, oldValue, newValue) ->
+            if (!newValue && Convertible.toDouble(number.getText()))
             {
-                if (!newValue && Convertible.toDouble(number.getText()))
-                {
-                    setting.set(number.getText());
-                }
-            });
-        }
+                setting.set(number.getText());
+            }
+        });
+
         number.textProperty().addListener((observable, oldValue, newValue) ->
         {
             if (!Convertible.toDouble(newValue))
@@ -418,16 +447,15 @@ public class SettingsGUI
 
         TextField number = new TextField();
         number.setText(setting.get());
-        if (SettingsConfig.saveOnChange.SETTINGProperty().getBoolean())
+
+        number.focusedProperty().addListener((observable, oldValue, newValue) -> //TODO save on change or save on save button click?
         {
-            number.focusedProperty().addListener((observable, oldValue, newValue) -> //TODO save on change or save on save button click?
+            if (!newValue && Convertible.toInt(number.getText()))
             {
-                if (!newValue && Convertible.toInt(number.getText()))
-                {
-                    setting.set(number.getText());
-                }
-            });
-        }
+                setting.set(number.getText());
+            }
+        });
+
         number.textProperty().addListener((observable, oldValue, newValue) ->
         {
             if (!Convertible.toInt(newValue))
@@ -451,6 +479,7 @@ public class SettingsGUI
 
     /**
      * This gets the Name of the Class Name that should be shown.
+     *
      * @param classname The Classname that is in question.
      * @return The Name that gets shown.
      */
@@ -481,5 +510,7 @@ public class SettingsGUI
      * This is used to reset the values to the default value.
      */
     private class DefaultValue extends ActionEvent
-    {}
+    {
+
+    }
 }
