@@ -1,10 +1,18 @@
 package org.asdfgamer.utils.config;
 
+import javafx.beans.InvalidationListener;
+import javafx.beans.WeakInvalidationListener;
 import javafx.beans.property.SimpleStringProperty;
+import javafx.beans.property.StringProperty;
+import javafx.beans.value.*;
+import javafx.collections.FXCollections;
+import javafx.collections.ListChangeListener;
+import javafx.collections.ObservableList;
 import org.asdfgamer.utils.config.internal.SettingsInformation;
 import org.asdfgamer.utils.other.Convertible;
 import org.asdfgamer.utils.other.Utils;
 
+import java.util.ArrayList;
 import java.util.logging.Logger;
 
 import static org.asdfgamer.utils.config.internal.SettingUtils.*;
@@ -16,7 +24,7 @@ import static org.asdfgamer.utils.config.internal.SettingUtils.*;
  * @version 0.9
  */
 @SuppressWarnings({"UnusedReturnValue", "unused", "WeakerAccess"})
-public class SettingsProperty extends SimpleStringProperty
+public class SettingsProperty implements WritableStringValue, ObservableStringValue
 {
 
     /**
@@ -39,20 +47,31 @@ public class SettingsProperty extends SimpleStringProperty
      */
     private SettingsInformation info;
 
+    private final StringProperty valueString;
+
+    /**
+     * This is the Value of the Setting as String. This is the List that has all Listeners.
+     */
+    private ObservableList<String> valuesString = FXCollections.observableList(new ArrayList<>());
     /**
      * This is the Value of the Setting as boolean, if existent. If it is not existent that this is null.
      */
-    private Boolean valueBoolean = null;
+    private ObservableList<Boolean> valuesBoolean = FXCollections.observableList(new ArrayList<>());
 
     /**
      * This is the Value of the Setting as integer, if existent. If it is not existent that this is null.
      */
-    private Integer valueInteger = null;
+    private ObservableList<Integer> valuesInteger = FXCollections.observableList(new ArrayList<>());
 
     /**
      * This is the Value of the Setting as double, if existent. If it is not existent that this is null.
      */
-    private Double valueDouble = null;
+    private ObservableList<Double> valuesDouble = FXCollections.observableList(new ArrayList<>());
+
+    /**
+     * This is the Value of the Setting as Enum, if existent. If it is not existent that this is null.
+     */
+    private ObservableList<Enum> valuesEnum = FXCollections.observableList(new ArrayList<>());
 
     /**
      * This shows the highest allowed value. If it is null then there is no upper bound.
@@ -69,17 +88,29 @@ public class SettingsProperty extends SimpleStringProperty
      */
     private boolean changed = false;
 
-    private Enum valueEnum;
+
 
     /**
      * This is the default constructor, everything uses default values.
      */
     public SettingsProperty()
     {
-
-        super();
         this.defaultValue = null;
-        internalValue = false;
+        this.internalValue = false;
+        this.valueString = new SimpleStringProperty();
+        this.valuesString.addListener(getvalueUpdater());
+    }
+
+    private ListChangeListener<String> getvalueUpdater()
+    {
+        return c ->
+        {
+            c.next();
+            if (c.getFrom() == 0)
+            {
+                valueString.setValue(valuesString.get(0));
+            }
+        };
     }
 
     /**
@@ -91,11 +122,12 @@ public class SettingsProperty extends SimpleStringProperty
      */
     SettingsProperty(String initialValue)
     {
-
-        super(initialValue);
+        this.valuesString.add(initialValue);
         this.defaultValue = initialValue;
+        this.valueString = new SimpleStringProperty(initialValue);
+        this.valuesString.addListener(getvalueUpdater());
         this.init(initialValue);
-        internalValue = false;
+        this.internalValue = false;
     }
 
     /**
@@ -107,9 +139,10 @@ public class SettingsProperty extends SimpleStringProperty
      */
     SettingsProperty(String initialValue, boolean internalValue)
     {
-
-        super(initialValue);
+        this.valuesString.add(initialValue);
+        this.valueString = new SimpleStringProperty(initialValue);
         this.defaultValue = initialValue;
+        this.valuesString.addListener(getvalueUpdater());
         this.init(initialValue);
         this.internalValue = internalValue;
     }
@@ -151,6 +184,21 @@ public class SettingsProperty extends SimpleStringProperty
     }
 
     /**
+     * Get the wrapped value. This must be identical to
+     * the value returned from {@link #getValue()}.
+     * <p>
+     * This method exists only to align WritableObjectValue API with
+     * {@link WritableBooleanValue} and subclasses of {@link WritableNumberValue}
+     *
+     * @return The current value
+     */
+    @Override
+    public String get()
+    {
+        return valuesString.get(0);
+    }
+
+    /**
      * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
      * The methode {@link SettingsProperty#setString(String)} does exactly the same thing, but returns an boolean value
      * instead of the exception.
@@ -163,18 +211,19 @@ public class SettingsProperty extends SimpleStringProperty
     public void set(String newValue) throws IllegalArgumentException
     {
 
-        if (this.valueBoolean != null)
+        if (this.valuesBoolean.size() > 0)
         {
             if (Convertible.toBoolean(newValue, TRUE_VALUES, FALSE_VALUES))
             {
-                this.valueBoolean = Utils.isTrue(newValue, TRUE_VALUES);
+                setBoolean(Utils.isTrue(newValue, TRUE_VALUES));
+                //this.valuesBoolean = Utils.isTrue(newValue, TRUE_VALUES);
             } else
             {
                 throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_boolean"));
             }
         }
 
-        if (this.valueInteger != null)
+        if (this.valuesInteger.size() > 0)
         {
             if (Convertible.toInt(newValue))
             {
@@ -185,7 +234,7 @@ public class SettingsProperty extends SimpleStringProperty
             }
         }
 
-        if (this.valueDouble != null)
+        if (this.valuesDouble.size() > 0)
         {
             if (Convertible.toDouble(newValue))
             {
@@ -196,7 +245,7 @@ public class SettingsProperty extends SimpleStringProperty
             }
         }
 
-        if (this.valueEnum != null)
+        if (this.valuesEnum.size() > 0)
         {
             if (Utils.isEnum(newValue))
             {
@@ -207,7 +256,7 @@ public class SettingsProperty extends SimpleStringProperty
             }
         }
 
-        super.set(newValue);
+        valuesString.set(0, newValue);
     }
 
     /**
@@ -278,10 +327,10 @@ public class SettingsProperty extends SimpleStringProperty
     public boolean setEnum(Enum newValue)
     {
 
-        if (this.valueEnum != null)
+        if (this.valuesEnum.size() > 0)
         {
-            this.valueEnum = newValue;
-            super.set(String.valueOf(newValue.getDeclaringClass() + "." + newValue));
+            this.valuesEnum.set(0, newValue);
+            valuesString.set(0, String.valueOf(newValue.getDeclaringClass() + "." + newValue));
             return true;
         } else
         {
@@ -301,7 +350,7 @@ public class SettingsProperty extends SimpleStringProperty
     public boolean setInteger(int newValue)
     {
 
-        if (this.valueInteger != null)
+        if (this.valuesInteger.size() > 0)
         {
             if (this.maximum != null && this.maximum < newValue)
             {
@@ -310,8 +359,8 @@ public class SettingsProperty extends SimpleStringProperty
             {
                 newValue = this.minimum.intValue();
             }
-            this.valueInteger = newValue;
-            super.set(String.valueOf(newValue));
+            this.valuesInteger.set(0, newValue);
+            this.valuesString.set(0, String.valueOf(newValue));
             return true;
         } else
         {
@@ -332,7 +381,7 @@ public class SettingsProperty extends SimpleStringProperty
     public boolean setDouble(double newValue)
     {
 
-        if (this.valueDouble != null)
+        if (this.valuesDouble.size() > 0)
         {
             if (this.maximum != null && this.maximum < newValue)
             {
@@ -341,8 +390,8 @@ public class SettingsProperty extends SimpleStringProperty
             {
                 newValue = this.minimum;
             }
-            this.valueDouble = newValue;
-            super.set(String.valueOf(newValue));
+            this.valuesDouble.set(0, newValue);
+            this.valuesString.set(0, String.valueOf(newValue));
             return true;
         } else
         {
@@ -397,10 +446,10 @@ public class SettingsProperty extends SimpleStringProperty
     public boolean setBoolean(boolean newValue)
     {
 
-        if (this.valueBoolean != null)
+        if (this.valuesBoolean.size() > 0)
         {
-            this.valueBoolean = newValue;
-            super.set(String.valueOf(newValue));
+            this.valuesBoolean.set(0, newValue);
+            this.valuesString.set(0, String.valueOf(newValue));
             return true;
         } else
         {
@@ -418,7 +467,7 @@ public class SettingsProperty extends SimpleStringProperty
     public Boolean getBoolean()
     {
 
-        return this.valueBoolean;
+        return this.valuesBoolean.get(0);
     }
 
     /**
@@ -429,7 +478,7 @@ public class SettingsProperty extends SimpleStringProperty
     public Integer getInteger()
     {
 
-        return this.valueInteger;
+        return this.valuesInteger.get(0);
     }
 
     /**
@@ -442,14 +491,14 @@ public class SettingsProperty extends SimpleStringProperty
     public Double getDouble()
     {
 
-        if (this.valueDouble != null)
+        if (this.valuesDouble.get(0) != null)
         {
-            return this.valueDouble;
+            return this.valuesDouble.get(0);
         } else
         {
-            if (this.valueInteger != null)
+            if (this.valuesInteger.get(0) != null)
             {
-                return this.valueInteger.doubleValue();
+                return this.valuesInteger.get(0).doubleValue();
             } else
             {
                 return null;
@@ -465,9 +514,9 @@ public class SettingsProperty extends SimpleStringProperty
     public Class<? extends Enum> getEnumType()
     {
 
-        if (valueEnum != null)
+        if (valuesEnum != null)
         {
-            return valueEnum.getClass();
+            return valuesEnum.get(0).getClass();
         }
         return null;
     }
@@ -506,7 +555,7 @@ public class SettingsProperty extends SimpleStringProperty
     public boolean hasBooleanValue()
     {
 
-        return this.valueBoolean != null;
+        return this.valuesBoolean.size() > 0;
     }
 
     /**
@@ -518,7 +567,7 @@ public class SettingsProperty extends SimpleStringProperty
     public boolean hasDoubleValue()
     {
 
-        return this.valueDouble != null;
+        return this.valuesDouble.size() > 0;
     }
 
     /**
@@ -529,7 +578,7 @@ public class SettingsProperty extends SimpleStringProperty
     public boolean hasIntegerValue()
     {
 
-        return this.valueInteger != null;
+        return this.valuesInteger.size() > 0;
     }
 
     /**
@@ -540,7 +589,7 @@ public class SettingsProperty extends SimpleStringProperty
     public boolean hasEnumValue()
     {
 
-        return this.valueEnum != null;
+        return this.valuesEnum.size() > 0;
     }
 
     /**
@@ -735,7 +784,7 @@ public class SettingsProperty extends SimpleStringProperty
     public Enum getEnum()
     {
 
-        return this.valueEnum;
+        return this.valuesEnum.get(0);
         //return getEnum(0);
     }
 
@@ -832,19 +881,18 @@ public class SettingsProperty extends SimpleStringProperty
      */
     private void init(String initialValue)
     {
-
         if (Convertible.toBoolean(initialValue, TRUE_VALUES, FALSE_VALUES))
         {
-            this.valueBoolean = Utils.isTrue(initialValue, TRUE_VALUES);
+            this.valuesBoolean.add(0, Utils.isTrue(initialValue, TRUE_VALUES));
         } else if (Convertible.toInt(initialValue))
         {
-            this.valueInteger = Integer.parseInt(initialValue);
+            this.valuesInteger.add(0, Integer.parseInt(initialValue));
         } else if (Convertible.toDouble(initialValue))
         {
-            this.valueDouble = Double.parseDouble(initialValue);
+            this.valuesDouble.add(0, Double.parseDouble(initialValue));
         } else if (Utils.isEnum(initialValue))
         {
-            this.valueEnum = Utils.getEnumElement(initialValue);
+            this.valuesEnum.add(0, Utils.getEnumElement(initialValue));
         }
     }
 
@@ -871,4 +919,119 @@ public class SettingsProperty extends SimpleStringProperty
         SettingsInformation.setAnySettingChanged();
     }
 
+    /**
+     * Adds a {@link ChangeListener} which will be notified whenever the value
+     * of the {@code ObservableValue} changes. If the same listener is added
+     * more than once, then it will be notified more than once. That is, no
+     * check is made to ensure uniqueness.
+     * <p>
+     * Note that the same actual {@code ChangeListener} instance may be safely
+     * registered for different {@code ObservableValues}.
+     * <p>
+     * The {@code ObservableValue} stores a strong reference to the listener
+     * which will prevent the listener from being garbage collected and may
+     * result in a memory leak. It is recommended to either unregister a
+     * listener by calling {@link #removeListener(ChangeListener)
+     * removeListener} after use or to use an instance of
+     * {@link WeakChangeListener} avoid this situation.
+     *
+     * @param listener The listener to register
+     *
+     * @throws NullPointerException if the listener is null
+     * @see #removeListener(ChangeListener)
+     */
+    @Override
+    public void addListener(ChangeListener<? super String> listener)
+    {
+        valueString.addListener(listener);
+    }
+
+    /**
+     * Removes the given listener from the list of listeners, that are notified
+     * whenever the value of the {@code ObservableValue} changes.
+     * <p>
+     * If the given listener has not been previously registered (i.e. it was
+     * never added) then this method call is a no-op. If it had been previously
+     * added then it will be removed. If it had been added more than once, then
+     * only the first occurrence will be removed.
+     *
+     * @param listener The listener to remove
+     *
+     * @throws NullPointerException if the listener is null
+     * @see #addListener(ChangeListener)
+     */
+    @Override
+    public void removeListener(ChangeListener<? super String> listener)
+    {
+        valueString.removeListener(listener);
+    }
+
+    /**
+     * Adds an {@link InvalidationListener} which will be notified whenever the
+     * {@code Observable} becomes invalid. If the same
+     * listener is added more than once, then it will be notified more than
+     * once. That is, no check is made to ensure uniqueness.
+     * <p>
+     * Note that the same actual {@code InvalidationListener} instance may be
+     * safely registered for different {@code Observables}.
+     * <p>
+     * The {@code Observable} stores a strong reference to the listener
+     * which will prevent the listener from being garbage collected and may
+     * result in a memory leak. It is recommended to either unregister a
+     * listener by calling {@link #removeListener(InvalidationListener)
+     * removeListener} after use or to use an instance of
+     * {@link WeakInvalidationListener} avoid this situation.
+     *
+     * @param listener The listener to register
+     *
+     * @throws NullPointerException if the listener is null
+     * @see #removeListener(InvalidationListener)
+     */
+    @Override
+    public void addListener(InvalidationListener listener)
+    {
+        valueString.addListener(listener);
+    }
+
+    /**
+     * Removes the given listener from the list of listeners, that are notified
+     * whenever the value of the {@code Observable} becomes invalid.
+     * <p>
+     * If the given listener has not been previously registered (i.e. it was
+     * never added) then this method call is a no-op. If it had been previously
+     * added then it will be removed. If it had been added more than once, then
+     * only the first occurrence will be removed.
+     *
+     * @param listener The listener to remove
+     *
+     * @throws NullPointerException if the listener is null
+     * @see #addListener(InvalidationListener)
+     */
+    @Override
+    public void removeListener(InvalidationListener listener)
+    {
+        valueString.removeListener(listener);
+    }
+
+    /**
+     * Get the wrapped value.
+     *
+     * @return The current value
+     */
+    @Override
+    public String getValue()
+    {
+        return get();
+    }
+
+    /**
+     * Set the wrapped value.
+     *
+     * @param value The new value
+     */
+    @Override
+    public void setValue(String value)
+    {
+        set(value);
+    }
 }
