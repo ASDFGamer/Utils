@@ -8,9 +8,9 @@ import static org.junit.Assert.assertEquals;
 @SuppressWarnings("WeakerAccess")
 public class PropertiesFileStorageTest
 {
-    public static final SettingsProperty setting1 = Settings.newSetting("it works");
+    public static final Setting setting1 = Settings.newSetting("it works");
 
-    public static final SettingsProperty setting2 = Settings.newSetting("it works really");
+    public static final Setting setting2 = Settings.newSetting("it works really");
 
     @Test
     @Ignore

@@ -1,6 +1,6 @@
 package org.asdfgamer.utils.config.internal;
 
-import org.asdfgamer.utils.config.SettingsProperty;
+import org.asdfgamer.utils.config.Setting;
 import org.asdfgamer.utils.other.Utils;
 
 import java.lang.reflect.Field;
@@ -20,7 +20,7 @@ public class SettingUtils
 
     public final static ResourceBundle bundle = ResourceBundle.getBundle("config/Settings", locale);//TODO test if a change in language works
 
-    public static Map<String, SettingsProperty> getFields(Object settings)
+    public static Map<String, Setting> getFields(Object settings)
     {
         if (Utils.isEnum(settings))
         {
@@ -31,7 +31,7 @@ public class SettingUtils
         }
     }
 
-    private static Map<String, SettingsProperty> getFieldsFromEnum(Object object)
+    private static Map<String, Setting> getFieldsFromEnum(Object object)
     {
         Field[] enumConstants;
         if (object instanceof Class)
@@ -41,7 +41,7 @@ public class SettingUtils
         {
             enumConstants = object.getClass().getFields();
         }
-        Map<String, SettingsProperty> settings = new HashMap<>();
+        Map<String, Setting> settings = new HashMap<>();
         for (Field enumConstant : enumConstants)
         {
             try
@@ -52,9 +52,9 @@ public class SettingUtils
                         Method[] methods = enumConstant.get(null).getClass().getMethods();
                         for (Method method : methods)
                         {
-                            if (method.getReturnType().equals(SettingsProperty.class))
+                            if (method.getReturnType().equals(Setting.class))
                             {
-                                settings.put(enumConstant.getName(), (SettingsProperty) method.invoke(enumConstant.get(null)));
+                                settings.put(enumConstant.getName(), (Setting) method.invoke(enumConstant.get(null)));
                             }
                         }
                     } catch (IllegalAccessException | InvocationTargetException e)
@@ -75,23 +75,23 @@ public class SettingUtils
      * @param enumObject The Class-object of the enum
      * @return A List with all Settings
      */
-    private static List<SettingsProperty> getSettingsFromEnum(Object enumObject)
+    private static List<Setting> getSettingsFromEnum(Object enumObject)
     {
 
         if (Utils.isEnum(enumObject))
         {
-            List<SettingsProperty> settings = new LinkedList<>();
+            List<Setting> settings = new LinkedList<>();
             Object[] enumConstants = ((Class) enumObject).getEnumConstants();
             for (Object enumConstant : enumConstants)
             {
                 Method[] methods = enumConstant.getClass().getDeclaredMethods();
                 for (Method method : methods)
                 {
-                    if (method.getReturnType().equals(SettingsProperty.class))
+                    if (method.getReturnType().equals(Setting.class))
                     {
                         try
                         {
-                            SettingsProperty setting = (SettingsProperty) method.invoke(enumConstant);
+                            Setting setting = (Setting) method.invoke(enumConstant);
                             //setting.setSettingName(((Enum) enumConstant).name());
                             if (!settings.contains(setting))
                             {
@@ -119,18 +119,18 @@ public class SettingUtils
      * @return A Map which has in the Classname as Key and as value a List with all Settings of that Class.
      */
     @SuppressWarnings("WeakerAccess")
-    public static Map<String, List<SettingsProperty>> sortSettingsInClasses(List<SettingsProperty> settings)
+    public static Map<String, List<Setting>> sortSettingsInClasses(List<Setting> settings)
     {
 
-        Map<String, List<SettingsProperty>> settingClasses = new HashMap<>();
-        for (SettingsProperty setting : settings)
+        Map<String, List<Setting>> settingClasses = new HashMap<>();
+        for (Setting setting : settings)
         {
             if (settingClasses.containsKey(setting.getClassName()))
             {
                 settingClasses.get(setting.getClassName()).add(setting);
             } else
             {
-                List<SettingsProperty> className = new LinkedList<>();
+                List<Setting> className = new LinkedList<>();
                 className.add(setting);
                 settingClasses.put(setting.getClassName(), className);
             }
@@ -145,7 +145,7 @@ public class SettingUtils
     @SuppressWarnings("SpellCheckingInspection")
     public static String[] TRUE_VALUES = {"true"};
 
-    public static List<SettingsProperty> getSettingsFromObject(Object object)
+    public static List<Setting> getSettingsFromObject(Object object)
     {
 
         if (Utils.isEnum(object))
@@ -157,14 +157,14 @@ public class SettingUtils
         }
     }
 
-    private static List<SettingsProperty> getSettingsFromClass(Object object)
+    private static List<Setting> getSettingsFromClass(Object object)
     {
 
         try
         {
-            List<SettingsProperty> settings = new LinkedList<>();
-            Map<String, SettingsProperty> stringSettingsPropertyMap = Utils.getFields(object);
-            for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
+            List<Setting> settings = new LinkedList<>();
+            Map<String, Setting> stringSettingsPropertyMap = Utils.getFields(object);
+            for (Map.Entry<String, Setting> entry : stringSettingsPropertyMap.entrySet())
             {
                 settings.add(entry.getValue());
             }

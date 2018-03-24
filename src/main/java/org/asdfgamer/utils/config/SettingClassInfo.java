@@ -10,7 +10,7 @@ import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
 /**
  * In this Class are different information about the whole Class/Enum with Settings, because they are for the Class/Enum
- * and not for a specific SettingsProperty.
+ * and not for a specific Setting.
  *
  * @author ASDFGamer
  */

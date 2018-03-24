@@ -21,7 +21,7 @@ public enum SettingsConfig
     language(Locale.getDefault().toLanguageTag(), bundle.getString("languageSettingInfo")),
     fileEnding(".cfg", bundle.getString("fileEndingInfo"));
 
-    private final SettingsProperty SETTING;
+    private final Setting SETTING;
 
     /**
      * This constructor is for Enums important, because this lets you use one constructor for all cases.
@@ -52,7 +52,7 @@ public enum SettingsConfig
         this.SETTING.set(SETTING);
     }
 
-    public SettingsProperty SETTINGProperty()
+    public Setting SETTINGProperty()
     {
 
         return SETTING;

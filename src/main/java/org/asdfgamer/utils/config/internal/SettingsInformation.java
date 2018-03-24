@@ -1,7 +1,7 @@
 package org.asdfgamer.utils.config.internal;
 
+import org.asdfgamer.utils.config.Setting;
 import org.asdfgamer.utils.config.Settings;
-import org.asdfgamer.utils.config.SettingsProperty;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -168,7 +168,7 @@ public class SettingsInformation
      * @param setting The setting that should get the Name.
      * @return true, if everything was successful, otherwise false.
      */
-    public boolean setSettingsName(SettingsProperty setting)
+    public boolean setSettingsName(Setting setting)
     {
 
         if (!getClassName().isEmpty())
@@ -192,11 +192,11 @@ public class SettingsInformation
      * @param settings The Class with the settings.
      * @return true, if it was successful, otherwise false.
      */
-    private boolean setSettingNamesClass(Object settings, SettingsProperty property)
+    private boolean setSettingNamesClass(Object settings, Setting property)
     {
 
-        Map<String, SettingsProperty> stringSettingsPropertyMap = SettingUtils.getFields(settings);
-        for (Map.Entry<String, SettingsProperty> entry : stringSettingsPropertyMap.entrySet())
+        Map<String, Setting> stringSettingsPropertyMap = SettingUtils.getFields(settings);
+        for (Map.Entry<String, Setting> entry : stringSettingsPropertyMap.entrySet())
         {
             if (entry.getValue() != null && entry.getValue().equals(property))
             {

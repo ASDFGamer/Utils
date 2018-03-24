@@ -7,9 +7,9 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import org.asdfgamer.utils.config.Caption;
+import org.asdfgamer.utils.config.Setting;
 import org.asdfgamer.utils.config.SettingClassInfo;
 import org.asdfgamer.utils.config.Settings;
-import org.asdfgamer.utils.config.SettingsProperty;
 import org.asdfgamer.utils.config.sort.CaptionElement;
 import org.asdfgamer.utils.config.sort.ListElement;
 import org.asdfgamer.utils.config.sort.SettingElement;
@@ -161,7 +161,7 @@ public class SettingsGUI
         GridPane gridPane = new GridPane();
         try
         {
-            List<SettingsProperty> settings = getSettingsFromObject(Class.forName(classname));
+            List<Setting> settings = getSettingsFromObject(Class.forName(classname));
             SettingsSorter sorter = new SettingsSorter();
             sorter.add(settings);
             sorter.add(Class.forName(classname));
@@ -287,7 +287,7 @@ public class SettingsGUI
      * @param setting The Setting that should get the control element..
      * @return The new control element..
      */
-    private Control getSettingChangeElement(SettingsProperty setting)
+    private Control getSettingChangeElement(Setting setting)
     {
 
         switch (setting.getType())
@@ -307,7 +307,7 @@ public class SettingsGUI
         }
     }
 
-    private ComboBox<Enum> createEnumElement(SettingsProperty setting)
+    private ComboBox<Enum> createEnumElement(Setting setting)
     {
 
         ComboBox<Enum> comboBox = new ComboBox<>();
@@ -339,7 +339,7 @@ public class SettingsGUI
      * @param setting The Setting that should be edited.
      * @return The newly created TextField.
      */
-    private TextField createStringElement(SettingsProperty setting)
+    private TextField createStringElement(Setting setting)
     {
 
         TextField text = new TextField();
@@ -370,7 +370,7 @@ public class SettingsGUI
      * @param setting The Setting that should be edited.
      * @return The newly created CheckBox.
      */
-    private CheckBox createBooleanElement(SettingsProperty setting)
+    private CheckBox createBooleanElement(Setting setting)
     {
 
         CheckBox checkBox = new CheckBox();
@@ -401,7 +401,7 @@ public class SettingsGUI
      * @param setting The Setting that should be edited.
      * @return The newly created TextField.
      */
-    private TextField createDoubleElement(SettingsProperty setting)
+    private TextField createDoubleElement(Setting setting)
     {
 
         TextField number = new TextField();
@@ -442,7 +442,7 @@ public class SettingsGUI
      * @param setting The Setting that should be edited.
      * @return The newly created TextField.
      */
-    private TextField createIntegerElement(SettingsProperty setting)
+    private TextField createIntegerElement(Setting setting)
     {
 
         TextField number = new TextField();

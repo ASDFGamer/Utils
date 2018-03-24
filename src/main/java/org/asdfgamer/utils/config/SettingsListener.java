@@ -21,7 +21,7 @@ class SettingsListener
      * @param setting The Setting that should get the Listener.
      * @return The new ChangeListener.
      */
-    public static ChangeListener<String> getSettingChange(SettingsProperty setting)
+    public static ChangeListener<String> getSettingChange(Setting setting)
     {
 
         return new ChangeListener<>()

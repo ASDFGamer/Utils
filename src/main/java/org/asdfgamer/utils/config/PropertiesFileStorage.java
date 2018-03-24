@@ -90,12 +90,12 @@ public class PropertiesFileStorage implements SettingsStorage
      * @return false, if there was an error while loading, otherwise true.
      */
     @Override
-    public boolean load(List<SettingsProperty> settings)
+    public boolean load(List<Setting> settings)
     {
 
         boolean result = true;
-        Map<String, List<SettingsProperty>> classes = sortSettingsInClasses(settings);
-        for (Map.Entry<String, List<SettingsProperty>> settingsSortedInClasses : classes.entrySet())
+        Map<String, List<Setting>> classes = sortSettingsInClasses(settings);
+        for (Map.Entry<String, List<Setting>> settingsSortedInClasses : classes.entrySet())
         {
             String name = settingsSortedInClasses.getKey().substring(settingsSortedInClasses.getKey().lastIndexOf('.') + 1);
             String path = createFile(name);
@@ -113,12 +113,12 @@ public class PropertiesFileStorage implements SettingsStorage
      * @return true, if saving the settings was successful, otherwise false.
      */
     @Override
-    public boolean save(List<SettingsProperty> settings)
+    public boolean save(List<Setting> settings)
     {
 
         boolean result = true;
-        Map<String, List<SettingsProperty>> classes = sortSettingsInClasses(settings);
-        for (Map.Entry<String, List<SettingsProperty>> settingsSortedInClasses : classes.entrySet())
+        Map<String, List<Setting>> classes = sortSettingsInClasses(settings);
+        for (Map.Entry<String, List<Setting>> settingsSortedInClasses : classes.entrySet())
         {
             String name = settingsSortedInClasses.getKey().substring(settingsSortedInClasses.getKey().lastIndexOf('.') + 1);
             String path = createFile(name);
@@ -142,7 +142,7 @@ public class PropertiesFileStorage implements SettingsStorage
      * @param path The Path to the file.
      * @return true, if the settings got saved, otherwise false.
      */
-    private boolean saveMYSettingProperties(List<SettingsProperty> value, String path)
+    private boolean saveMYSettingProperties(List<Setting> value, String path)
     {
 
         org.asdfgamer.utils.config.Properties myProperties = new org.asdfgamer.utils.config.Properties(path, PROGRAM_NAME);
@@ -157,7 +157,7 @@ public class PropertiesFileStorage implements SettingsStorage
      * @param path     This is the Path to the Config-file that should be used.
      * @return true, if there was no Problem during saving otherwise false.
      */
-    private boolean saveSettingsProperty(List<SettingsProperty> settings, String path)
+    private boolean saveSettingsProperty(List<Setting> settings, String path)
     {
 
         if (checkForChanges)
@@ -174,7 +174,7 @@ public class PropertiesFileStorage implements SettingsStorage
         try
         {
             configFile = new FileOutputStream(path);
-            for (SettingsProperty setting : settings)
+            for (Setting setting : settings)
             {
                 if (!setting.isInternalValue())
                 {
@@ -215,12 +215,12 @@ public class PropertiesFileStorage implements SettingsStorage
      * @param settings This are all settings that should be checked as List.
      * @return true, if there was no Change, otherwise false.
      */
-    private boolean noChanges(List<SettingsProperty> settings)
+    private boolean noChanges(List<Setting> settings)
     {
 
         boolean settingChanged = false;
 
-        for (SettingsProperty setting : settings)
+        for (Setting setting : settings)
         {
             if (setting.getSettingChanged())
             {
@@ -263,7 +263,7 @@ public class PropertiesFileStorage implements SettingsStorage
      * @param path     The path to the file.
      * @return true, if the settings got loaded successful.
      */
-    private boolean loadSettingProperties(List<SettingsProperty> settings, String path)
+    private boolean loadSettingProperties(List<Setting> settings, String path)
     {
 
         boolean result = true;
@@ -271,7 +271,7 @@ public class PropertiesFileStorage implements SettingsStorage
         InputStream configFile = null;
 
         //remove change listener
-        for (SettingsProperty setting : settings)
+        for (Setting setting : settings)
         {
             if (!setting.isInternalValue())
             {
@@ -284,7 +284,7 @@ public class PropertiesFileStorage implements SettingsStorage
             configFile = new FileInputStream(path);
             properties.load(configFile);
 
-            for (SettingsProperty setting : settings)
+            for (Setting setting : settings)
             {
                 if (properties.getProperty(setting.getSettingName()) == null && !setting.isInternalValue())
                 {
@@ -326,7 +326,7 @@ public class PropertiesFileStorage implements SettingsStorage
         }
 
         //add the change listener again
-        for (SettingsProperty setting : settings)
+        for (Setting setting : settings)
         {
             if (!setting.isInternalValue())
             {

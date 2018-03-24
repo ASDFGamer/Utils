@@ -60,11 +60,11 @@ public class Properties
 
 
     /**
-     * This Method add an new Value from the given SettingsProperty to the end of the File.
+     * This Method add an new Value from the given Setting to the end of the File.
      *
      * @param setting The Setting that should be saved.
      */
-    public void add(SettingsProperty setting)
+    public void add(Setting setting)
     {
         if (!setting.isInternalValue())
         {
@@ -86,12 +86,12 @@ public class Properties
     /**
      * This Method adds a Map of Settings to the list of Properties that should be saved.
      *
-     * @param settings A Map of names of Settings and the associated SettingsProperty.
+     * @param settings A Map of names of Settings and the associated Setting.
      */
-    public void add(List<SettingsProperty> settings)
+    public void add(List<Setting> settings)
     {
 
-        for (SettingsProperty setting : settings)
+        for (Setting setting : settings)
         {
             add(setting);
         }
@@ -125,7 +125,7 @@ public class Properties
             {
                 if (element instanceof SettingElement)
                 {
-                    SettingsProperty setting = ((SettingElement) element).getSetting();
+                    Setting setting = ((SettingElement) element).getSetting();
                     String settingText;
                     if (setting.getType().equals(SettingsPropertyTypes.String))
                     {

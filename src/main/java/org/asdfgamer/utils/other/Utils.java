@@ -579,7 +579,7 @@ public class Utils
                                 {
                                     LOG.fine("Wenn zum Abfragen der Felder einer Klasse nur ein Class-Objekt übergeben " +
                                             "wird, dann können nur statische Felder betrachtet werden (bei der Klasse "
-                                            + ((Class) klasse).getSimpleName() + ").");//Falls ein Weg gefunden werden kann dies nicht auszugeben, falls T instanceof SettingsProperty, dann kann es wieder zu Info werden, aber ansonsten ist es zu oft ausgegeben.
+                                            + ((Class) klasse).getSimpleName() + ").");//Falls ein Weg gefunden werden kann dies nicht auszugeben, falls T instanceof Setting, dann kann es wieder zu Info werden, aber ansonsten ist es zu oft ausgegeben.
                                 }
                             } catch (Exception e)
                             {

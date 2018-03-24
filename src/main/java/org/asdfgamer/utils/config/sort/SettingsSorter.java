@@ -1,7 +1,7 @@
 package org.asdfgamer.utils.config.sort;
 
 import org.asdfgamer.utils.config.Caption;
-import org.asdfgamer.utils.config.SettingsProperty;
+import org.asdfgamer.utils.config.Setting;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
@@ -49,7 +49,7 @@ public class SettingsSorter
      *
      * @param setting The setting itself.
      */
-    public void add(SettingsProperty setting)
+    public void add(Setting setting)
     {
 
         content.add(new SettingElement(setting));
@@ -84,10 +84,10 @@ public class SettingsSorter
      *
      * @param settings The List with all Settings that should be added.
      */
-    public void add(List<SettingsProperty> settings)
+    public void add(List<Setting> settings)
     {
 
-        for (SettingsProperty setting : settings)
+        for (Setting setting : settings)
         {
             content.add(new SettingElement(setting));
         }

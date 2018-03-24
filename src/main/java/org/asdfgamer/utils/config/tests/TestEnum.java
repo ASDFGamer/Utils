@@ -1,7 +1,7 @@
 package org.asdfgamer.utils.config.tests;
 
+import org.asdfgamer.utils.config.Setting;
 import org.asdfgamer.utils.config.Settings;
-import org.asdfgamer.utils.config.SettingsProperty;
 
 import java.lang.annotation.ElementType;
 
@@ -31,7 +31,7 @@ public enum TestEnum
     etestDouble(1.1),
     etestBoolean(true),*/;
 
-    private final SettingsProperty SETTING;
+    private final Setting SETTING;
 
     /**
      * This constructor is for Enums important, because this lets you use one constructor for all cases.
@@ -62,7 +62,7 @@ public enum TestEnum
         this.SETTING.set(SETTING);
     }
 
-    public SettingsProperty SETTINGProperty()
+    public Setting SETTINGProperty()
     {
 
         return SETTING;

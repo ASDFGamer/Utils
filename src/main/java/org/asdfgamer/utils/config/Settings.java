@@ -14,7 +14,7 @@ import static org.asdfgamer.utils.config.internal.SettingUtils.getSettingsFromOb
 /**
  * This creates SettingsProperties und manages SettingsProperties and Setting-classes.
  * <p>
- * <b> Every SettingsProperty has to be public.</b>
+ * <b> Every Setting has to be public.</b>
  * Otherwise are there problems while saving and loading.
  *
  * @author ASDFGamer
@@ -108,11 +108,11 @@ public class Settings
     // ALL Options for parameter
 
     /**
-     * This creates a simple SettingsProperty without any predefined value.
+     * This creates a simple Setting without any predefined value.
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting()
+    public static Setting newSetting()
     {
 
         return new SettingsBuilder().build();
@@ -127,7 +127,7 @@ public class Settings
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(Object[] args)
+    public static Setting newSetting(Object[] args)
     {
         switch (args.length)
         {
@@ -152,48 +152,48 @@ public class Settings
     //STRINGS
 
     /**
-     * This creates an SettingsProperty with a String as default value.
+     * This creates an Setting with a String as default value.
      *
      * @param defaultValue The default value
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(String defaultValue)
+    public static Setting newSetting(String defaultValue)
     {
 
         return newSetting(new Object[]{defaultValue});
     }
 
     /**
-     * This creates an SettingsProperty with a String as default value.
+     * This creates an Setting with a String as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(String defaultValue, boolean internal)
+    public static Setting newSetting(String defaultValue, boolean internal)
     {
 
         return newSetting(new Object[]{defaultValue, internal});
     }
 
     /**
-     * This creates an SettingsProperty with a String as default value.
+     * This creates an Setting with a String as default value.
      *
      * @param defaultValue The default value
      * @param description  This is the description for the given Setting
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(String defaultValue, String description)
+    public static Setting newSetting(String defaultValue, String description)
     {
 
         return newSetting(new Object[]{defaultValue, description});
     }
 
     /**
-     * This creates an SettingsProperty with a String as default value.
+     * This creates an Setting with a String as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
@@ -201,7 +201,7 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(String defaultValue, boolean internal, String description)
+    public static Setting newSetting(String defaultValue, boolean internal, String description)
     {
 
         return newSetting(new Object[]{defaultValue, internal, description});
@@ -210,48 +210,48 @@ public class Settings
     //INT
 
     /**
-     * This creates an SettingsProperty with a Integer as default value.
+     * This creates an Setting with a Integer as default value.
      *
      * @param defaultValue The default value
      *
      * @return The new Setting.
      */
-    public static SettingsProperty newSetting(int defaultValue)
+    public static Setting newSetting(int defaultValue)
     {
 
         return newSetting(new Object[]{defaultValue});
     }
 
     /**
-     * This creates an SettingsProperty with a Integer as default value.
+     * This creates an Setting with a Integer as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(int defaultValue, boolean internal)
+    public static Setting newSetting(int defaultValue, boolean internal)
     {
 
         return newSetting(new Object[]{defaultValue, internal});
     }
 
     /**
-     * This creates an SettingsProperty with a Integer as default value.
+     * This creates an Setting with a Integer as default value.
      *
      * @param defaultValue The default value
      * @param description  This is the description for the given Setting
      *
      * @return The new Setting.
      */
-    public static SettingsProperty newSetting(int defaultValue, String description)
+    public static Setting newSetting(int defaultValue, String description)
     {
 
         return newSetting(new Object[]{defaultValue, description});
     }
 
     /**
-     * This creates an SettingsProperty with a Integer as default value.
+     * This creates an Setting with a Integer as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
@@ -259,14 +259,14 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(int defaultValue, boolean internal, String description)
+    public static Setting newSetting(int defaultValue, boolean internal, String description)
     {
 
         return newSetting(new Object[]{defaultValue, internal, description});
     }
 
     /**
-     * This creates an SettingsProperty with a integer as default value.
+     * This creates an Setting with a integer as default value.
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
@@ -275,14 +275,14 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum)
+    public static Setting newSetting(int defaultValue, int minimum, int maximum)
     {
 
         return newSetting(new Object[]{defaultValue, minimum, maximum});
     }
 
     /**
-     * This creates an SettingsProperty with a integer as default value.
+     * This creates an Setting with a integer as default value.
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
@@ -292,14 +292,14 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum, String description)
+    public static Setting newSetting(int defaultValue, int minimum, int maximum, String description)
     {
 
         return newSetting(new Object[]{defaultValue, minimum, maximum, description});
     }
 
     /**
-     * This creates an SettingsProperty with a integer as default value.
+     * This creates an Setting with a integer as default value.
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
@@ -309,14 +309,14 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum, boolean internal)
+    public static Setting newSetting(int defaultValue, int minimum, int maximum, boolean internal)
     {
 
         return newSetting(new Object[]{defaultValue, minimum, maximum, internal});
     }
 
     /**
-     * This creates an SettingsProperty with a integer as default value.
+     * This creates an Setting with a integer as default value.
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
@@ -327,7 +327,7 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(int defaultValue, int minimum, int maximum, boolean internal, String description)
+    public static Setting newSetting(int defaultValue, int minimum, int maximum, boolean internal, String description)
     {
 
         return newSetting(new Object[]{defaultValue, minimum, maximum, internal, description});
@@ -336,48 +336,48 @@ public class Settings
     //DOUBLE
 
     /**
-     * This creates an SettingsProperty with a Double as default value.
+     * This creates an Setting with a Double as default value.
      *
      * @param defaultValue The default value
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(double defaultValue)
+    public static Setting newSetting(double defaultValue)
     {
 
         return newSetting(new Object[]{defaultValue});
     }
 
     /**
-     * This creates an SettingsProperty with a Double as default value.
+     * This creates an Setting with a Double as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(double defaultValue, boolean internal)
+    public static Setting newSetting(double defaultValue, boolean internal)
     {
 
         return newSetting(new Object[]{defaultValue, internal});
     }
 
     /**
-     * This creates an SettingsProperty with a Double as default value.
+     * This creates an Setting with a Double as default value.
      *
      * @param defaultValue The default value
      * @param description  This is the description for the given Setting
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(double defaultValue, String description)
+    public static Setting newSetting(double defaultValue, String description)
     {
 
         return newSetting(new Object[]{defaultValue, description});
     }
 
     /**
-     * This creates an SettingsProperty with a Double as default value.
+     * This creates an Setting with a Double as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
@@ -385,14 +385,14 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(double defaultValue, boolean internal, String description)
+    public static Setting newSetting(double defaultValue, boolean internal, String description)
     {
 
         return newSetting(new Object[]{defaultValue, internal, description});
     }
 
     /**
-     * This creates an SettingsProperty with a double as default value.
+     * This creates an Setting with a double as default value.
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
@@ -401,14 +401,14 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum)
+    public static Setting newSetting(double defaultValue, double minimum, double maximum)
     {
 
         return newSetting(new Object[]{defaultValue, minimum, maximum});
     }
 
     /**
-     * This creates an SettingsProperty with a double as default value.
+     * This creates an Setting with a double as default value.
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
@@ -418,14 +418,14 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum, String description)
+    public static Setting newSetting(double defaultValue, double minimum, double maximum, String description)
     {
 
         return newSetting(new Object[]{defaultValue, minimum, maximum, description});
     }
 
     /**
-     * This creates an SettingsProperty with a double as default value.
+     * This creates an Setting with a double as default value.
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
@@ -435,14 +435,14 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum, boolean internal)
+    public static Setting newSetting(double defaultValue, double minimum, double maximum, boolean internal)
     {
 
         return newSetting(new Object[]{defaultValue, minimum, maximum, internal});
     }
 
     /**
-     * This creates an SettingsProperty with a double as default value.
+     * This creates an Setting with a double as default value.
      * Additionally this creates an area for the Setting.
      *
      * @param defaultValue The default value.
@@ -453,7 +453,7 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(double defaultValue, double minimum, double maximum, boolean internal, String description)
+    public static Setting newSetting(double defaultValue, double minimum, double maximum, boolean internal, String description)
     {
 
         return newSetting(new Object[]{defaultValue, minimum, maximum, internal, description});
@@ -462,48 +462,48 @@ public class Settings
     //BOOLEAN
 
     /**
-     * This creates an SettingsProperty with a boolean as default value.
+     * This creates an Setting with a boolean as default value.
      *
      * @param defaultValue The default value.
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(boolean defaultValue)
+    public static Setting newSetting(boolean defaultValue)
     {
 
         return newSetting(new Object[]{defaultValue});
     }
 
     /**
-     * This creates an SettingsProperty with a boolean as default value.
+     * This creates an Setting with a boolean as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(boolean defaultValue, boolean internal)
+    public static Setting newSetting(boolean defaultValue, boolean internal)
     {
 
         return newSetting(new Object[]{defaultValue, internal});
     }
 
     /**
-     * This creates an SettingsProperty with a boolean as default value.
+     * This creates an Setting with a boolean as default value.
      *
      * @param defaultValue The default value.
      * @param description  This is the description for the given Setting
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(boolean defaultValue, String description)
+    public static Setting newSetting(boolean defaultValue, String description)
     {
 
         return newSetting(new Object[]{defaultValue, description});
     }
 
     /**
-     * This creates an SettingsProperty with a boolean as default value.
+     * This creates an Setting with a boolean as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
@@ -511,7 +511,7 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(boolean defaultValue, boolean internal, String description)
+    public static Setting newSetting(boolean defaultValue, boolean internal, String description)
     {
 
         return newSetting(new Object[]{defaultValue, internal, description});
@@ -519,48 +519,48 @@ public class Settings
 
     //ENUM
     /**
-     * This creates an SettingsProperty with a Enum as default value.
+     * This creates an Setting with a Enum as default value.
      *
      * @param defaultValue The default value.
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(Enum defaultValue)
+    public static Setting newSetting(Enum defaultValue)
     {
 
         return newSetting(new Object[]{defaultValue});
     }
 
     /**
-     * This creates an SettingsProperty with a Enum as default value.
+     * This creates an Setting with a Enum as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(Enum defaultValue, boolean internal)
+    public static Setting newSetting(Enum defaultValue, boolean internal)
     {
 
         return newSetting(new Object[]{defaultValue, internal});
     }
 
     /**
-     * This creates an SettingsProperty with a Enum as default value.
+     * This creates an Setting with a Enum as default value.
      *
      * @param defaultValue The default value.
      * @param description  This is the description for the given Setting
      *
      * @return The new Setting
      */
-    public static SettingsProperty newSetting(Enum defaultValue, String description)
+    public static Setting newSetting(Enum defaultValue, String description)
     {
 
         return newSetting(new Object[]{defaultValue, description});
     }
 
     /**
-     * This creates an SettingsProperty with a Enum as default value.
+     * This creates an Setting with a Enum as default value.
      *
      * @param defaultValue The default Value
      * @param internal     This shows if the setting should only be used internally or if it should also be saved.
@@ -568,7 +568,7 @@ public class Settings
      *
      * @return The new setting
      */
-    public static SettingsProperty newSetting(Enum defaultValue, boolean internal, String description)
+    public static Setting newSetting(Enum defaultValue, boolean internal, String description)
     {
 
         return newSetting(new Object[]{defaultValue, internal, description});
@@ -577,7 +577,7 @@ public class Settings
     //Settings from Elements
 
     /**
-     * This transforms an Object to an SettingsProperty with the same Type as the argument.
+     * This transforms an Object to an Setting with the same Type as the argument.
      *
      * @param setting The argument for the setting as String, Integer, Double or Boolean.
      *
@@ -603,7 +603,7 @@ public class Settings
     }
 
     /**
-     * This Methode interprets an Array with two Object in such a way that it creates an SettingsProperty.
+     * This Methode interprets an Array with two Object in such a way that it creates an Setting.
      *
      * @param settings The array with two arguments.
      *
@@ -632,7 +632,7 @@ public class Settings
     }
 
     /**
-     * This Methode interprets an Array with three Object in such a way that it creates an SettingsProperty.
+     * This Methode interprets an Array with three Object in such a way that it creates an Setting.
      *
      * @param settings The array with three arguments.
      *
@@ -667,7 +667,7 @@ public class Settings
     }
 
     /**
-     * This Methode interprets an Array with four  Object in such a way that it creates an SettingsProperty.
+     * This Methode interprets an Array with four  Object in such a way that it creates an Setting.
      *
      * @param settings The array with four arguments.
      *
@@ -705,7 +705,7 @@ public class Settings
     }
 
     /**
-     * This Methode interprets an Array with five Object in such a way that it creates an SettingsProperty.
+     * This Methode interprets an Array with five Object in such a way that it creates an Setting.
      *
      * @param settings The array with five arguments.
      *
@@ -800,7 +800,7 @@ public class Settings
         {
             try
             {
-                List<SettingsProperty> settings = getSettingsFromObject(Class.forName(className));
+                List<Setting> settings = getSettingsFromObject(Class.forName(className));
                 if (!settings.isEmpty())
                 {
                     result = STORAGE.load(settings) && result;

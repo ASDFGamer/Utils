@@ -46,16 +46,16 @@ class SettingsBuilder
     }
 
     /**
-     * This builds an SettingsProperty form the given values.
+     * This builds an Setting form the given values.
      *
-     * @return A new SettingsProperty
+     * @return A new Setting
      */
-    public SettingsProperty build()
+    public Setting build()
     {
 
         addClass();
 
-        SettingsProperty setting = new SettingsProperty(defaultValue, internalValue);
+        Setting setting = new Setting(defaultValue, internalValue);
         if (maximumInt)
         {
             setting.setMaximumValue((int) maximumValue);

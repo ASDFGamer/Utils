@@ -18,7 +18,7 @@ public interface SettingsStorage
      * @param settings This is a List with all Settings that should be loaded.
      * @return true, if there was no problem while loading the Settings, otherwise false.
      */
-    boolean load(List<SettingsProperty> settings);
+    boolean load(List<Setting> settings);
 
     /**
      * This saves all Settings from the List.
@@ -26,6 +26,6 @@ public interface SettingsStorage
      * @param settings This is a List with all Settings that should be saved.
      * @return true, if there was no problem while saving the Settings, otherwise false.
      */
-    boolean save(List<SettingsProperty> settings);
+    boolean save(List<Setting> settings);
 
 }
