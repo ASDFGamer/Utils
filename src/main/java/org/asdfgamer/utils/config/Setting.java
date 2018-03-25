@@ -13,6 +13,7 @@ import org.asdfgamer.utils.other.Convertible;
 import org.asdfgamer.utils.other.Utils;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.asdfgamer.utils.config.internal.SettingUtils.*;
@@ -134,6 +135,40 @@ public class Setting implements WritableStringValue, ObservableStringValue
         this.valuesString.add(initialValue);
         this.valueString = new SimpleStringProperty(initialValue);
         this.defaultValue = initialValue;
+        this.valuesString.addListener(getValueUpdater());
+        this.init(initialValue);
+        this.internalValue = internalValue;
+    }
+
+    /**
+     * This Constructor uses a default/initial value, everything else uses default values.
+     * If the value can be interpreted as an integer, double or boolean value, the setting will do so and accept only
+     * values of that type afterwards.
+     *
+     * @param initialValue The default/initial value of the setting.
+     */
+    Setting(List<String> initialValue)
+    {
+        this.valuesString = FXCollections.observableList(initialValue);
+        this.defaultValue = initialValue.get(0);
+        this.valueString = new SimpleStringProperty(initialValue.get(0));
+        this.valuesString.addListener(getValueUpdater());
+        this.init(initialValue);
+        this.internalValue = false;
+    }
+
+    /**
+     * This constructor receives the default/initial value and if this setting is internal, everything else uses
+     * default values.
+     *
+     * @param initialValue  The default/initial value of the setting.
+     * @param internalValue This shows if the Setting is only for internal use.
+     */
+    Setting(List<String> initialValue, boolean internalValue)
+    {
+        this.valuesString = FXCollections.observableList(initialValue);
+        this.valueString = new SimpleStringProperty(initialValue.get(0));
+        this.defaultValue = initialValue.get(0);
         this.valuesString.addListener(getValueUpdater());
         this.init(initialValue);
         this.internalValue = internalValue;
@@ -701,6 +736,17 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * @param newValue the added Setting.
      * @return true, if it was successful, otherwise false.
      */
+    private boolean add(String newValue)
+    {
+        return addString(newValue);
+    }
+
+    /**
+     * This adds an new Setting at the end of the List
+     *
+     * @param newValue the added Setting.
+     * @return true, if it was successful, otherwise false.
+     */
     public boolean addString(String newValue)
     {
         try
@@ -748,7 +794,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * Note: This is only successful, if the setting got initialized with an value that can be interpreted as a integer.
      *
      * @param newValue The new value.
-     *                 @param index The index of the Setting
+     * @param index    The index of the Setting
      * @return true, if the value changed, otherwise false.
      * @throws IndexOutOfBoundsException This happens if the given index isn't already set or the next free value.
      */
@@ -1374,6 +1420,23 @@ public class Setting implements WritableStringValue, ObservableStringValue
         } else if (Utils.isEnum(initialValue))
         {
             this.valuesEnum.add(0, Utils.getEnumElement(initialValue));
+        }
+    }
+
+    /**
+     * This Methode gets called from the Constructor to check if the initial value convertible to boolean, integer or
+     * double. If so it saves the value in that format.
+     * If the first value is convertible to one value and another following value to an other value, this will throw an exception
+     *
+     * @param initialValue The initial Value of the setting.
+     * @throws IllegalArgumentException If there is an different value Type then the first type in the list.
+     */
+    private void init(List<String> initialValue)
+    {
+        init(initialValue.get(0));
+        for (String value : initialValue)
+        {
+            add(value);
         }
     }
 

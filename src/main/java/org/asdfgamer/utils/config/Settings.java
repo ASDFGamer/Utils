@@ -598,6 +598,18 @@ public class Settings
         {
             return new SettingsBuilder().setDefaultValue(((Enum) setting).getDeclaringClass().getName() + "." + setting.toString());
         }
+        if (setting instanceof Object[])
+        {
+            return new SettingsBuilder().setDefaultValue((Object[]) setting);
+        }
+        if (setting instanceof Integer[] | setting instanceof Double[] | setting instanceof Boolean[])
+        {
+            return new SettingsBuilder().setDefaultValue(String.valueOf(setting));
+        }
+        if (setting instanceof Enum[])
+        {
+            return new SettingsBuilder().setDefaultValue(((Enum) setting).getDeclaringClass().getName() + "." + setting.toString());
+        }
         LOG.warning(bundle.getString("wrongTypeOneArg"));
         return new SettingsBuilder();
     }
