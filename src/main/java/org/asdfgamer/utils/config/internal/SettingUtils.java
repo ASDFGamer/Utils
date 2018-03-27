@@ -1,6 +1,7 @@
 package org.asdfgamer.utils.config.internal;
 
 import org.asdfgamer.utils.config.Setting;
+import org.asdfgamer.utils.config.annotations.SettingInfo;
 import org.asdfgamer.utils.other.Utils;
 
 import java.lang.reflect.Field;
@@ -73,6 +74,7 @@ public class SettingUtils
      * This finds all SettingsProperties from the given Enum and returns them as List.
      *
      * @param enumObject The Class-object of the enum
+     *
      * @return A List with all Settings
      */
     private static List<Setting> getSettingsFromEnum(Object enumObject)
@@ -116,6 +118,7 @@ public class SettingUtils
      *
      * @param settings This are all settings that should be sorted as List.
      *                 The settings can be from different classes but don't have to be.
+     *
      * @return A Map which has in the Classname as Key and as value a List with all Settings of that Class.
      */
     @SuppressWarnings("WeakerAccess")
@@ -194,5 +197,45 @@ public class SettingUtils
         TRUE_VALUES = new String[]{TRUE_VALUES[0], bundle.getString("true_value")};
         FALSE_VALUES = new String[]{FALSE_VALUES[0], bundle.getString("false_value")};
         locale = newLocale;
+    }
+
+    /**
+     * This returns the Annotation for the setting.
+     *
+     * @param setting The Setting with the annotation.
+     *
+     * @return The Annotation.
+     */
+    public static SettingInfo getAnnotation(Setting setting)
+    {
+        if (!setting.getClassName().isEmpty())
+        {
+            Field settingsField = getField(setting);
+            if (settingsField != null)
+            {
+                return settingsField.getAnnotation(SettingInfo.class);
+            }
+            return null;
+        }
+        LOG.warning(bundle.getString("classNameIsEmpty"));
+        return null;
+    }
+
+    private static Field getField(Setting setting)
+    {
+        try
+        {
+            if (setting.getSettingName() != null || !setting.getSettingName().isEmpty())
+            {
+                return Class.forName(setting.getClassName()).getField(setting.getSettingName());
+            } else
+            {
+                return Utils.getStaticField(Class.forName(setting.getClassName()), setting);
+            }
+        } catch (ClassNotFoundException | NoSuchFieldException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 }

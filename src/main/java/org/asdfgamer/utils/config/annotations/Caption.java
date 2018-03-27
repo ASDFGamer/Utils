@@ -1,4 +1,4 @@
-package org.asdfgamer.utils.config;
+package org.asdfgamer.utils.config.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
+@Deprecated
 public @interface Caption
 {
 

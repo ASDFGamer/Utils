@@ -1,5 +1,7 @@
 package org.asdfgamer.utils.config;
 
+import org.asdfgamer.utils.config.annotations.Caption;
+
 import java.util.Locale;
 
 import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;

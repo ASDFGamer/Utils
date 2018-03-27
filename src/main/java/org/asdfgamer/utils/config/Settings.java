@@ -1,6 +1,5 @@
 package org.asdfgamer.utils.config;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.Set;
@@ -118,461 +117,491 @@ public class Settings
         return new SettingsBuilder().build();
     }
 
-    /**
-     * This takes an Array of Objects with undefined length and creates a setting from that.
-     * This is only a convenience methode and forwards the args to the right methode.
-     * This is the preferred methode if it should be used in a constructor of an enum.
-     *
-     * @param args This is an array of objects which should be analyzed to create the new setting.
-     *
-     * @return The new Setting
-     */
+    public static Setting newSetting(Object arg)
+    {
+        return newSetting(new Object[]{arg});
+    }
+
     public static Setting newSetting(Object[] args)
     {
-        switch (args.length)
+        if (args == null || args.length == 0)
         {
-            case 0:
-                return new SettingsBuilder().build();
-            case 1:
-                return firstArgument(args[0]).build();
-            case 2:
-                return twoArguments(args).build();
-            case 3:
-                return threeArguments(args).build();
-            case 4:
-                return fourArguments(args).build();
-            case 5:
-                return fiveArguments(args).build();
-            default:
-                LOG.warning(bundle.getString("toManyArgs") + Arrays.toString(args));
-                return new SettingsBuilder().build();
+            return newSetting();
         }
+        SettingsBuilder settingsBuilder;
+        if (args.length > 1)
+        {
+            Class aClass = args[0].getClass();
+            for (int i = 1; i < args.length - 1; i++)
+            {
+                if (!args[i].getClass().equals(aClass))
+                {
+                    throw new IllegalArgumentException(bundle.getString("AllSameType"));
+                }
+            }
+            settingsBuilder = parseElements(args);
+        } else
+        {
+            settingsBuilder = parseArgument(args[0]);
+        }
+        return settingsBuilder.build();
     }
 
-    //STRINGS
-
-    /**
-     * This creates an Setting with a String as default value.
-     *
-     * @param defaultValue The default value
-     *
-     * @return The new Setting
-     */
-    public static Setting newSetting(String defaultValue)
-    {
-
-        return newSetting(new Object[]{defaultValue});
-    }
-
-    /**
-     * This creates an Setting with a String as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(String defaultValue, boolean internal)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal});
-    }
-
-    /**
-     * This creates an Setting with a String as default value.
-     *
-     * @param defaultValue The default value
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new Setting
-     */
-    public static Setting newSetting(String defaultValue, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, description});
-    }
-
-    /**
-     * This creates an Setting with a String as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(String defaultValue, boolean internal, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal, description});
-    }
-
-    //INT
-
-    /**
-     * This creates an Setting with a Integer as default value.
-     *
-     * @param defaultValue The default value
-     *
-     * @return The new Setting.
-     */
-    public static Setting newSetting(int defaultValue)
-    {
-
-        return newSetting(new Object[]{defaultValue});
-    }
-
-    /**
-     * This creates an Setting with a Integer as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(int defaultValue, boolean internal)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal});
-    }
-
-    /**
-     * This creates an Setting with a Integer as default value.
-     *
-     * @param defaultValue The default value
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new Setting.
-     */
-    public static Setting newSetting(int defaultValue, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, description});
-    }
-
-    /**
-     * This creates an Setting with a Integer as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(int defaultValue, boolean internal, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal, description});
-    }
-
-    /**
-     * This creates an Setting with a integer as default value.
-     * Additionally this creates an area for the Setting.
-     *
-     * @param defaultValue The default value.
-     * @param minimum      The lowest allowed value.
-     * @param maximum      The highest allowed value.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(int defaultValue, int minimum, int maximum)
-    {
-
-        return newSetting(new Object[]{defaultValue, minimum, maximum});
-    }
-
-    /**
-     * This creates an Setting with a integer as default value.
-     * Additionally this creates an area for the Setting.
-     *
-     * @param defaultValue The default value.
-     * @param minimum      The lowest allowed value.
-     * @param maximum      The highest allowed value.
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(int defaultValue, int minimum, int maximum, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, minimum, maximum, description});
-    }
-
-    /**
-     * This creates an Setting with a integer as default value.
-     * Additionally this creates an area for the Setting.
-     *
-     * @param defaultValue The default value.
-     * @param minimum      The lowest allowed value.
-     * @param maximum      The highest allowed value.
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(int defaultValue, int minimum, int maximum, boolean internal)
-    {
-
-        return newSetting(new Object[]{defaultValue, minimum, maximum, internal});
-    }
-
-    /**
-     * This creates an Setting with a integer as default value.
-     * Additionally this creates an area for the Setting.
-     *
-     * @param defaultValue The default value.
-     * @param minimum      The lowest allowed value.
-     * @param maximum      The highest allowed value.
-     * @param description  This is the description for the given Setting
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(int defaultValue, int minimum, int maximum, boolean internal, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, minimum, maximum, internal, description});
-    }
-
-    //DOUBLE
-
-    /**
-     * This creates an Setting with a Double as default value.
-     *
-     * @param defaultValue The default value
-     *
-     * @return The new Setting
-     */
-    public static Setting newSetting(double defaultValue)
-    {
-
-        return newSetting(new Object[]{defaultValue});
-    }
-
-    /**
-     * This creates an Setting with a Double as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(double defaultValue, boolean internal)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal});
-    }
-
-    /**
-     * This creates an Setting with a Double as default value.
-     *
-     * @param defaultValue The default value
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new Setting
-     */
-    public static Setting newSetting(double defaultValue, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, description});
-    }
-
-    /**
-     * This creates an Setting with a Double as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(double defaultValue, boolean internal, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal, description});
-    }
-
-    /**
-     * This creates an Setting with a double as default value.
-     * Additionally this creates an area for the Setting.
-     *
-     * @param defaultValue The default value.
-     * @param minimum      The lowest allowed value.
-     * @param maximum      The highest allowed value.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(double defaultValue, double minimum, double maximum)
-    {
-
-        return newSetting(new Object[]{defaultValue, minimum, maximum});
-    }
-
-    /**
-     * This creates an Setting with a double as default value.
-     * Additionally this creates an area for the Setting.
-     *
-     * @param defaultValue The default value.
-     * @param minimum      The lowest allowed value.
-     * @param maximum      The highest allowed value.
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(double defaultValue, double minimum, double maximum, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, minimum, maximum, description});
-    }
-
-    /**
-     * This creates an Setting with a double as default value.
-     * Additionally this creates an area for the Setting.
-     *
-     * @param defaultValue The default value.
-     * @param minimum      The lowest allowed value.
-     * @param maximum      The highest allowed value.
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(double defaultValue, double minimum, double maximum, boolean internal)
-    {
-
-        return newSetting(new Object[]{defaultValue, minimum, maximum, internal});
-    }
-
-    /**
-     * This creates an Setting with a double as default value.
-     * Additionally this creates an area for the Setting.
-     *
-     * @param defaultValue The default value.
-     * @param minimum      The lowest allowed value.
-     * @param maximum      The highest allowed value.
-     * @param description  This is the description for the given Setting
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(double defaultValue, double minimum, double maximum, boolean internal, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, minimum, maximum, internal, description});
-    }
-
-    //BOOLEAN
-
-    /**
-     * This creates an Setting with a boolean as default value.
-     *
-     * @param defaultValue The default value.
-     *
-     * @return The new Setting
-     */
-    public static Setting newSetting(boolean defaultValue)
-    {
-
-        return newSetting(new Object[]{defaultValue});
-    }
-
-    /**
-     * This creates an Setting with a boolean as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(boolean defaultValue, boolean internal)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal});
-    }
-
-    /**
-     * This creates an Setting with a boolean as default value.
-     *
-     * @param defaultValue The default value.
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new Setting
-     */
-    public static Setting newSetting(boolean defaultValue, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, description});
-    }
-
-    /**
-     * This creates an Setting with a boolean as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(boolean defaultValue, boolean internal, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal, description});
-    }
-
-    //ENUM
-    /**
-     * This creates an Setting with a Enum as default value.
-     *
-     * @param defaultValue The default value.
-     *
-     * @return The new Setting
-     */
-    public static Setting newSetting(Enum defaultValue)
-    {
-
-        return newSetting(new Object[]{defaultValue});
-    }
-
-    /**
-     * This creates an Setting with a Enum as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(Enum defaultValue, boolean internal)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal});
-    }
-
-    /**
-     * This creates an Setting with a Enum as default value.
-     *
-     * @param defaultValue The default value.
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new Setting
-     */
-    public static Setting newSetting(Enum defaultValue, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, description});
-    }
-
-    /**
-     * This creates an Setting with a Enum as default value.
-     *
-     * @param defaultValue The default Value
-     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
-     * @param description  This is the description for the given Setting
-     *
-     * @return The new setting
-     */
-    public static Setting newSetting(Enum defaultValue, boolean internal, String description)
-    {
-
-        return newSetting(new Object[]{defaultValue, internal, description});
-    }
+//    /**
+//     * This takes an Array of Objects with undefined length and creates a setting from that.
+//     * This is only a convenience methode and forwards the args to the right methode.
+//     * This is the preferred methode if it should be used in a constructor of an enum.
+//     *
+//     * @param args This is an array of objects which should be analyzed to create the new setting.
+//     *
+//     * @return The new Setting
+//     */
+//    public static Setting newSetting(Object[] args)
+//    {
+//        switch (args.length)
+//        {
+//            case 0:
+//                return new SettingsBuilder().build();
+//            case 1:
+//                return firstArgument(args[0]).build();
+//            case 2:
+//                return twoArguments(args).build();
+//            case 3:
+//                return threeArguments(args).build();
+//            case 4:
+//                return fourArguments(args).build();
+//            case 5:
+//                return fiveArguments(args).build();
+//            default:
+//                LOG.warning(bundle.getString("toManyArgs") + Arrays.toString(args));
+//                return new SettingsBuilder().build();
+//        }
+//    }
+//
+//    //STRINGS
+//
+//    /**
+//     * This creates an Setting with a String as default value.
+//     *
+//     * @param defaultValue The default value
+//     *
+//     * @return The new Setting
+//     */
+//    public static Setting newSetting(String defaultValue)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue});
+//    }
+//
+//    /**
+//     * This creates an Setting with a String as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(String defaultValue, boolean internal)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal});
+//    }
+//
+//    /**
+//     * This creates an Setting with a String as default value.
+//     *
+//     * @param defaultValue The default value
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new Setting
+//     */
+//    public static Setting newSetting(String defaultValue, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, description});
+//    }
+//
+//    /**
+//     * This creates an Setting with a String as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(String defaultValue, boolean internal, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal, description});
+//    }
+//
+//    //INT
+//
+//    /**
+//     * This creates an Setting with a Integer as default value.
+//     *
+//     * @param defaultValue The default value
+//     *
+//     * @return The new Setting.
+//     */
+//    public static Setting newSetting(int defaultValue)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue});
+//    }
+//
+//    /**
+//     * This creates an Setting with a Integer as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(int defaultValue, boolean internal)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal});
+//    }
+//
+//    /**
+//     * This creates an Setting with a Integer as default value.
+//     *
+//     * @param defaultValue The default value
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new Setting.
+//     */
+//    public static Setting newSetting(int defaultValue, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, description});
+//    }
+//
+//    /**
+//     * This creates an Setting with a Integer as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(int defaultValue, boolean internal, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal, description});
+//    }
+//
+//    /**
+//     * This creates an Setting with a integer as default value.
+//     * Additionally this creates an area for the Setting.
+//     *
+//     * @param defaultValue The default value.
+//     * @param minimum      The lowest allowed value.
+//     * @param maximum      The highest allowed value.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(int defaultValue, int minimum, int maximum)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, minimum, maximum});
+//    }
+//
+//    /**
+//     * This creates an Setting with a integer as default value.
+//     * Additionally this creates an area for the Setting.
+//     *
+//     * @param defaultValue The default value.
+//     * @param minimum      The lowest allowed value.
+//     * @param maximum      The highest allowed value.
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(int defaultValue, int minimum, int maximum, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, minimum, maximum, description});
+//    }
+//
+//    /**
+//     * This creates an Setting with a integer as default value.
+//     * Additionally this creates an area for the Setting.
+//     *
+//     * @param defaultValue The default value.
+//     * @param minimum      The lowest allowed value.
+//     * @param maximum      The highest allowed value.
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(int defaultValue, int minimum, int maximum, boolean internal)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, minimum, maximum, internal});
+//    }
+//
+//    /**
+//     * This creates an Setting with a integer as default value.
+//     * Additionally this creates an area for the Setting.
+//     *
+//     * @param defaultValue The default value.
+//     * @param minimum      The lowest allowed value.
+//     * @param maximum      The highest allowed value.
+//     * @param description  This is the description for the given Setting
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(int defaultValue, int minimum, int maximum, boolean internal, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, minimum, maximum, internal, description});
+//    }
+//
+//    //DOUBLE
+//
+//    /**
+//     * This creates an Setting with a Double as default value.
+//     *
+//     * @param defaultValue The default value
+//     *
+//     * @return The new Setting
+//     */
+//    public static Setting newSetting(double defaultValue)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue});
+//    }
+//
+//    /**
+//     * This creates an Setting with a Double as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(double defaultValue, boolean internal)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal});
+//    }
+//
+//    /**
+//     * This creates an Setting with a Double as default value.
+//     *
+//     * @param defaultValue The default value
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new Setting
+//     */
+//    public static Setting newSetting(double defaultValue, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, description});
+//    }
+//
+//    /**
+//     * This creates an Setting with a Double as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(double defaultValue, boolean internal, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal, description});
+//    }
+//
+//    /**
+//     * This creates an Setting with a double as default value.
+//     * Additionally this creates an area for the Setting.
+//     *
+//     * @param defaultValue The default value.
+//     * @param minimum      The lowest allowed value.
+//     * @param maximum      The highest allowed value.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(double defaultValue, double minimum, double maximum)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, minimum, maximum});
+//    }
+//
+//    /**
+//     * This creates an Setting with a double as default value.
+//     * Additionally this creates an area for the Setting.
+//     *
+//     * @param defaultValue The default value.
+//     * @param minimum      The lowest allowed value.
+//     * @param maximum      The highest allowed value.
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(double defaultValue, double minimum, double maximum, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, minimum, maximum, description});
+//    }
+//
+//    /**
+//     * This creates an Setting with a double as default value.
+//     * Additionally this creates an area for the Setting.
+//     *
+//     * @param defaultValue The default value.
+//     * @param minimum      The lowest allowed value.
+//     * @param maximum      The highest allowed value.
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(double defaultValue, double minimum, double maximum, boolean internal)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, minimum, maximum, internal});
+//    }
+//
+//    /**
+//     * This creates an Setting with a double as default value.
+//     * Additionally this creates an area for the Setting.
+//     *
+//     * @param defaultValue The default value.
+//     * @param minimum      The lowest allowed value.
+//     * @param maximum      The highest allowed value.
+//     * @param description  This is the description for the given Setting
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(double defaultValue, double minimum, double maximum, boolean internal, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, minimum, maximum, internal, description});
+//    }
+//
+//    //BOOLEAN
+//
+//    /**
+//     * This creates an Setting with a boolean as default value.
+//     *
+//     * @param defaultValue The default value.
+//     *
+//     * @return The new Setting
+//     */
+//    public static Setting newSetting(boolean defaultValue)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue});
+//    }
+//
+//    /**
+//     * This creates an Setting with a boolean as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(boolean defaultValue, boolean internal)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal});
+//    }
+//
+//    /**
+//     * This creates an Setting with a boolean as default value.
+//     *
+//     * @param defaultValue The default value.
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new Setting
+//     */
+//    public static Setting newSetting(boolean defaultValue, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, description});
+//    }
+//
+//    /**
+//     * This creates an Setting with a boolean as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(boolean defaultValue, boolean internal, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal, description});
+//    }
+//
+//    //ENUM
+//    /**
+//     * This creates an Setting with a Enum as default value.
+//     *
+//     * @param defaultValue The default value.
+//     *
+//     * @return The new Setting
+//     */
+//    public static Setting newSetting(Enum defaultValue)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue});
+//    }
+//
+//    /**
+//     * This creates an Setting with a Enum as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(Enum defaultValue, boolean internal)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal});
+//    }
+//
+//    /**
+//     * This creates an Setting with a Enum as default value.
+//     *
+//     * @param defaultValue The default value.
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new Setting
+//     */
+//    public static Setting newSetting(Enum defaultValue, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, description});
+//    }
+//
+//    /**
+//     * This creates an Setting with a Enum as default value.
+//     *
+//     * @param defaultValue The default Value
+//     * @param internal     This shows if the setting should only be used internally or if it should also be saved.
+//     * @param description  This is the description for the given Setting
+//     *
+//     * @return The new setting
+//     */
+//    public static Setting newSetting(Enum defaultValue, boolean internal, String description)
+//    {
+//
+//        return newSetting(new Object[]{defaultValue, internal, description});
+//    }
 
     //Settings from Elements
 
@@ -583,7 +612,7 @@ public class Settings
      *
      * @return The new Setting.
      */
-    private static SettingsBuilder firstArgument(Object setting)
+    private static SettingsBuilder parseArgument(Object setting)
     {
 
         if (setting instanceof String)
@@ -600,147 +629,161 @@ public class Settings
         }
         if (setting instanceof Object[])
         {
-            return new SettingsBuilder().setDefaultValue((Object[]) setting);
-        }
-        if (setting instanceof Integer[] | setting instanceof Double[] | setting instanceof Boolean[])
-        {
-            return new SettingsBuilder().setDefaultValue(String.valueOf(setting));
-        }
-        if (setting instanceof Enum[])
-        {
-            return new SettingsBuilder().setDefaultValue(((Enum) setting).getDeclaringClass().getName() + "." + setting.toString());
+            return parseElements((Object[]) setting);
         }
         LOG.warning(bundle.getString("wrongTypeOneArg"));
         return new SettingsBuilder();
     }
 
-    /**
-     * This Methode interprets an Array with two Object in such a way that it creates an Setting.
-     *
-     * @param settings The array with two arguments.
-     *
-     * @return The new Setting.
-     */
-    private static SettingsBuilder twoArguments(Object[] settings)
+    private static SettingsBuilder parseElements(Object[] settings)
     {
-
-        if (settings.length < 2)
+        System.out.println(settings.getClass());
+        String[] settingStrings = new String[settings.length];
+        for (int i = 0; i < settings.length; i++)
         {
-            LOG.warning(bundle.getString("lessThenTwoArgs"));
-            return new SettingsBuilder();
+            if (settings[i] instanceof String)
+            {
+                settingStrings[i] = (String) settings[i];
+            }
+            if (settings[i] instanceof Integer | settings[i] instanceof Double | settings instanceof Boolean[])
+            {
+                settingStrings[i] = String.valueOf(settings[i]);
+            }
+            if (settings[i] instanceof Enum)
+            {
+                settingStrings[i] = ((Enum) settings[i]).getDeclaringClass().getName() + "." + settings[0].toString();
+            }
         }
-        SettingsBuilder builder = firstArgument(settings[0]);
-        if (settings[1] instanceof Boolean)
-        {
-            builder.setInternalValue((Boolean) settings[1]);
-        } else if (settings[1] instanceof String)
-        {
-            builder.setInformationText((String) settings[1]);
-        } else
-        {
-            LOG.warning(bundle.getString("wrongTypeTwoArgs"));
-        }
-        return builder;
+        return new SettingsBuilder().setDefaultValue(settingStrings);
     }
 
-    /**
-     * This Methode interprets an Array with three Object in such a way that it creates an Setting.
-     *
-     * @param settings The array with three arguments.
-     *
-     * @return The new Setting.
-     */
-    private static SettingsBuilder threeArguments(Object[] settings)
-    {
-
-        if (settings.length < 3)
-        {
-            LOG.warning(bundle.getString("lessThenThreeArgs"));
-            return new SettingsBuilder();
-        }
-        SettingsBuilder builder = firstArgument(settings[0]);
-        if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer)
-        {
-            builder.setMinimumValue((Integer) settings[1]);
-            builder.setMaximumValue((Integer) settings[2]);
-        } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double)
-        {
-            builder.setMinimumValue((Double) settings[1]);
-            builder.setMaximumValue((Double) settings[2]);
-        } else if (settings[1] instanceof Boolean && settings[2] instanceof String)
-        {
-            builder.setInternalValue((Boolean) settings[1]);
-            builder.setInformationText((String) settings[2]);
-        } else
-        {
-            LOG.warning(bundle.getString("wrongTypeThreeArgs"));
-        }
-        return builder;
-    }
-
-    /**
-     * This Methode interprets an Array with four  Object in such a way that it creates an Setting.
-     *
-     * @param settings The array with four arguments.
-     *
-     * @return The new Setting.
-     */
-    private static SettingsBuilder fourArguments(Object[] settings)
-    {
-
-        if (settings.length < 4)
-        {
-            LOG.warning(bundle.getString("lessThenFourArgs"));
-            return new SettingsBuilder();
-        }
-        SettingsBuilder builder = firstArgument(settings[0]);
-        if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer)
-        {
-            builder.setMinimumValue((Integer) settings[1]);
-            builder.setMaximumValue((Integer) settings[2]);
-        } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double)
-        {
-            builder.setMinimumValue((Double) settings[1]);
-            builder.setMaximumValue((Double) settings[2]);
-        } else
-        {
-            LOG.warning(bundle.getString("wrongTypeFourArgs"));
-        }
-        if (settings[3] instanceof String)
-        {
-            builder.setInformationText((String) settings[3]);
-        } else if (settings[3] instanceof Boolean)
-        {
-            builder.setInternalValue((Boolean) settings[3]);
-        }
-        return builder;
-    }
-
-    /**
-     * This Methode interprets an Array with five Object in such a way that it creates an Setting.
-     *
-     * @param settings The array with five arguments.
-     *
-     * @return The new Setting.
-     */
-    private static SettingsBuilder fiveArguments(Object[] settings)
-    {
-        if (settings.length < 5)
-        {
-            LOG.warning(bundle.getString("lessThenFiveArgs"));
-            return new SettingsBuilder();
-        }
-        SettingsBuilder builder = threeArguments(new Object[]{settings[0], settings[1], settings[2]});
-        if (settings[3] instanceof Boolean && settings[4] instanceof String)
-        {
-            builder.setInternalValue((Boolean) settings[3]);
-            builder.setInformationText((String) settings[4]);
-        } else
-        {
-            LOG.warning(bundle.getString("wrongTypeFiveArgs"));
-        }
-        return builder;
-    }
+//    /**
+//     * This Methode interprets an Array with two Object in such a way that it creates an Setting.
+//     *
+//     * @param settings The array with two arguments.
+//     *
+//     * @return The new Setting.
+//     */
+//    private static SettingsBuilder twoArguments(Object[] settings)
+//    {
+//
+//        if (settings.length < 2)
+//        {
+//            LOG.warning(bundle.getString("lessThenTwoArgs"));
+//            return new SettingsBuilder();
+//        }
+//        SettingsBuilder builder = firstArgument(settings[0]);
+//        if (settings[1] instanceof Boolean)
+//        {
+//            builder.setInternalValue((Boolean) settings[1]);
+//        } else if (settings[1] instanceof String)
+//        {
+//            builder.setInformationText((String) settings[1]);
+//        } else
+//        {
+//            LOG.warning(bundle.getString("wrongTypeTwoArgs"));
+//        }
+//        return builder;
+//    }
+//
+//    /**
+//     * This Methode interprets an Array with three Object in such a way that it creates an Setting.
+//     *
+//     * @param settings The array with three arguments.
+//     *
+//     * @return The new Setting.
+//     */
+//    private static SettingsBuilder threeArguments(Object[] settings)
+//    {
+//
+//        if (settings.length < 3)
+//        {
+//            LOG.warning(bundle.getString("lessThenThreeArgs"));
+//            return new SettingsBuilder();
+//        }
+//        SettingsBuilder builder = firstArgument(settings[0]);
+//        if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer)
+//        {
+//            builder.setMinimumValue((Integer) settings[1]);
+//            builder.setMaximumValue((Integer) settings[2]);
+//        } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double)
+//        {
+//            builder.setMinimumValue((Double) settings[1]);
+//            builder.setMaximumValue((Double) settings[2]);
+//        } else if (settings[1] instanceof Boolean && settings[2] instanceof String)
+//        {
+//            builder.setInternalValue((Boolean) settings[1]);
+//            builder.setInformationText((String) settings[2]);
+//        } else
+//        {
+//            LOG.warning(bundle.getString("wrongTypeThreeArgs"));
+//        }
+//        return builder;
+//    }
+//
+//    /**
+//     * This Methode interprets an Array with four  Object in such a way that it creates an Setting.
+//     *
+//     * @param settings The array with four arguments.
+//     *
+//     * @return The new Setting.
+//     */
+//    private static SettingsBuilder fourArguments(Object[] settings)
+//    {
+//
+//        if (settings.length < 4)
+//        {
+//            LOG.warning(bundle.getString("lessThenFourArgs"));
+//            return new SettingsBuilder();
+//        }
+//        SettingsBuilder builder = firstArgument(settings[0]);
+//        if (settings[0] instanceof Integer && settings[1] instanceof Integer && settings[2] instanceof Integer)
+//        {
+//            builder.setMinimumValue((Integer) settings[1]);
+//            builder.setMaximumValue((Integer) settings[2]);
+//        } else if (settings[0] instanceof Double && settings[1] instanceof Double && settings[2] instanceof Double)
+//        {
+//            builder.setMinimumValue((Double) settings[1]);
+//            builder.setMaximumValue((Double) settings[2]);
+//        } else
+//        {
+//            LOG.warning(bundle.getString("wrongTypeFourArgs"));
+//        }
+//        if (settings[3] instanceof String)
+//        {
+//            builder.setInformationText((String) settings[3]);
+//        } else if (settings[3] instanceof Boolean)
+//        {
+//            builder.setInternalValue((Boolean) settings[3]);
+//        }
+//        return builder;
+//    }
+//
+//    /**
+//     * This Methode interprets an Array with five Object in such a way that it creates an Setting.
+//     *
+//     * @param settings The array with five arguments.
+//     *
+//     * @return The new Setting.
+//     */
+//    private static SettingsBuilder fiveArguments(Object[] settings)
+//    {
+//        if (settings.length < 5)
+//        {
+//            LOG.warning(bundle.getString("lessThenFiveArgs"));
+//            return new SettingsBuilder();
+//        }
+//        SettingsBuilder builder = threeArguments(new Object[]{settings[0], settings[1], settings[2]});
+//        if (settings[3] instanceof Boolean && settings[4] instanceof String)
+//        {
+//            builder.setInternalValue((Boolean) settings[3]);
+//            builder.setInformationText((String) settings[4]);
+//        } else
+//        {
+//            LOG.warning(bundle.getString("wrongTypeFiveArgs"));
+//        }
+//        return builder;
+//    }
 
     //LOAD and SAVE
 

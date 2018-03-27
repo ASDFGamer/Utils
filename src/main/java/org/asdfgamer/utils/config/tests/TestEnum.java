@@ -2,6 +2,7 @@ package org.asdfgamer.utils.config.tests;
 
 import org.asdfgamer.utils.config.Setting;
 import org.asdfgamer.utils.config.Settings;
+import org.asdfgamer.utils.config.annotations.SettingInfo;
 
 import java.lang.annotation.ElementType;
 
@@ -13,6 +14,7 @@ import java.lang.annotation.ElementType;
 @SuppressWarnings("unused")
 public enum TestEnum
 {
+    @SettingInfo(caption = "testen")
     test("test"),
     testInt(1),
     testDouble(1.1),

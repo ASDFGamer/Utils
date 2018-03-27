@@ -2,6 +2,7 @@ package org.asdfgamer.utils.config.internal;
 
 import org.asdfgamer.utils.config.Setting;
 import org.asdfgamer.utils.config.Settings;
+import org.asdfgamer.utils.config.annotations.SettingInfo;
 
 import java.util.Map;
 import java.util.logging.Logger;
@@ -10,8 +11,10 @@ import static java.util.logging.Logger.getLogger;
 import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 
 /**
- * This Class holds all Information of an Setting that belongs to the Setting, but isn't related to the value of the Setting.
+ * This Class holds all Information of an Setting that belongs to the Setting, but isn't related to the value of the
+ * Setting.
  */
+@SuppressWarnings("WeakerAccess")
 public class SettingsInformation
 {
 
@@ -25,7 +28,7 @@ public class SettingsInformation
     /**
      * This text shows some information about the setting.
      */
-    private final String informationText;
+    private String informationText = null;
 
     /**
      * This is the Name of the class in which the setting is created
@@ -33,10 +36,12 @@ public class SettingsInformation
     private final String className;
 
     /**
-     * This is the LineNumber where the Setting gets created. In Enums this is the Line where the Setting gets declared, in Classes it is the Line where the Setting gets initialised.
+     * This is the LineNumber where the Setting gets created. In Enums this is the Line where the Setting gets declared,
+     * in Classes it is the Line where the Setting gets initialised.
      */
     private final int lineNumber;
 
+    private Setting setting;
 
     /**
      * This is the Name of the Setting.
@@ -46,18 +51,15 @@ public class SettingsInformation
     /**
      * This creates an new Information Object for a Setting.
      *
-     * @param informationText This is the Information Text for the setting, if there is any.
-     * @param settingName     This is the Name of the Setting.
-     * @param className       This is the Name of the Class of the Setting.
-     * @param lineNumber      This is the Line number of the Setting.
+     * @param className  This is the Name of the Class of the Setting.
+     * @param lineNumber This is the Line number of the Setting.
+    //* @param setting    This is the Setting where this Info-Object gets added.
      */
-    public SettingsInformation(String informationText, String settingName, String className, int lineNumber)
+    public SettingsInformation(String className, int lineNumber)
     {
-
-        this.informationText = informationText;
         this.className = className;
         this.lineNumber = lineNumber;
-        this.settingName = settingName;
+        //this.setting = setting;
     }
 
     /**
@@ -85,11 +87,14 @@ public class SettingsInformation
      * {@link Settings} it returns the localized version.
      *
      * @return The Information Text for the Setting. If it can be localized with the ResourceBundle given to
-     * {@link Settings} it returns the localized version.
+     *         {@link Settings} it returns the localized version.
      */
     public String getInformationText()
     {
-
+        if (informationText == null)
+        {
+            setInformationText();
+        }
         if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(informationText))
         {
             return Settings.getResourceBundle().getString(informationText);
@@ -97,12 +102,21 @@ public class SettingsInformation
         return informationText;
     }
 
+    private void setInformationText()
+    {
+        SettingInfo info = SettingUtils.getAnnotation(setting);
+        if (info != null)
+        {
+            informationText = info.info();
+        }
+    }
+
     /**
      * This returns the Class Name for the Setting. If it can be localized with the ResourceBundle given to
      * {@link Settings} it returns the localized version.
      *
      * @return The Class Name for the Setting. If it can be localized with the ResourceBundle given to
-     * {@link Settings} it returns the localized version.
+     *         {@link Settings} it returns the localized version.
      */
     public String getClassName()
     {
@@ -130,11 +144,15 @@ public class SettingsInformation
      * {@link Settings} it returns the localized version.
      *
      * @return The Name for the Setting. If it can be localized with the ResourceBundle given to
-     * {@link Settings} it returns the localized version.
+     *         {@link Settings} it returns the localized version.
      */
     public String getSettingName()
     {
 
+        if (settingName == null || settingName.isEmpty())
+        {
+            setSettingsName();
+        }
         if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(settingName))
         {
             return Settings.getResourceBundle().getString(settingName);
@@ -142,10 +160,12 @@ public class SettingsInformation
         return settingName;
     }
 
+
     /**
      * This sets the name of the Setting, if no name already exists
      *
      * @param name This is the name of the Setting.
+     *
      * @return true, if the name could be set, otherwise false.
      */
     private boolean setSettingName(String name)
@@ -165,10 +185,9 @@ public class SettingsInformation
     /**
      * This searches for the name of the Setting and sets it.
      *
-     * @param setting The setting that should get the Name.
      * @return true, if everything was successful, otherwise false.
      */
-    public boolean setSettingsName(Setting setting)
+    private boolean setSettingsName()
     {
 
         if (!getClassName().isEmpty())
@@ -190,6 +209,7 @@ public class SettingsInformation
      * This adds the Name of the Setting to the SettingProperty
      *
      * @param settings The Class with the settings.
+     *
      * @return true, if it was successful, otherwise false.
      */
     private boolean setSettingNamesClass(Object settings, Setting property)
@@ -204,5 +224,10 @@ public class SettingsInformation
             }
         }
         return false;
+    }
+
+    public void setSettings(Setting setting)
+    {
+        this.setting = setting;
     }
 }

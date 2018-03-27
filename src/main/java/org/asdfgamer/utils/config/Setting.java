@@ -8,6 +8,8 @@ import javafx.beans.value.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
+import org.asdfgamer.utils.config.annotations.SettingInfo;
+import org.asdfgamer.utils.config.internal.SettingUtils;
 import org.asdfgamer.utils.config.internal.SettingsInformation;
 import org.asdfgamer.utils.other.Convertible;
 import org.asdfgamer.utils.other.Utils;
@@ -41,7 +43,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
     /**
      * This shows if this setting is only for internally use and shouldn't be saved, etc.
      */
-    private final boolean internalValue;
+    private Boolean internalValue;
 
     /**
      * This contains all information about this Setting that isn't connected to the value.
@@ -93,15 +95,26 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     private boolean changed = false;
 
+    /**
+     * This shows if the Minimum value was used.
+     */
+    private boolean minimumNeverUsed = true;
+
+    /**
+     * This shows if the Maximum value was used.
+     */
+    private boolean maximumNeverUsed = true;
+
     // ----Constructors----
 
     /**
      * This is the default constructor, everything uses default values.
      */
-    Setting()
+    Setting(SettingsInformation info)
     {
+        this.info = info;
+        info.setSettings(this);
         this.defaultValue = null;
-        this.internalValue = false;
         this.valueString = new SimpleStringProperty();
         this.valuesString.addListener(getValueUpdater());
     }
@@ -120,7 +133,6 @@ public class Setting implements WritableStringValue, ObservableStringValue
         this.valueString = new SimpleStringProperty(initialValue);
         this.valuesString.addListener(getValueUpdater());
         this.init(initialValue);
-        this.internalValue = false;
     }
 
     /**
@@ -130,14 +142,17 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * @param initialValue  The default/initial value of the setting.
      * @param internalValue This shows if the Setting is only for internal use.
      */
-    Setting(String initialValue, boolean internalValue)
+    Setting(String initialValue, boolean internalValue, SettingsInformation info)
     {
+        this.info = info;
+        info.setSettings(this);
         this.valuesString.add(initialValue);
         this.valueString = new SimpleStringProperty(initialValue);
         this.defaultValue = initialValue;
         this.valuesString.addListener(getValueUpdater());
         this.init(initialValue);
         this.internalValue = internalValue;
+        info.setSettings(this);
     }
 
     /**
@@ -147,8 +162,10 @@ public class Setting implements WritableStringValue, ObservableStringValue
      *
      * @param initialValue The default/initial value of the setting.
      */
-    Setting(List<String> initialValue)
+    Setting(List<String> initialValue, SettingsInformation info)
     {
+        this.info = info;
+        info.setSettings(this);
         this.valuesString = FXCollections.observableList(initialValue);
         this.defaultValue = initialValue.get(0);
         this.valueString = new SimpleStringProperty(initialValue.get(0));
@@ -164,8 +181,10 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * @param initialValue  The default/initial value of the setting.
      * @param internalValue This shows if the Setting is only for internal use.
      */
-    Setting(List<String> initialValue, boolean internalValue)
+    Setting(List<String> initialValue, boolean internalValue, SettingsInformation info)
     {
+        this.info = info;
+        info.setSettings(this);
         this.valuesString = FXCollections.observableList(initialValue);
         this.valueString = new SimpleStringProperty(initialValue.get(0));
         this.defaultValue = initialValue.get(0);
@@ -462,7 +481,15 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     public Double getMaximum()
     {
-
+        if (maximum == null & maximumNeverUsed)
+        {
+            SettingInfo annotation = SettingUtils.getAnnotation(this);
+            if (annotation != null && annotation.maximumValue() != Double.MAX_VALUE)
+            {
+                maximum = annotation.minimumValue();
+            }
+            maximumNeverUsed = false;
+        }
         return maximum;
     }
 
@@ -473,7 +500,15 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     public Double getMinimum()
     {
-
+        if (minimum == null & minimumNeverUsed)
+        {
+            SettingInfo annotation = SettingUtils.getAnnotation(this);
+            if (annotation != null && annotation.minimumValue() != Double.MIN_VALUE)
+            {
+                minimum = annotation.minimumValue();
+            }
+            minimumNeverUsed = false;
+        }
         return minimum;
     }
 
@@ -518,11 +553,6 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     public String getSettingName()
     {
-
-        if (info.getSettingName() == null || info.getSettingName().isEmpty())
-        {
-            info.setSettingsName(this);
-        }
         return info.getSettingName();
     }
 
@@ -534,7 +564,14 @@ public class Setting implements WritableStringValue, ObservableStringValue
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isInternalValue()
     {
-
+        if (internalValue == null)
+        {
+            SettingInfo annotation = SettingUtils.getAnnotation(this);
+            if (annotation != null)
+            {
+                internalValue = annotation.internalValue();
+            }
+        }
         return internalValue;
     }
 
@@ -803,12 +840,12 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (this.valuesInteger.size() > 0)
         {
-            if (this.maximum != null && this.maximum < newValue)
+            if (getMaximum() != null && getMaximum() < newValue)
             {
-                newValue = this.maximum.intValue();
-            } else if (this.minimum != null && this.minimum > newValue)
+                newValue = getMaximum().intValue();
+            } else if (getMinimum() != null && getMinimum() > newValue)
             {
-                newValue = this.minimum.intValue();
+                newValue = getMinimum().intValue();
             }
             this.valuesInteger.set(index, newValue);
             this.valuesString.set(index, String.valueOf(newValue));
@@ -886,12 +923,12 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (this.valuesDouble.size() > 0)
         {
-            if (this.maximum != null && this.maximum < newValue)
+            if (getMaximum() != null && getMaximum() < newValue)
             {
-                newValue = this.maximum;
-            } else if (this.minimum != null && this.minimum > newValue)
+                newValue = getMaximum();
+            } else if (getMinimum() != null && getMinimum() > newValue)
             {
-                newValue = this.minimum;
+                newValue = getMinimum();
             }
             this.valuesDouble.set(index, newValue);
             this.valuesString.set(index, String.valueOf(newValue));

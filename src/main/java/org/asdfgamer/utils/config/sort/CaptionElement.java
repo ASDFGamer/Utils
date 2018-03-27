@@ -1,6 +1,6 @@
 package org.asdfgamer.utils.config.sort;
 
-import org.asdfgamer.utils.config.Caption;
+import org.asdfgamer.utils.config.annotations.Caption;
 
 /**
  * This Class is used to create Elements that can be added to an List of ListElements.

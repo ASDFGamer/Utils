@@ -2,6 +2,8 @@ package org.asdfgamer.utils.config;
 
 import org.asdfgamer.utils.config.internal.SettingsInformation;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static java.util.logging.Logger.getLogger;
@@ -38,6 +40,8 @@ class SettingsBuilder
 
     private boolean minimumInt;
 
+    private List<String> defaultValueList = null;
+
     /**
      * This builder can only be used by classes from this package.
      */
@@ -54,8 +58,15 @@ class SettingsBuilder
     {
 
         addClass();
-
-        Setting setting = new Setting(defaultValue, internalValue);
+        Setting setting;
+        SettingsInformation info = new SettingsInformation(className, lineNumber);
+        if (!(defaultValueList == null))
+        {
+            setting = new Setting(defaultValueList, internalValue, info);
+        } else
+        {
+            setting = new Setting(defaultValue, internalValue, info);
+        }
         if (maximumInt)
         {
             setting.setMaximumValue((int) maximumValue);
@@ -75,7 +86,7 @@ class SettingsBuilder
         {
             setting.addListener(SettingsListener.getSettingChange(setting));
         }
-        SettingsInformation info = new SettingsInformation(informationText, settingName, className, lineNumber);
+
         setting.setSettingsInformation(info);
         return setting;
     }
@@ -129,6 +140,19 @@ class SettingsBuilder
     {
 
         this.defaultValue = value;
+        return this;
+    }
+
+    /**
+     * This sets the default values
+     *
+     * @param value The default values of the Setting
+     *
+     * @return The used SettingsBuilder
+     */
+    public SettingsBuilder setDefaultValue(String[] value)
+    {
+        this.defaultValueList = Arrays.asList(value);
         return this;
     }
 
@@ -241,4 +265,5 @@ class SettingsBuilder
         this.maximumInt = false;
         return this;
     }
+
 }

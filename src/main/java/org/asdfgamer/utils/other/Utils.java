@@ -43,6 +43,7 @@ public class Utils
      *
      * @param wert        Der String der überprüft werden soll.
      * @param true_values Die Strings die wahr sind.
+     *
      * @return true, falls der String gleich ist wie einer der true_values.
      */
     public static boolean isTrue(String wert, String[] true_values)
@@ -64,6 +65,7 @@ public class Utils
      *
      * @param wert         Der String der überprüft werden soll.
      * @param false_values Die Strings die falsch sind.
+     *
      * @return true, falls der String gleich ist wie einer der false_values.
      */
     public static boolean isFalse(String wert, String[] false_values)
@@ -83,6 +85,7 @@ public class Utils
      * Dies gibt einen sinnvollen Config-Ordner zurück je nach Betriebssystem.
      *
      * @param name Der Name des Ordners (sinnvollerweise der Programmname).
+     *
      * @return Den Pfad des Ordners.
      */
     public static String getConfigFolder(String name)
@@ -120,6 +123,7 @@ public class Utils
      * @param progname Der Name des Programms ({@link Utils#getConfigFolder(java.lang.String)
      *                 }).
      * @param filename Der Name der Einstellungsdatei.
+     *
      * @return Den Pfad der Einstellungsdatei oder null falls sie nicht erstellt werden konnte.
      */
     public static String getConfigFile(String progname, String filename)
@@ -143,6 +147,7 @@ public class Utils
      * Datei zeigt.
      *
      * @param path Der Pfad zur Datei als String.
+     *
      * @return true, falls es eine Datei ist, sonnst false.
      */
     public static boolean isFile(String path)
@@ -164,6 +169,7 @@ public class Utils
      * Datei zeigt.
      *
      * @param path Der Pfad zur Datei als File.
+     *
      * @return true, falls es eine Datei ist, sonnst false.
      */
     public static boolean isFile(File path)
@@ -177,6 +183,7 @@ public class Utils
      * Datei zeigt.
      *
      * @param path Der Pfad zur Datei als Path.
+     *
      * @return true, falls es eine Datei ist, sonnst false.
      */
     public static boolean isFile(Path path)
@@ -189,6 +196,7 @@ public class Utils
      * Dies erstellt die Datei und wenn nötig auch jeden übergeordneten Ordner.
      *
      * @param datei Die Datei die erstellt werden soll als Pfad.
+     *
      * @return true, falls es geklappt hat, sonst false.
      */
     public static boolean createFile(String datei)
@@ -201,6 +209,7 @@ public class Utils
      * Dies erstellt die Datei und wenn nötig auch jeden übergeordneten Ordner.
      *
      * @param datei Die Datei die erstellt werden soll.
+     *
      * @return true, falls es geklappt hat, sonst false.
      */
     public static boolean createFile(Path datei)
@@ -237,6 +246,7 @@ public class Utils
      * Dies erstellt den Ordner und wenn nötig auch jeden übergeordneten Ordner.
      *
      * @param ordner Der Ordner der erstellt werden soll.
+     *
      * @return true, falls es geklappt hat, sonst false.
      */
     public static boolean createFolder(Path ordner)
@@ -279,6 +289,7 @@ public class Utils
      * Ordner zeigt.
      *
      * @param path Der Pfad zum Ordner als String.
+     *
      * @return true, falls es ein Ordner ist, sonnst false.
      */
     public static boolean isFolder(String path)
@@ -300,6 +311,7 @@ public class Utils
      * Ordner zeigt.
      *
      * @param path Der Pfad zum Ordner als File.
+     *
      * @return true, falls es ein Ordner ist, sonnst false.
      */
     public static boolean isFolder(File path)
@@ -313,6 +325,7 @@ public class Utils
      * Ordner zeigt.
      *
      * @param path Der Pfad zum Ordner als Path.
+     *
      * @return true, falls es ein Ordner ist, sonnst false.
      */
     public static boolean isFolder(Path path)
@@ -443,6 +456,7 @@ public class Utils
      * wird zu [2,516,3].
      *
      * @param text Der Text der geparst werden soll.
+     *
      * @return Ein Array aus den int Argumenten die geparst wurden.
      */
     public static int[] getArgs(String text)
@@ -480,6 +494,7 @@ public class Utils
      * Hiermit wird der Sinus in Grad für den angegebenen Winkel berechnet.
      *
      * @param winkel Der Winkel von 0 bis 360 Grad.
+     *
      * @return Der zugehörige Sinus.
      */
     public static double sinRad(double winkel)
@@ -497,6 +512,7 @@ public class Utils
      * Hiermit wird der Kosinus in Grad für den angegebenen Winkel berechnet.
      *
      * @param winkel Der Winkel von 0 bis 360 Grad.
+     *
      * @return Der zugehörige Cosinus.
      */
     public static double cosRad(double winkel)
@@ -511,10 +527,12 @@ public class Utils
     }
 
     /**
-     * Hiermit wird der Arctangens für die beiden längen berechnet. Die Argumente dürfen auch negativ sein. Die Ausgabe ist in Grad.
+     * Hiermit wird der Arctangens für die beiden längen berechnet. Die Argumente dürfen auch negativ sein. Die Ausgabe
+     * ist in Grad.
      *
      * @param y Die länge in y-Richtung.
      * @param x Die länge in x-Richtung.
+     *
      * @return Der Winkel von 0 bis 360.
      */
     public static double arctan(double y, double x)
@@ -535,8 +553,10 @@ public class Utils
      * @param klasse Dies ist das Objekt aus dem die Felder ausgelesen werden. Es kann sich auch um das dazugehörige
      *               Class-Objekt handeln, aber dann können nur statische Felder betrachtet werden.
      * @param <T>    Dies ist der Typ von dem die ausgelesenen Felder sein sollen.
+     *
      * @return Dies ist eine Liste mit allen Feldern des angegebenen Typs.
-     * Todo aufräumen, testen, falls ein String übergeben wird und nach SettingPropertys gescht wird treten anscheinend fehler auf.
+     *         Todo aufräumen, testen, falls ein String übergeben wird und nach SettingPropertys gescht wird treten
+     *         anscheinend fehler auf.
      */
     public static <T> Map<String, T> getFields(Object klasse)
     {
@@ -609,6 +629,7 @@ public class Utils
      * This tests if the given object is an Enum, or an Class object of an Enum or a String that represents an Enum.
      *
      * @param enumObject The Object that should be checked.
+     *
      * @return true, if it ist an enum, otherwise false.
      */
     public static boolean isEnum(Object enumObject)
@@ -646,6 +667,7 @@ public class Utils
      * gesamte Name sein, z.B. java.lang.annotation.ElementType.ANNOTATION_TYPE
      *
      * @param enumElement Der String der das Enumelement angibt.
+     *
      * @return Entweder das Enumelement oder null, falls es nicht gefunden werden konnte.
      */
     public static Enum getEnumElement(String enumElement)
@@ -694,6 +716,7 @@ public class Utils
      * 'User\AppData\Roaming' liegt.
      *
      * @param name Der Name des Ordners (sinnvollerweise der Programmname).
+     *
      * @return Den Pfad des Ordners.
      */
     private static String getConfigFolderWin(String name)
@@ -709,6 +732,7 @@ public class Utils
      * '~\.config'.
      *
      * @param name Der Name des Ordners (sinnvollerweise der Programmname).
+     *
      * @return Den Pfad des Ordners.
      */
     private static String getConfigFolderLinux(String name)
@@ -723,6 +747,7 @@ public class Utils
      * Dies gibt einen guten Pfad für MacOS zurück.
      *
      * @param name Der Name des Ordners (sinnvollerweise der Programmname).
+     *
      * @return Den Pfad des Ordners.
      */
     private static String getConfigFolderMacOS(String name)
@@ -738,11 +763,38 @@ public class Utils
      * zurück.
      *
      * @param name Der Name des Ordners (sinnvollerweise der Programmname).
+     *
      * @return Den Pfad des Ordners.
      */
     private static String getConfigFolderNormal(String name)
     {
 
         return System.getProperty("user.home") + SEPERATOR + name + SEPERATOR;
+    }
+
+    /**
+     * Dies gibt das Statische Feld zurück, welches als Wert das gegebene Objekt hat.
+     *
+     * @param aClass Die Klasse die das Feld enthält
+     * @param object Das Objekt nach dem gesucht werden soll.
+     *
+     * @return Das Field oder null.
+     */
+    public static Field getStaticField(Class<?> aClass, Object object)
+    {
+        Field[] fields = aClass.getFields();
+        for (Field field : fields)
+        {
+            try
+            {
+                if (Modifier.isStatic(field.getModifiers()) && field.get(null).equals(object))
+                {
+                    return field;
+                }
+            } catch (IllegalAccessException ignored)
+            {
+            }
+        }
+        return null;
     }
 }

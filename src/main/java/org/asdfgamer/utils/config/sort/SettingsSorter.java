@@ -1,7 +1,7 @@
 package org.asdfgamer.utils.config.sort;
 
-import org.asdfgamer.utils.config.Caption;
 import org.asdfgamer.utils.config.Setting;
+import org.asdfgamer.utils.config.annotations.Caption;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
