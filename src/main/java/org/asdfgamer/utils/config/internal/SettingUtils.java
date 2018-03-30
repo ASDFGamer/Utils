@@ -74,7 +74,6 @@ public class SettingUtils
      * This finds all SettingsProperties from the given Enum and returns them as List.
      *
      * @param enumObject The Class-object of the enum
-     *
      * @return A List with all Settings
      */
     private static List<Setting> getSettingsFromEnum(Object enumObject)
@@ -118,7 +117,6 @@ public class SettingUtils
      *
      * @param settings This are all settings that should be sorted as List.
      *                 The settings can be from different classes but don't have to be.
-     *
      * @return A Map which has in the Classname as Key and as value a List with all Settings of that Class.
      */
     @SuppressWarnings("WeakerAccess")
@@ -203,29 +201,41 @@ public class SettingUtils
      * This returns the Annotation for the setting.
      *
      * @param setting The Setting with the annotation.
-     *
      * @return The Annotation.
+     * @throws IllegalStateException If the setting wasn't instantiated.
      */
-    public static SettingInfo getAnnotation(Setting setting)
+    public static SettingInfo getAnnotation(Setting setting) throws IllegalStateException
     {
         if (!setting.getClassName().isEmpty())
         {
             Field settingsField = getField(setting);
-            if (settingsField != null)
+            if (settingsField == null)
+            {
+                throw new IllegalStateException(bundle.getString("SettingNotInstantiated"));
+            } else
             {
                 return settingsField.getAnnotation(SettingInfo.class);
             }
-            return null;
         }
         LOG.warning(bundle.getString("classNameIsEmpty"));
         return null;
     }
 
+    /**
+     * This returns the Field of the Setting
+     *
+     * @param setting The Setting
+     * @return The Field of the setting, if the Setting is initialized.
+     */
     private static Field getField(Setting setting)
     {
+        if (setting == null)
+        {
+            return null;
+        }
         try
         {
-            if (setting.getSettingName() != null || !setting.getSettingName().isEmpty())
+            if (setting.getSettingName() != null && !setting.getSettingName().isEmpty())
             {
                 return Class.forName(setting.getClassName()).getField(setting.getSettingName());
             } else

@@ -483,10 +483,10 @@ public class Setting implements WritableStringValue, ObservableStringValue
     {
         if (maximum == null & maximumNeverUsed)
         {
-            SettingInfo annotation = SettingUtils.getAnnotation(this);
+            SettingInfo annotation = SettingUtils.getAnnotation(this);//TODO when this is called to early it returns null, but sometimes it should return null
             if (annotation != null && annotation.maximumValue() != Double.MAX_VALUE)
             {
-                maximum = annotation.minimumValue();
+                maximum = annotation.maximumValue();
             }
             maximumNeverUsed = false;
         }
@@ -715,10 +715,27 @@ public class Setting implements WritableStringValue, ObservableStringValue
                 throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_enum"));
             }
         } else
-        {
-            valuesString.set(index, newValue);//this gets set in every other set...
+        {//this gets set in every other set...
+            setOnlyString(newValue, index);
         }
 
+    }
+
+    /**
+     * This sets the value only for the String.
+     *
+     * @param newValue The new value
+     * @param index    The index
+     */
+    private void setOnlyString(String newValue, int index)
+    {
+        if (index == valuesString.size())
+        {
+            valuesString.add(newValue);
+        } else
+        {
+            valuesString.set(index, newValue);//TODO only if it changed
+        }
     }
 
     /**
@@ -847,8 +864,14 @@ public class Setting implements WritableStringValue, ObservableStringValue
             {
                 newValue = getMinimum().intValue();
             }
-            this.valuesInteger.set(index, newValue);
-            this.valuesString.set(index, String.valueOf(newValue));
+            if (index == valuesInteger.size())
+            {
+                this.valuesInteger.add(newValue);
+            } else
+            {
+                this.valuesInteger.set(index, newValue);
+            }
+            setOnlyString(String.valueOf(newValue), index);
             return true;
         } else
         {
@@ -930,8 +953,15 @@ public class Setting implements WritableStringValue, ObservableStringValue
             {
                 newValue = getMinimum();
             }
-            this.valuesDouble.set(index, newValue);
-            this.valuesString.set(index, String.valueOf(newValue));
+            if (index == valuesDouble.size())
+            {
+                this.valuesDouble.add(newValue);
+            } else
+            {
+                this.valuesDouble.set(index, newValue);
+            }
+            setOnlyString(String.valueOf(newValue), index);
+
             return true;
         } else
         {
@@ -1004,8 +1034,15 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (this.valuesBoolean.size() > 0)
         {
-            this.valuesBoolean.set(index, newValue);
-            this.valuesString.set(index, String.valueOf(newValue));
+            if (index == valuesBoolean.size())
+            {
+                this.valuesBoolean.add(newValue);
+            } else
+            {
+                this.valuesBoolean.set(index, newValue);
+            }
+            setOnlyString(String.valueOf(newValue), index);
+
             return true;
         } else
         {
@@ -1077,8 +1114,15 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (this.valuesEnum.size() > 0)
         {
-            this.valuesEnum.set(index, newValue);
-            valuesString.set(index, String.valueOf(newValue.getDeclaringClass().getName() + "." + newValue));
+            if (index == valuesEnum.size())
+            {
+                this.valuesEnum.add(newValue);
+            } else
+            {
+                this.valuesEnum.set(index, newValue);
+            }
+            setOnlyString(String.valueOf(newValue), index);
+
             return true;
         } else
         {
@@ -1471,11 +1515,9 @@ public class Setting implements WritableStringValue, ObservableStringValue
     private void init(List<String> initialValue)
     {
         init(initialValue.get(0));
-        for (String value : initialValue)
+        for (int i = 1; i < initialValue.size(); i++)
         {
-            add(value);
+            set(initialValue.get(i), i);
         }
     }
-
-
 }

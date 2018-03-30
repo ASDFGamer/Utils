@@ -60,7 +60,7 @@ class SettingsBuilder
         addClass();
         Setting setting;
         SettingsInformation info = new SettingsInformation(className, lineNumber);
-        if (!(defaultValueList == null))
+        if (defaultValueList != null)
         {
             setting = new Setting(defaultValueList, internalValue, info);
         } else
