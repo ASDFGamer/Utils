@@ -166,11 +166,12 @@ public class Setting implements WritableStringValue, ObservableStringValue
     {
         this.info = info;
         info.setSettings(this);
-        this.valuesString = FXCollections.observableList(initialValue);
+        this.init(initialValue);
+        //this.valuesString = FXCollections.observableList(initialValue);
         this.defaultValue = initialValue.get(0);
         this.valueString = new SimpleStringProperty(initialValue.get(0));
         this.valuesString.addListener(getValueUpdater());
-        this.init(initialValue);
+
         this.internalValue = false;
     }
 
@@ -185,11 +186,11 @@ public class Setting implements WritableStringValue, ObservableStringValue
     {
         this.info = info;
         info.setSettings(this);
-        this.valuesString = FXCollections.observableList(initialValue);
+        this.init(initialValue);
+        //this.valuesString = FXCollections.observableList(initialValue);This should be already done in init()
         this.valueString = new SimpleStringProperty(initialValue.get(0));
         this.defaultValue = initialValue.get(0);
         this.valuesString.addListener(getValueUpdater());
-        this.init(initialValue);
         this.internalValue = internalValue;
     }
 
@@ -483,12 +484,20 @@ public class Setting implements WritableStringValue, ObservableStringValue
     {
         if (maximum == null & maximumNeverUsed)
         {
-            SettingInfo annotation = SettingUtils.getAnnotation(this);//TODO when this is called to early it returns null, but sometimes it should return null
-            if (annotation != null && annotation.maximumValue() != Double.MAX_VALUE)
+            try
             {
-                maximum = annotation.maximumValue();
+                SettingInfo annotation = SettingUtils.getAnnotation(this);//TODO when this is called to early it returns null, but sometimes it should return null
+                if (annotation != null && annotation.maximumValue() != Double.MAX_VALUE)
+                {
+                    maximum = annotation.maximumValue();
+                }
+                maximumNeverUsed = false;
+            } catch (IllegalStateException e)
+            {
+                LOG.warning(e.getMessage());
+                return null;
             }
-            maximumNeverUsed = false;
+
         }
         return maximum;
     }
@@ -502,12 +511,20 @@ public class Setting implements WritableStringValue, ObservableStringValue
     {
         if (minimum == null & minimumNeverUsed)
         {
-            SettingInfo annotation = SettingUtils.getAnnotation(this);
-            if (annotation != null && annotation.minimumValue() != Double.MIN_VALUE)
+            try
             {
-                minimum = annotation.minimumValue();
+
+                SettingInfo annotation = SettingUtils.getAnnotation(this);
+                if (annotation != null && annotation.minimumValue() != Double.MIN_VALUE)
+                {
+                    minimum = annotation.minimumValue();
+                }
+                minimumNeverUsed = false;
+            } catch (IllegalStateException e)
+            {
+                LOG.warning(e.getMessage());
+                return null;
             }
-            minimumNeverUsed = false;
         }
         return minimum;
     }
@@ -1489,6 +1506,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     private void init(String initialValue)
     {
+        this.valuesString.add(0, initialValue);
         if (Convertible.toBoolean(initialValue, TRUE_VALUES, FALSE_VALUES))
         {
             this.valuesBoolean.add(0, Utils.isTrue(initialValue, TRUE_VALUES));
