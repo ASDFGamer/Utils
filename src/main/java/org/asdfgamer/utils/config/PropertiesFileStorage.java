@@ -302,7 +302,8 @@ public class PropertiesFileStorage implements SettingsStorage
                     setting.set(longtext);
                 } else
                 {
-                    setting.set(properties.getProperty(setting.getSettingName(), setting.getDefaultValue()));
+                    String value = properties.getProperty(setting.getSettingName(), setting.getDefaultValue());
+                    setting.set(value);
                 }
                 SettingClassInfo.setSettingsLoaded(setting.getClassName());//This gets called to much -> performance loss
             }

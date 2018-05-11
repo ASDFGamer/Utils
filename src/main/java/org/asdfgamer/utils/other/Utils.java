@@ -645,7 +645,8 @@ public class Utils
                 {
                     try
                     {
-                        return Class.forName(((String) enumObject).substring(0, ((String) enumObject).lastIndexOf("."))).isEnum();
+                        String shortName = ((String) enumObject).substring(0, ((String) enumObject).lastIndexOf("."));
+                        return Class.forName(shortName).isEnum();
                     } catch (ClassNotFoundException ex)
                     {
                         return false;

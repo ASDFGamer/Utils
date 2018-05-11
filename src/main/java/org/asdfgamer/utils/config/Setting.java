@@ -725,12 +725,16 @@ public class Setting implements WritableStringValue, ObservableStringValue
             }
         } else if (this.valuesEnum.size() > 0)
         {
+            if (!newValue.contains("."))
+            {
+                newValue = defaultValue.substring(0, defaultValue.lastIndexOf("."))+"."+newValue;
+            }
             if (Utils.isEnum(newValue))
             {
                 setEnum(Utils.getEnumElement(newValue), index);
             } else
             {
-                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + bundle.getString("cantConvertValue_enum"));
+                throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + " " + bundle.getString("cantConvertValue_enum"));
             }
         } else
         {//this gets set in every other set...
