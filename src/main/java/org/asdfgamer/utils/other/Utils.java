@@ -791,7 +791,7 @@ public class Utils
                 {
                     return field;
                 }
-            } catch (IllegalAccessException ignored)
+            } catch (IllegalAccessException | NullPointerException ignored)
             {
             }
         }

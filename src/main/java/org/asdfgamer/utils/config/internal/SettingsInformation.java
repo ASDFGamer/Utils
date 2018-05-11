@@ -121,10 +121,10 @@ public class SettingsInformation
     public String getClassName()
     {
 
-        if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(className))
+        /*if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(className))
         {
             return Settings.getResourceBundle().getString(className);
-        }
+        }*/
         return className;
     }
 
@@ -151,7 +151,10 @@ public class SettingsInformation
 
         if (settingName == null || settingName.isEmpty())
         {
-            setSettingsName();
+            if (!setSettingsName())
+            {
+                LOG.warning(bundle.getString("nonStaticSetting"));
+            }
         }
         if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(settingName))
         {
@@ -209,12 +212,12 @@ public class SettingsInformation
      * This adds the Name of the Setting to the SettingProperty
      *
      * @param settings The Class with the settings.
+     * @param property The Setting where the Name should be set.
      *
      * @return true, if it was successful, otherwise false.
      */
-    private boolean setSettingNamesClass(Object settings, Setting property)
+    private boolean setSettingNamesClass(Class settings, Setting property)
     {
-
         Map<String, Setting> stringSettingsPropertyMap = SettingUtils.getFields(settings);
         for (Map.Entry<String, Setting> entry : stringSettingsPropertyMap.entrySet())
         {
