@@ -32,9 +32,9 @@ class SettingsBuilder
 
     private boolean changeListener = true;
 
-    private double minimumValue;
+    private Double minimumValue = null;
 
-    private double maximumValue;
+    private Double maximumValue = null;
 
     private boolean maximumInt;
 
@@ -67,21 +67,26 @@ class SettingsBuilder
         {
             setting = new Setting(defaultValue, internalValue, info);
         }
-        if (maximumInt)
+        if (maximumValue != null)
         {
-            setting.setMaximumValue((int) maximumValue);
-        } else
-        {
-            setting.setMaximumValue(maximumValue);
+            if (maximumInt)
+            {
+                setting.setMaximumValue(maximumValue.intValue());
+            } else
+            {
+                setting.setMaximumValue(maximumValue);
+            }
         }
-        if (minimumInt)
+        if (minimumValue != null)
         {
-            setting.setMinimumValue((int) minimumValue);
-        } else
-        {
-            setting.setMinimumValue(minimumValue);
+            if (minimumInt)
+            {
+                setting.setMinimumValue(minimumValue.intValue());
+            } else
+            {
+                setting.setMinimumValue(minimumValue);
+            }
         }
-
         if (changeListener)
         {
             setting.addListener(SettingsListener.getSettingChange(setting));
@@ -219,7 +224,7 @@ class SettingsBuilder
     public SettingsBuilder setMinimumValue(int minimum)
     {
 
-        this.minimumValue = minimum;
+        this.minimumValue = (double) minimum;
         this.minimumInt = true;
         return this;
     }
@@ -233,7 +238,7 @@ class SettingsBuilder
     public SettingsBuilder setMaximumValue(int maximum)
     {
 
-        this.maximumValue = maximum;
+        this.maximumValue = (double) maximum;
         this.maximumInt = true;
         return this;
     }

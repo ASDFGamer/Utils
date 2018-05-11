@@ -494,11 +494,12 @@ public class Setting implements WritableStringValue, ObservableStringValue
                 maximumNeverUsed = false;
             } catch (IllegalStateException e)
             {
-                LOG.warning(e.getMessage());
+                LOG.fine(e.getMessage());
                 return null;
             }
 
         }
+        LOG.info("Setting.getMaximum Zeile 502" + maximum);
         return maximum;
     }
 
@@ -522,7 +523,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
                 minimumNeverUsed = false;
             } catch (IllegalStateException e)
             {
-                LOG.warning(e.getMessage());
+                LOG.fine(e.getMessage());
                 return null;
             }
         }
@@ -876,6 +877,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
         {
             if (getMaximum() != null && getMaximum() < newValue)
             {
+                LOG.warning(getMaximum().toString() + "");
                 newValue = getMaximum().intValue();
             } else if (getMinimum() != null && getMinimum() > newValue)
             {

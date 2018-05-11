@@ -2,6 +2,7 @@ package org.asdfgamer.utils.config.tests;
 
 import org.asdfgamer.utils.config.Setting;
 import org.asdfgamer.utils.config.Settings;
+import org.asdfgamer.utils.config.annotations.SettingInfo;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -13,6 +14,7 @@ public class SettingsTest
 
     public final Setting setting1 = Settings.newSetting(new Object[]{"test"});
 
+    @SettingInfo(caption = "testSetting2", maximumValue = 9, minimumValue = 0)
     public final Setting setting2 = Settings.newSetting(new Object[]{5, 0, 9});
 
     @Test
