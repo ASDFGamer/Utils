@@ -499,7 +499,6 @@ public class Setting implements WritableStringValue, ObservableStringValue
             }
 
         }
-        LOG.info("Setting.getMaximum Zeile 502" + maximum);
         return maximum;
     }
 
@@ -737,7 +736,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
                 throw new IllegalArgumentException(bundle.getString("cantConvertValue_start") + newValue + " " + bundle.getString("cantConvertValue_enum"));
             }
         } else
-        {//this gets set in every other set...
+        {//this gets set in every other set-operation ...
             setOnlyString(newValue, index);
         }
 
@@ -881,7 +880,6 @@ public class Setting implements WritableStringValue, ObservableStringValue
         {
             if (getMaximum() != null && getMaximum() < newValue)
             {
-                LOG.warning(getMaximum().toString() + "");
                 newValue = getMaximum().intValue();
             } else if (getMinimum() != null && getMinimum() > newValue)
             {

@@ -637,7 +637,6 @@ public class Settings
 
     private static SettingsBuilder parseElements(Object[] settings)
     {
-        System.out.println(settings.getClass());
         String[] settingStrings = new String[settings.length];
         for (int i = 0; i < settings.length; i++)
         {

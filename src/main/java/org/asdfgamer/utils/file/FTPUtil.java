@@ -247,7 +247,7 @@ public class FTPUtil
         {
             String timePart = servertime.split(" ")[1];
             Date modificationTime = dateFormat.parse(timePart);
-            System.out.println("File modification time: " + modificationTime);
+            LOG.fine("File modification time: " + modificationTime);
             return modificationTime;
         } catch (ParseException ex)
         {
@@ -419,27 +419,27 @@ public class FTPUtil
         {
             String dirnow = client.printWorkingDirectory();
             //tempdir = dirnow;
-            System.out.println(dirnow);
+            LOG.fine(dirnow);
             while (noError)
             {
                 client.changeToParentDirectory();
-                System.out.println(client.printWorkingDirectory());
+                LOG.fine(client.printWorkingDirectory());
                 reply = client.getReplyCode();
-                System.out.println(reply);
+                LOG.fine(reply + "");
                 noError = FTPReply.isPositiveCompletion(reply) && !tempdir.equals(client.printWorkingDirectory());
-                System.out.println(noError);
+                LOG.fine(noError + "");
                 tempdir = client.printWorkingDirectory();
             }
-            System.out.println(client.changeWorkingDirectory(directory));
+            LOG.fine(client.changeWorkingDirectory(directory) + "");
             if (directory.equals(client.printWorkingDirectory()))
             {
-                System.out.println("Es wurde in das richtige verzeichnis gewechselt.");
+                LOG.fine("Es wurde in das richtige verzeichnis gewechselt.");
                 result = true;
             }
             if (!result)
             {
                 client.changeWorkingDirectory(dirnow);
-                System.out.println("Es gab einen Fehler und es wird zurück in das anfangsverzeichis gewechselt.");
+                LOG.info("Es gab einen Fehler und es wird zurück in das anfangsverzeichis gewechselt.");
                 return false;
             } else
             {
