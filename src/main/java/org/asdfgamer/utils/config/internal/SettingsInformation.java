@@ -145,15 +145,17 @@ public class SettingsInformation
      *
      * @return The Name for the Setting. If it can be localized with the ResourceBundle given to
      *         {@link Settings} it returns the localized version.
+     * @throws IllegalStateException if there was a problem with finding the setting
      */
-    public String getSettingName()
+    public String getSettingName() throws IllegalStateException
     {
 
         if (settingName == null || settingName.isEmpty())
         {
             if (!setSettingsName())
             {
-                LOG.warning(bundle.getString("nonStaticSetting"));
+                //LOG.warning(bundle.getString("nonStaticSetting"));
+                throw new IllegalStateException(bundle.getString("nonStaticSetting"));
             }
         }
         if (Settings.getResourceBundle() != null && Settings.getResourceBundle().containsKey(settingName))

@@ -225,6 +225,17 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
+     * TODO
+     *
+     * @param index
+     * @return
+     */
+    public String get(int index)
+    {
+        return getString(index);
+    }
+
+    /**
      * This Methode returns the Setting as String. If there are more entries, then the first entry is returned.
      *
      * @return The value of the Setting as String
@@ -567,6 +578,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * This returns the name of the Setting.
      *
      * @return The name of the Setting.
+     * @throws IllegalStateException if there was a problem with the setting, for example if it isn't fully instantiated.
      */
     public String getSettingName()
     {
@@ -623,7 +635,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
      *
      * @return The default value.
      */
-    public String getDefaultValue()
+    public String getDefaultValue()//TODO how works this in Lists?
     {
 
         return defaultValue;
@@ -851,6 +863,19 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
+     * TODO
+     *
+     * @param newValue
+     * @param index
+     * @return
+     */
+    public boolean set(Integer newValue, int index)
+    {
+
+        return setInteger(newValue, index);
+    }
+
+    /**
      * This sets the integer value of the setting and updates the String-value.
      * <p>
      * Note: This is only successful, if the setting got initialized with an value that can be interpreted as a integer.
@@ -934,6 +959,19 @@ public class Setting implements WritableStringValue, ObservableStringValue
     {
 
         return setDouble(newValue);
+    }
+
+    /**
+     * TODO
+     *
+     * @param newValue
+     * @param index
+     * @return
+     */
+    public boolean set(Double newValue, int index)
+    {
+
+        return setDouble(newValue,index);
     }
 
     /**
@@ -1026,6 +1064,19 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
+     * TODO
+     *
+     * @param newValue
+     * @param index
+     * @return
+     */
+    public boolean set(Boolean newValue, int index)
+    {
+
+        return setBoolean(newValue,index);
+    }
+
+    /**
      * This sets the boolean value of the setting and updates the String-value.
      * <p>
      * Note: This is only successful, if the setting got initialized with an value that can be interpreted as boolean.
@@ -1104,6 +1155,19 @@ public class Setting implements WritableStringValue, ObservableStringValue
     {
 
         return setEnum(newValue);
+    }
+
+    /**
+     * TODO
+     *
+     * @param newValue
+     * @param index
+     * @return
+     */
+    public boolean set(Enum newValue, int index)
+    {
+
+        return setEnum(newValue,index);
     }
 
     /**

@@ -290,35 +290,57 @@ public class SettingsGUI
      */
     private Control getSettingChangeElement(Setting setting)
     {
+        if (setting.isList())
+        {
+            return getSettingChangeElementList(setting);
+        }
+        return getSettingChangeElementSingle(setting, 0);
 
+    }
+
+    private Control getSettingChangeElementList(Setting setting)
+    {
+
+        TreeView<Control> treeView = new TreeView<>();
+        treeView.setCellFactory(e -> new ListCell());
+        for (int i = 0; i < setting.getLength(); i++)
+        {
+            TreeItem<Control> item = new TreeItem<>(getSettingChangeElementSingle(setting, i));
+        }
+
+        return treeView;
+    }
+
+    private Control getSettingChangeElementSingle(Setting setting, int i)
+    {
         switch (setting.getType())
         {
             case Double:
-                return createDoubleElement(setting);
+                return createDoubleElement(setting, i);
             case Integer:
-                return createIntegerElement(setting);
+                return createIntegerElement(setting, i);
             case Boolean:
-                return createBooleanElement(setting);
+                return createBooleanElement(setting, i);
             case String:
-                return createStringElement(setting);
+                return createStringElement(setting, i);
             case Enum:
-                return createEnumElement(setting);
+                return createEnumElement(setting, i);
             default:
                 return new Label(bundle.getString("internalError"));
         }
     }
 
-    private ComboBox<Enum> createEnumElement(Setting setting)
+    private ComboBox<Enum> createEnumElement(Setting setting, int index)
     {
 
         ComboBox<Enum> comboBox = new ComboBox<>();
-        Enum[] elements = Utils.getAllEnumElements(setting.getEnum());
+        Enum[] elements = Utils.getAllEnumElements(setting.getEnum(index));
         comboBox.getItems().addAll(elements);
-        comboBox.getSelectionModel().select(setting.getEnum());
+        comboBox.getSelectionModel().select(setting.getEnum(index));
         comboBox.valueProperty().addListener((observable, oldValue, newValue) ->
         {
             LOG.warning("SettingsGUI.createEnumElement Zeile 319");
-            setting.set(comboBox.getValue());
+            setting.set(comboBox.getValue(), index);
 
         });
 
@@ -340,17 +362,17 @@ public class SettingsGUI
      * @param setting The Setting that should be edited.
      * @return The newly created TextField.
      */
-    private TextField createStringElement(Setting setting)
+    private TextField createStringElement(Setting setting, int index)
     {
 
         TextField text = new TextField();
-        text.setText(setting.get());
+        text.setText(setting.get(index));
 
         text.focusedProperty().addListener((observable, oldValue, newValue) ->
         {
             if (!newValue)
             {
-                setting.set(text.getText());
+                setting.set(text.getText(), index);
             }
         });
 
@@ -371,17 +393,17 @@ public class SettingsGUI
      * @param setting The Setting that should be edited.
      * @return The newly created CheckBox.
      */
-    private CheckBox createBooleanElement(Setting setting)
+    private CheckBox createBooleanElement(Setting setting, int index)
     {
 
-        CheckBox checkBox = new CheckBox();
-        checkBox.setSelected(setting.getBoolean());
+        CheckBox checkBox = new CheckBox();//PROBLEM Es gibt ein Problem mit dem Settings was dafür sorgt, dass nur ein boolean value erstellt wird.
+        checkBox.setSelected(setting.getBoolean(index));
 
         checkBox.focusedProperty().addListener((observable, oldValue, newValue) ->
         {
             if (!newValue)
             {
-                setting.setBoolean(checkBox.isSelected());
+                setting.setBoolean(checkBox.isSelected(), index);
             }
         });
 
@@ -402,17 +424,17 @@ public class SettingsGUI
      * @param setting The Setting that should be edited.
      * @return The newly created TextField.
      */
-    private TextField createDoubleElement(Setting setting)
+    private TextField createDoubleElement(Setting setting, int index)
     {
 
         TextField number = new TextField();
-        number.setText(setting.get());
+        number.setText(setting.get(index));
 
         number.focusedProperty().addListener((observable, oldValue, newValue) ->
         {
             if (!newValue && Convertible.toDouble(number.getText()))
             {
-                setting.set(number.getText());
+                setting.set(number.getText(), index);
             }
         });
 
@@ -443,17 +465,17 @@ public class SettingsGUI
      * @param setting The Setting that should be edited.
      * @return The newly created TextField.
      */
-    private TextField createIntegerElement(Setting setting)
+    private TextField createIntegerElement(Setting setting, int index)
     {
 
         TextField number = new TextField();
-        number.setText(setting.get());
+        number.setText(setting.get(index));
 
         number.focusedProperty().addListener((observable, oldValue, newValue) -> //TODO save on change or save on save button click?
         {
             if (!newValue && Convertible.toInt(number.getText()))
             {
-                setting.set(number.getText());
+                setting.set(number.getText(), index);
             }
         });
 

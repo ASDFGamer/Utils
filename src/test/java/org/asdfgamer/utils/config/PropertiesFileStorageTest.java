@@ -1,6 +1,5 @@
 package org.asdfgamer.utils.config;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
@@ -13,7 +12,6 @@ public class PropertiesFileStorageTest
     public static final Setting setting2 = Settings.newSetting("it works really");
 
     @Test
-    @Ignore
     public void loadSettings()
     {
         setting1.set("it works");
@@ -28,32 +26,30 @@ public class PropertiesFileStorageTest
     }
 
     @Test
-    @Ignore
     public void loadSettingsFromEnum()
     {
         Settings settings = new Settings("testEnum");
-        SettingsConfig.language.SETTINGProperty().set("hello");
-        assertEquals(true, settings.save(SettingsConfig.class));
-        SettingsConfig.language.SETTINGProperty().set("doesn't work");
-        assertEquals(true, settings.load(SettingsConfig.class));
-        assertEquals("hello", SettingsConfig.language.SETTINGProperty().get());
+        TestEnum.test.SETTINGProperty().set("hello");
+        assertEquals(true, settings.save(TestEnum.class));
+        TestEnum.test.SETTINGProperty().set("doesn't work");
+        assertEquals(true, settings.load(TestEnum.class));
+        assertEquals("hello", TestEnum.test.SETTINGProperty().get());
     }
 
     @Test
-    @Ignore
     public void loadAllSettings()
     {
         setting1.set("Yeah");
         setting2.set("Hey Ho");
-        SettingsConfig.language.SETTINGProperty().set("Now this");
+        TestEnum.test.SETTINGProperty().set("Now this");
         Settings settings = new Settings("test");
         assertEquals(true, settings.save());
         setting1.set("Sad");
         setting2.set("it doesn't work");
-        SettingsConfig.language.SETTINGProperty().set("although it should");
+        TestEnum.test.SETTINGProperty().set("although it should");
         assertEquals(true, settings.load());
         assertEquals("Yeah", setting1.get());
         assertEquals("Hey Ho", setting2.get());
-        assertEquals("Now this", SettingsConfig.language.SETTINGProperty().get());
+        assertEquals("Now this", TestEnum.test.SETTINGProperty().get());
     }
 }

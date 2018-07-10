@@ -14,4 +14,5 @@ module org.asdfgamer.utils {
     exports org.asdfgamer.utils.file;
     exports org.asdfgamer.utils.other;
     exports org.asdfgamer.utils.config.tests to javafx.graphics;
+    exports org.asdfgamer.utils.config.gui to javafx.graphics;
 }
