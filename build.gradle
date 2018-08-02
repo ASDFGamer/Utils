@@ -29,48 +29,4 @@ dependencies {
 
     // JUnit and Mockito
     testCompile "junit:junit:4.12"
-    //Da es ein Problem mit dem Laden der Ressourcen für die Tests gibt (Die RessourceBundels werden nicht gefunden)
-    compile "junit:junit:4.12"
-    //test
 }
-
-//Changes for Jigsaw
-
-/*
-compileJava {
-    inputs.property("moduleName", moduleName)
-    doFirst {
-        options.compilerArgs = [
-                '--module-path', classpath.asPath,
-        ]
-        classpath = files()
-    }
-}
-
-compileTestJava {
-    inputs.property("moduleName", moduleName)
-    doFirst {
-        options.compilerArgs = [
-                '--module-path', classpath.asPath,
-                '--add-modules', 'junit',
-                '--add-reads', "$moduleName=junit",
-                '--patch-module', "$moduleName=" + files(sourceSets.test.java.srcDirs).asPath,
-        ]
-        classpath = files()
-    }
-}
-
-test {
-    inputs.property("moduleName", moduleName)
-    doFirst {
-        jvmArgs = [
-                '--module-path', classpath.asPath,
-                '--add-modules', 'ALL-MODULE-PATH',
-                '--add-reads', "$moduleName=junit",
-                '--patch-module', "$moduleName=" + files(sourceSets.test.java.outputDir).asPath
-        ]
-        classpath = files()
-    }
-}
-*/
-//End of Changes for Jigsaw
