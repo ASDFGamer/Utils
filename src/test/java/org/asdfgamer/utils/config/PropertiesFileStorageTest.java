@@ -29,11 +29,11 @@ public class PropertiesFileStorageTest
     public void loadSettingsFromEnum()
     {
         Settings settings = new Settings("testEnum");
-        TestEnum.test.SETTINGProperty().set("hello");
+        TestEnum.testString.SETTINGProperty().set("hello");
         assertEquals(true, settings.save(TestEnum.class));
-        TestEnum.test.SETTINGProperty().set("doesn't work");
+        TestEnum.testString.SETTINGProperty().set("doesn't work");
         assertEquals(true, settings.load(TestEnum.class));
-        assertEquals("hello", TestEnum.test.SETTINGProperty().get());
+        assertEquals("hello", TestEnum.testString.SETTINGProperty().get());
     }
 
     @Test
@@ -41,15 +41,15 @@ public class PropertiesFileStorageTest
     {
         setting1.set("Yeah");
         setting2.set("Hey Ho");
-        TestEnum.test.SETTINGProperty().set("Now this");
-        Settings settings = new Settings("test");
+        TestEnum.testString.SETTINGProperty().set("Now this");
+        Settings settings = new Settings("testString");
         assertEquals(true, settings.save());
         setting1.set("Sad");
         setting2.set("it doesn't work");
-        TestEnum.test.SETTINGProperty().set("although it should");
+        TestEnum.testString.SETTINGProperty().set("although it should");
         assertEquals(true, settings.load());
         assertEquals("Yeah", setting1.get());
         assertEquals("Hey Ho", setting2.get());
-        assertEquals("Now this", TestEnum.test.SETTINGProperty().get());
+        assertEquals("Now this", TestEnum.testString.SETTINGProperty().get());
     }
 }

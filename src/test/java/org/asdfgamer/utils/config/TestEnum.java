@@ -1,5 +1,6 @@
 package org.asdfgamer.utils.config;
 
+import org.asdfgamer.utils.config.annotations.Caption;
 import org.asdfgamer.utils.config.annotations.SettingInfo;
 
 import java.lang.annotation.ElementType;
@@ -12,21 +13,21 @@ import java.lang.annotation.ElementType;
 @SuppressWarnings("unused")
 public enum TestEnum
 {
-    @SettingInfo(caption = "testen")
-    test("test"),
+    @Caption("Testwerte")
+    testString("test"),
     testInt(1),
     testDouble(1.1),
     testBoolean(true),
     testEnum(ElementType.ANNOTATION_TYPE),
-    /*qtest("test"),
+    /*qtest("testString"),
     qtestInt(1),
     qtestDouble(1.1),
     qtestBoolean(true),
-    wtest("test"),
+    wtest("testString"),
     wtestInt(1),
     wtestDouble(1.1),
     wtestBoolean(true),
-    etest("test"),
+    etest("testString"),
     etestInt(1),
     etestDouble(1.1),
     etestBoolean(true),*/;
@@ -48,7 +49,7 @@ public enum TestEnum
 
     /*
      * Theoretic is of the following methods only the getter for the Property important, but the other are here for
-     * continence. The getter for the Property is important because it gets used internally.
+     * continence. The getter for the Property is important because it gets used internally (But ist can be named different).
      */
     public String getSETTING()
     {
@@ -66,5 +67,15 @@ public enum TestEnum
     {
 
         return SETTING;
+    }
+
+    /**
+     * Only because it is shorter
+     * @return
+     */
+    public Setting get()
+    {
+
+        return SETTINGProperty();
     }
 }
