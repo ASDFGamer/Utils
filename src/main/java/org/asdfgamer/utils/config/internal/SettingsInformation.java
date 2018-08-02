@@ -211,7 +211,10 @@ public class SettingsInformation
     }
 
     /**
-     * This adds the Name of the Setting to the SettingProperty
+     * This adds the Name of the Setting to the SettingProperty.
+     * The Name is the Name of the field/EnumElement.
+     *
+     * It is not possible to set this value inside e.g. SettingInfo because that would lead to recursion problem.
      *
      * @param settings The Class with the settings.
      * @param property The Setting where the Name should be set.

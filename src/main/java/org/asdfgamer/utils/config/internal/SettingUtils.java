@@ -201,7 +201,7 @@ public class SettingUtils
      * This returns the Annotation for the setting.
      *
      * @param setting The Setting with the annotation.
-     * @return The Annotation.
+     * @return The Annotation or null if it doesn't exists.
      * @throws IllegalStateException If the setting wasn't instantiated.
      */
     public static SettingInfo getAnnotation(Setting setting) throws IllegalStateException
@@ -248,4 +248,5 @@ public class SettingUtils
         }
         return null;
     }
+
 }

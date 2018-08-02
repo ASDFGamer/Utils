@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  */
 @Target({ElementType.FIELD, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-@Deprecated
+//TODO why was this class deprecated? There was an caption element in SettingInfo but I don't know why.
 public @interface Caption
 {
 

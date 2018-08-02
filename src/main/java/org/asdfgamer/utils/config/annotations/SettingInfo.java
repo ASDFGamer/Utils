@@ -18,7 +18,5 @@ public @interface SettingInfo
 
     double maximumValue() default Double.MAX_VALUE;
 
-    String caption();
-
     boolean noGUI() default false;
 }
