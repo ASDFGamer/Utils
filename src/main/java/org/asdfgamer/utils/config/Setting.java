@@ -1199,6 +1199,10 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (this.valuesEnum.size() > 0)
         {
+            if (!Utils.inSameEnum(newValue,valuesEnum.get(index)))
+            {
+                return false;
+            }
             if (index == valuesEnum.size())
             {
                 this.valuesEnum.add(newValue);

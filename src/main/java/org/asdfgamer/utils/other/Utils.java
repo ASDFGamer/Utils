@@ -646,7 +646,19 @@ public class Utils
                     try
                     {
                         String shortName = ((String) enumObject).substring(0, ((String) enumObject).lastIndexOf("."));
-                        return Class.forName(shortName).isEnum();
+                        if(Class.forName(shortName).isEnum() )
+                        {
+                            Object[] constants = Class.forName(shortName).getEnumConstants();
+                            String element = ((String) enumObject).substring( ((String) enumObject).lastIndexOf(".")+1);
+                            for (Object constant : constants)
+                            {
+                                if (constant.toString().equals(element))
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                        return false;
                     } catch (ClassNotFoundException ex)
                     {
                         return false;
@@ -797,5 +809,17 @@ public class Utils
             }
         }
         return null;
+    }
+
+    public static boolean inSameEnum(Enum element1, Enum element2) {
+        Object[] elements = element1.getDeclaringClass().getEnumConstants();
+        for (Object element : elements)
+        {
+            if (element.equals(element2))
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

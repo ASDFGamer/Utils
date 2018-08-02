@@ -34,6 +34,7 @@ public class PropertiesFileStorageTest
         TestEnum.testString.SETTINGProperty().set("doesn't work");
         assertEquals(true, settings.load(TestEnum.class));
         assertEquals("hello", TestEnum.testString.SETTINGProperty().get());
+        //TODO test if save(Object) works with a class Object of a normal class
     }
 
     @Test
