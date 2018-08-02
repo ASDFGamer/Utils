@@ -21,3 +21,13 @@ Die Config-Komponente hat die zentrale Klasse 'Setting' über die alle Funktione
 Die Einstellungen können in Properties-Dateien gespeichert werden, aber es besteht die Möglichkeit eigene Speicherorte hinzuzufügen.
 Alle Einstellungen werden als Poperties abgespeichert, somit ist es einfach Listener hinzuzufügen, z.B. falls sich eine Einstellung ändert.
 Des weiterem ist es einfach die Einstellungen in Enums anzulegen und damit Schreibfehler zu vermeiden, da viele andere Config-Systeme die Einstellungen nur über Strings zugreifbar machen.
+
+# TODOS
+## Version 1.0
+- Test (everything)
+- Implement it that Settings can be in Enums
+- Add Lists to Settings
+
+# later Version
+- Add it that Settings can be in classes. This is with the current version possible but not tested and possible very buggy
+- Add an GUI. There is an simple GUI in the current version, but it works only with simple Settings and not with Lists.
