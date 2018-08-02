@@ -919,7 +919,10 @@ public class Setting implements WritableStringValue, ObservableStringValue
             }
             setOnlyString(String.valueOf(newValue), index);
             return true;
-        } else
+        } else if (this.valuesDouble.size() > 0)
+        {
+            return setDouble(newValue,index);
+        }else
         {
             LOG.warning(bundle.getString("noIntegerValue"));
             return false;

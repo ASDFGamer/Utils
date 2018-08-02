@@ -13,12 +13,13 @@ import java.lang.annotation.ElementType;
 @SuppressWarnings("unused")
 public enum TestEnum
 {
-    @Caption("Testwerte")
+    @Caption("Testwerte")//TODO add a way to get the caption of a Setting (in a later version)
     testString("test"),
     testInt(1),
     testDouble(1.1),
     testBoolean(true),
     testEnum(ElementType.ANNOTATION_TYPE),
+    testListString("Dies","ist","ein","test"),
     /*qtest("testString"),
     qtestInt(1),
     qtestDouble(1.1),
