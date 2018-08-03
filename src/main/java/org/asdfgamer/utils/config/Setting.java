@@ -385,7 +385,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (valuesBoolean.size() > index)
         {
-            return valuesBoolean.get(0);
+            return valuesBoolean.get(index);
         } else
         {
             LOG.warning(bundle.getString("indexToHigh"));
@@ -1228,6 +1228,10 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (this.valuesEnum.size() > 0)
         {
+            if (this.valuesEnum.get(0)==null)
+            {
+                //addEnumValues();
+            }
             if (!Utils.inSameEnum(newValue,valuesEnum.get(0)))
             {
                 return false;

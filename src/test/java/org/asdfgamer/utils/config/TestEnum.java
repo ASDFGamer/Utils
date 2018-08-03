@@ -21,6 +21,7 @@ public enum TestEnum
     testListString("Dies","ist","ein","test"),
     testListInt(1,2,3),
     testListDouble(1.1,2.2,3.3),
+    testListBoolean(true,false),
     testListEnum(testString,testInt,testDouble),
     /*qtest("testString"),
     qtestInt(1),

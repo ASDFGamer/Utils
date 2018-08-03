@@ -644,7 +644,7 @@ public class Settings
             {
                 settingStrings[i] = (String) settings[i];
             }
-            if (settings[i] instanceof Integer | settings[i] instanceof Double | settings instanceof Boolean[])
+            if (settings[i] instanceof Integer | settings[i] instanceof Double | settings[i] instanceof Boolean)
             {
                 settingStrings[i] = String.valueOf(settings[i]);
             }

@@ -222,6 +222,35 @@ public class SettingsTest
     }
 
     @Test
+    public void BooleanListSetting()
+    {
+        assertEquals("true", testListBoolean.get().get());
+        assertEquals(false, testListBoolean.get().getBoolean(1));
+        assertFalse(testListBoolean.get().getSettingChanged());
+        assertEquals(2, testListBoolean.get().getLength());
+        testListBoolean.get().set("false");
+        assertTrue(testListBoolean.get().getSettingChanged());
+        assertEquals(false, testListBoolean.get().getBoolean());
+        assertEquals(2, testListBoolean.get().getLength());
+        testListBoolean.get().set(false, 2);
+        assertEquals("false", testListBoolean.get().get(2));
+        assertEquals(3, testListBoolean.get().getLength());
+
+        boolean fehler = false;
+        try
+        {
+            testListBoolean.get().set("Hallo", 3);
+        } catch (IllegalArgumentException e)
+        {
+            fehler = true;
+        }
+        assertTrue(fehler);
+        assertFalse(testListBoolean.get().set(2.12, 3));
+        assertFalse(testListBoolean.get().set(testEnum, 3));
+        assertFalse(testListBoolean.get().set(3, 3));
+    }
+
+    @Test
     public void EnumListSetting()
     {
         assertEquals("org.asdfgamer.utils.config.TestEnum.testString", testListEnum.get().get());
