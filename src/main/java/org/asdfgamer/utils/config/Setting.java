@@ -19,6 +19,9 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import static org.asdfgamer.utils.config.internal.SettingUtils.*;
+import static org.asdfgamer.utils.other.Utils.getEnumElement;
+import static org.asdfgamer.utils.other.Utils.isEnumElement;
+import static org.asdfgamer.utils.other.Utils.stackTraceContains;
 
 /**
  * This is the Property in which the setting gets saved.
@@ -422,14 +425,32 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     public Enum getEnum(int index)
     {
-
+        if (valuesEnum.size()>0 && valuesEnum.get(0)== null)
+        {
+            addEnumValues();
+        }
         if (valuesEnum.size() > index)
         {
-            return valuesEnum.get(0);
+            return valuesEnum.get(index);
         } else
         {
             LOG.warning(bundle.getString("indexToHigh"));
             return null;
+        }
+    }
+
+    /**
+     * This method is used to add the values of the Setting to the valuesEnum list because in the beginning the values are only in string format.
+     */
+    private void addEnumValues() {
+        valuesEnum.clear();
+        for (String aValuesString : valuesString) {
+            if (isEnumElement(aValuesString)) {
+
+                valuesEnum.add(getEnumElement(aValuesString));
+            } else {
+                throw new IllegalStateException(bundle.getString("nonEnumTypeInEnum"));
+            }
         }
     }
 
@@ -736,11 +757,16 @@ public class Setting implements WritableStringValue, ObservableStringValue
             }
         } else if (this.valuesEnum.size() > 0)
         {
+            if (stackTraceContains(Settings.class,null))
+            {
+                setOnlyString(newValue,index);
+                return;
+            }
             if (!newValue.contains("."))
             {
                 newValue = defaultValue.substring(0, defaultValue.lastIndexOf("."))+"."+newValue;
             }
-            if (Utils.isEnum(newValue))
+            if (Utils.isEnumElement(newValue))
             {
                 setEnum(Utils.getEnumElement(newValue), index);
             } else
@@ -1202,7 +1228,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (this.valuesEnum.size() > 0)
         {
-            if (!Utils.inSameEnum(newValue,valuesEnum.get(index)))
+            if (!Utils.inSameEnum(newValue,valuesEnum.get(0)))
             {
                 return false;
             }
@@ -1213,7 +1239,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
             {
                 this.valuesEnum.set(index, newValue);
             }
-            setOnlyString(String.valueOf(newValue), index);
+            setOnlyString(newValue.getDeclaringClass().getName()+"."+newValue.toString(), index);
 
             return true;
         } else
@@ -1581,19 +1607,22 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     private void init(String initialValue)
     {
-        this.valuesString.add(0, initialValue);
+        if (valuesString.size()==0)
+        {
+            this.valuesString.add( initialValue);
+        }
         if (Convertible.toBoolean(initialValue, TRUE_VALUES, FALSE_VALUES))
         {
-            this.valuesBoolean.add(0, Utils.isTrue(initialValue, TRUE_VALUES));
+            this.valuesBoolean.add( Utils.isTrue(initialValue, TRUE_VALUES));
         } else if (Convertible.toInt(initialValue))
         {
-            this.valuesInteger.add(0, Integer.parseInt(initialValue));
+            this.valuesInteger.add( Integer.parseInt(initialValue));
         } else if (Convertible.toDouble(initialValue))
         {
-            this.valuesDouble.add(0, Double.parseDouble(initialValue));
-        } else if (Utils.isEnum(initialValue))
+            this.valuesDouble.add( Double.parseDouble(initialValue));
+        } else if (Utils.isEnumClass(initialValue))
         {
-            this.valuesEnum.add(0, Utils.getEnumElement(initialValue));
+            this.valuesEnum.add( null);//This can't add the enum element because there is an chance that the element doesn't exist at that early time of initialisation.
         }
     }
 

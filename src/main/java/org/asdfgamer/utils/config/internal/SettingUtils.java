@@ -23,7 +23,7 @@ public class SettingUtils
 
     public static Map<String, Setting> getFields(Object settings)
     {
-        if (Utils.isEnum(settings))
+        if (Utils.isEnumElement(settings))
         {
             return getFieldsFromEnum(settings);
         } else
@@ -79,7 +79,7 @@ public class SettingUtils
     private static List<Setting> getSettingsFromEnum(Object enumObject)
     {
 
-        if (Utils.isEnum(enumObject))
+        if (Utils.isEnumElement(enumObject))
         {
             List<Setting> settings = new LinkedList<>();
             Object[] enumConstants = ((Class) enumObject).getEnumConstants();
@@ -149,7 +149,7 @@ public class SettingUtils
     public static List<Setting> getSettingsFromObject(Object object)
     {
 
-        if (Utils.isEnum(object))
+        if (Utils.isEnumElement(object))
         {
             return getSettingsFromEnum(object);
         } else
