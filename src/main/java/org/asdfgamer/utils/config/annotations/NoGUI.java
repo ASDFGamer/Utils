@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 /**
  * If this is declared than the Setting or class will not be visible in the created scene but in the Settings file.
  */
-@SuppressWarnings("WeakerAccess")
 @Target({ElementType.TYPE, ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface NoGUI

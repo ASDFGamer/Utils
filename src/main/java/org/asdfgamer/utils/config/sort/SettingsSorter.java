@@ -3,9 +3,12 @@ package org.asdfgamer.utils.config.sort;
 import org.asdfgamer.utils.config.Setting;
 import org.asdfgamer.utils.config.annotations.Caption;
 
-import java.lang.annotation.Annotation;
-import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
+import static org.asdfgamer.utils.other.Utils.getFieldAnnotations;
 
 /**
  * This Class sorts the given Settings and Captions in an predefined order.
@@ -105,26 +108,5 @@ public class SettingsSorter
         return content;
     }
 
-    /**
-     * This returns all Field Annotations of the given Type from the given Class.
-     *
-     * @param annotationClass The Type of the Annotation.
-     * @param classObject     The Class where the annotations should be searched.
-     * @param <T>             The Type of the Annotation.
-     * @return An Map with the Name of the Annotated Field and the responding Annotation.
-     */
-    private <T extends Annotation> Map<String, T> getFieldAnnotations(Class<T> annotationClass, Class classObject)
-    {
 
-        Map<String, T> elements = new HashMap<>();
-        Field[] fields = classObject.getFields();
-        for (Field field : fields)
-        {
-            if (field.isAnnotationPresent(annotationClass))
-            {
-                elements.put(field.getName(), field.getAnnotation(annotationClass));
-            }
-        }
-        return elements;
-    }
 }

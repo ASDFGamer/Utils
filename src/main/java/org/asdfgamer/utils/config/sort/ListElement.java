@@ -40,7 +40,7 @@ public abstract class ListElement
      * This returns the LineNumber.
      * @return The LineNumber
      */
-    public int getLineNumber()
+    int getLineNumber()
     {
         return lineNumber;
     }

@@ -12,7 +12,7 @@ import java.lang.annotation.ElementType;
  */
 public enum TestEnum
 {
-    @Caption("Testwerte")//TODO add a way to get the caption of a Setting (in a later version)
+    @Caption("test values")//TODO add a way to get the caption of a Setting (in a later version)
     testString("test"),
     testInt(1),
     testDouble(1.1),

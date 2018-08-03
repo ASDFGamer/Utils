@@ -3,6 +3,7 @@ package org.asdfgamer.utils.config;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("WeakerAccess")
 public class PropertiesFileStorageTest
@@ -17,9 +18,9 @@ public class PropertiesFileStorageTest
         setting1.set("it works");
         setting2.set("it works really");
         Settings settings = new Settings("test");
-        assertEquals(true, settings.save(this));
+        assertTrue(settings.save(this));
         setting1.set("doesn't work");
-        assertEquals(true, settings.load(this));
+        assertTrue(settings.load(this));
         assertEquals("it works", setting1.get());
         //assertEquals(true,setting1.getSettingChanged());TODO Test for change - problem is that the order of tests is not specified
         //assertEquals(false,setting2.getSettingChanged());
@@ -30,9 +31,9 @@ public class PropertiesFileStorageTest
     {
         Settings settings = new Settings("testEnum");
         TestEnum.testString.SETTINGProperty().set("hello");
-        assertEquals(true, settings.save(TestEnum.class));
+        assertTrue(settings.save(TestEnum.class));
         TestEnum.testString.SETTINGProperty().set("doesn't work");
-        assertEquals(true, settings.load(TestEnum.class));
+        assertTrue(settings.load(TestEnum.class));
         assertEquals("hello", TestEnum.testString.SETTINGProperty().get());
         //TODO test if save(Object) works with a class Object of a normal class
     }
@@ -44,11 +45,11 @@ public class PropertiesFileStorageTest
         setting2.set("Hey Ho");
         TestEnum.testString.SETTINGProperty().set("Now this");
         Settings settings = new Settings("testString");
-        assertEquals(true, settings.save());
+        assertTrue(settings.save());
         setting1.set("Sad");
         setting2.set("it doesn't work");
         TestEnum.testString.SETTINGProperty().set("although it should");
-        assertEquals(true, settings.load());
+        assertTrue(settings.load());
         assertEquals("Yeah", setting1.get());
         assertEquals("Hey Ho", setting2.get());
         assertEquals("Now this", TestEnum.testString.SETTINGProperty().get());

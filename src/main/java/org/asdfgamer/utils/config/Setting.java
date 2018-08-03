@@ -243,7 +243,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
-     * This Methode returns the Setting as String. If there are more entries, then the first entry is returned.
+     * This Method returns the Setting as String. If there are more entries, then the first entry is returned.
      *
      * @return The value of the Setting as String
      */
@@ -711,7 +711,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
     /**
      * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
-     * The methode {@link Setting#setString(String)} does exactly the same thing, but returns an boolean value
+     * The method {@link Setting#setString(String)} does exactly the same thing, but returns an boolean value
      * instead of the exception.
      *
      * @param newValue The new value that should be assigned.
@@ -726,7 +726,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
     /**
      * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
-     * The methode {@link Setting#setString(String)} does exactly the same thing, but returns an boolean value
+     * The method {@link Setting#setString(String)} does exactly the same thing, but returns an boolean value
      * instead of the exception.
      *
      * @param newValue The new value that should be assigned.
@@ -809,7 +809,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
     /**
      * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
-     * This is exactly the same as the {@link Setting#set(String)} methode but if that methode throws an
+     * This is exactly the same as the {@link Setting#set(String)} method but if that methode throws an
      * exception this methode returns false.
      *
      * @param newValue The new value that should be assigned.
@@ -832,7 +832,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
     /**
      * This sets the new value of the setting and updates, if necessary, the boolean, integer or double value.
-     * This is exactly the same as the {@link Setting#set(String)} methode but if that methode throws an
+     * This is exactly the same as the {@link Setting#set(String)} method but if that methode throws an
      * exception this methode returns false.
      *
      * @param newValue The new value that should be assigned.
@@ -1633,7 +1633,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
-     * This Methode gets called from the Constructor to check if the initial value convertible to boolean, integer or
+     * This Method gets called from the Constructor to check if the initial value convertible to boolean, integer or
      * double. If so it saves the value in that format.
      *
      * @param initialValue The initial Value of the setting.
@@ -1660,7 +1660,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
-     * This Methode gets called from the Constructor to check if the initial value convertible to boolean, integer or
+     * This Method gets called from the Constructor to check if the initial value convertible to boolean, integer or
      * double. If so it saves the value in that format.
      * If the first value is convertible to one value and another following value to an other value, this will throw an exception
      *

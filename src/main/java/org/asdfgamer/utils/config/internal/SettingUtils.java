@@ -21,6 +21,8 @@ public class SettingUtils
 
     public final static ResourceBundle bundle = ResourceBundle.getBundle("config/Settings", locale);//TODO test if a change in language works
 
+
+    @SuppressWarnings("WeakerAccess")
     public static Map<String, Setting> getFields(Object settings)
     {
         if (Utils.isEnumElement(settings))

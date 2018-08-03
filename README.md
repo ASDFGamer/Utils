@@ -1,7 +1,7 @@
 # Utils (English)
-This is a Repository with different helpfull Classes.
+This is a Repository with different helpful Classes.
 
-Doing this it is especially good at Config-Management wich can be done very comfortable and easy. 
+Doing this it is especially good at Config-Management which can be done very comfortable and easy. 
 Moreover there are Help-Methods for Files, FTP and other general functions.
 
 ## Config

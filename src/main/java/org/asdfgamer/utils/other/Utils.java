@@ -2,8 +2,8 @@ package org.asdfgamer.utils.other;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
@@ -744,5 +744,28 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    /**
+     * This returns all Field Annotations of the given Type from the given Class.
+     *
+     * @param annotationClass The Type of the Annotation.
+     * @param classObject     The Class where the annotations should be searched.
+     * @param <T>             The Type of the Annotation.
+     * @return An Map with the Name of the Annotated Field and the responding Annotation.
+     */
+    public static  <T extends Annotation> Map<String, T> getFieldAnnotations(Class<T> annotationClass, Class classObject)
+    {
+
+        Map<String, T> elements = new HashMap<>();
+        Field[] fields = classObject.getFields();
+        for (Field field : fields)
+        {
+            if (field.isAnnotationPresent(annotationClass))
+            {
+                elements.put(field.getName(), field.getAnnotation(annotationClass));
+            }
+        }
+        return elements;
     }
 }

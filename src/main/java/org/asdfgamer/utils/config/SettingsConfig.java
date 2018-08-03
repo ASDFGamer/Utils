@@ -39,7 +39,7 @@ public enum SettingsConfig
     }
 
     /*
-     * Theoretic is of the following methods only the getter for the Property important, but the other are here for
+     * Theoretically is of the following methods only the getter for the Property important, but the other are here for
      * continence. The getter for the Property is important because it gets used internally.
      */
     public String getSETTING()

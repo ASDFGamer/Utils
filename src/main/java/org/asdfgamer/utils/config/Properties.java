@@ -6,6 +6,7 @@ import org.asdfgamer.utils.config.sort.SettingsSorter;
 import org.asdfgamer.utils.other.Utils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.logging.Logger;
 
@@ -111,13 +112,14 @@ public class Properties
         {
             if (!Utils.createFile(file))
             {
+                //noinspection SpellCheckingInspection
                 LOG.warning(bundle.getString("couldntCreateFile") + file);
                 return false;
             }
         }
         try
         {
-            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "utf-8"));
+            Writer writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8));
             writer.write("#" + bundle.getString("fileHeader") + PROGRAM_NAME + "'.");
             writer.write("\n");
 

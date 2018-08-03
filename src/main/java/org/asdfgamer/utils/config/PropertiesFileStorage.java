@@ -3,6 +3,7 @@ package org.asdfgamer.utils.config;
 import org.asdfgamer.utils.other.Utils;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -75,6 +76,7 @@ public class PropertiesFileStorage implements SettingsStorage
      *                            uses a implementation of the Properties that can write comments, and a few other handy
      *                            things. If it is false it uses the default implementation to save the properties.
      */
+    @SuppressWarnings("SpellCheckingInspection")
     public PropertiesFileStorage(String programName, boolean dontCheckForChanges, boolean useBetterProperties)
     {
         this.STD_EXTENSION = SettingsConfig.fileEnding.getSETTING();
@@ -84,7 +86,7 @@ public class PropertiesFileStorage implements SettingsStorage
     }
 
     /**
-     * This Methode loads all Settings that are present in the map.
+     * This Method loads all Settings that are present in the map.
      *
      * @param settings This are all settings that should be loaded as List.
      * @return false, if there was an error while loading, otherwise true.
@@ -107,7 +109,7 @@ public class PropertiesFileStorage implements SettingsStorage
     }
 
     /**
-     * This methode lets you save Settings.
+     * This method lets you save Settings.
      *
      * @param settings This are all settings that should be saved as List.
      * @return true, if saving the settings was successful, otherwise false.
@@ -188,7 +190,7 @@ public class PropertiesFileStorage implements SettingsStorage
                 }
             }
 
-            properties.store(new OutputStreamWriter(configFile, "UTF-8"), bundle.getString("fileHeader") + PROGRAM_NAME + "'.");
+            properties.store(new OutputStreamWriter(configFile, StandardCharsets.UTF_8), bundle.getString("fileHeader") + PROGRAM_NAME + "'.");
         } catch (IOException e)
         {
             LOG.log(Level.WARNING, bundle.getString("problemOpen"), e);
@@ -238,7 +240,7 @@ public class PropertiesFileStorage implements SettingsStorage
 
 
     /**
-     * This Methode searches for  a File with the given Name. If it exists it returns the path ro it and if it doesn't
+     * This Method searches for  a File with the given Name. If it exists it returns the path ro it and if it doesn't
      * it attempts to create the file. If this is successful this will also return the path and if it can't create the
      * file it returns null.
      *

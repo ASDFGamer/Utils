@@ -14,7 +14,7 @@ import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
  *
  * @author ASDFGamer
  */
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({ "WeakerAccess"})
 public class SettingClassInfo
 {
 
@@ -34,7 +34,7 @@ public class SettingClassInfo
      *
      * @param className The absolute Classname (e.g. org.asdfgamer.utils.config.SettingsEnum)
      */
-    public static void setChanged(String className)
+    public static void setChanged(String className)//TODO implement, this is for efficient saving of the settings
     {
 
         if (info.containsKey(className))

@@ -43,7 +43,7 @@ public class Test extends Application
         // Creating a tree table view
         final TreeView<String> treeView = new TreeView<>(root);
 
-        // We set show root to false. This will hide the root and only show it's children in the treeview.
+        // We set show root to false. This will hide the root and only show it's children in the Treeview.
         treeView.setShowRoot(false);
 
 //        treeView.setCellFactory(e -> new ListCell());

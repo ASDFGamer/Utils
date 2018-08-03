@@ -21,9 +21,6 @@ public class WrittenOrder implements Comparator<ListElement>
             } else if (o2 instanceof CaptionElement)
             {
                 result = 1;
-            } else
-            {
-                result = 0;
             }
         }
         return result;
