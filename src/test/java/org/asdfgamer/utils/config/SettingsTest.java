@@ -281,5 +281,27 @@ public class SettingsTest
         assertFalse(testListEnum.get().set(3, 4));
     }
 
+    @Test
+    public void IntSettingWithAnnotation()
+    {
+        assertEquals(2,(int)testIntAnnotation.get().getInt());
+        assertEquals(-5, testIntAnnotation.get().getMinimum(),DELTA);
+        assertEquals(6, testIntAnnotation.get().getMaximum(),DELTA);
+        assertTrue(testIntAnnotation.get().isInternalValue());
+        assertEquals("This is a simple Info.",testIntAnnotation.get().getInformationText());
+        testIntAnnotation.get().set(6);
+        assertEquals("6",testIntAnnotation.getSETTING());
+        testIntAnnotation.get().set(42);
+        assertEquals("6",testIntAnnotation.getSETTING());
+        testIntAnnotation.get().set(-5);
+        assertEquals("-5",testIntAnnotation.getSETTING());
+        testIntAnnotation.get().set(-42);
+        assertEquals("-5",testIntAnnotation.getSETTING());
+        assertFalse(testIntAnnotation.get().setMaximumValue(-6));
+        assertEquals(6, testIntAnnotation.get().getMaximum(),DELTA);
+        assertFalse(testIntAnnotation.get().setMinimumValue(6.1));
+        assertEquals(-5, testIntAnnotation.get().getMinimum(),DELTA);
+    }
+
 
 }

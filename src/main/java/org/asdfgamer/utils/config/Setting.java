@@ -128,9 +128,13 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * values of that type afterwards.
      *
      * @param initialValue The default/initial value of the setting.
+     * @param info
+     *
      */
-    Setting(String initialValue)
+    Setting(String initialValue,  SettingsInformation info)
     {
+        this.info = info;
+        info.setSettings(this);
         this.valuesString.add(initialValue);
         this.defaultValue = initialValue;
         this.valueString = new SimpleStringProperty(initialValue);
@@ -155,7 +159,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
         this.valuesString.addListener(getValueUpdater());
         this.init(initialValue);
         this.internalValue = internalValue;
-        info.setSettings(this);
+        //info.setSettings(this);
     }
 
     /**
@@ -620,6 +624,10 @@ public class Setting implements WritableStringValue, ObservableStringValue
             if (annotation != null)
             {
                 internalValue = annotation.internalValue();
+            }
+            else
+            {
+                internalValue = false; //This is the standard value
             }
         }
         return internalValue;
@@ -1323,6 +1331,11 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (hasDoubleValue() || hasIntegerValue())
         {
+            if (getMinimum()!= null && getMinimum()>maximum)
+            {
+                LOG.info(bundle.getString("maxIsLowerThenMin"));
+                return false;
+            }
             this.maximum = (double) maximum;
         } else
         {
@@ -1341,6 +1354,11 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     public boolean setMinimumValue(double minimum)
     {
+        if (getMaximum()!= null && getMaximum()<minimum)
+        {
+            LOG.info(bundle.getString("minIsHigherThenMax"));
+            return false;
+        }
 
         if (hasDoubleValue())
         {

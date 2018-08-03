@@ -12,7 +12,7 @@ import static org.asdfgamer.utils.config.internal.SettingUtils.bundle;
 /**
  * This builder is used to create settings and add all necessary values.
  */
-@SuppressWarnings({"UnusedReturnValue", "unused"})
+@SuppressWarnings({"UnusedReturnValue"})
 class SettingsBuilder
 {
 
@@ -22,11 +22,7 @@ class SettingsBuilder
 
     private int lineNumber = -1;
 
-    private String settingName = "";
-
     private String className = "";
-
-    private String informationText = "";
 
     private boolean internalValue = false;
 
@@ -54,7 +50,7 @@ class SettingsBuilder
      *
      * @return A new Setting
      */
-    public Setting build()
+    Setting build()
     {
 
         addClass();
@@ -62,10 +58,10 @@ class SettingsBuilder
         SettingsInformation info = new SettingsInformation(className, lineNumber);
         if (defaultValueList != null)
         {
-            setting = new Setting(defaultValueList, internalValue, info);
+            setting = new Setting(defaultValueList, info);
         } else
         {
-            setting = new Setting(defaultValue, internalValue, info);
+            setting = new Setting(defaultValue, info);
         }
         if (maximumValue != null)
         {
@@ -141,7 +137,7 @@ class SettingsBuilder
      * @param value The default value of the Setting
      * @return The used SettingsBuilder
      */
-    public SettingsBuilder setDefaultValue(String value)
+    SettingsBuilder setDefaultValue(String value)
     {
 
         this.defaultValue = value;
@@ -155,35 +151,9 @@ class SettingsBuilder
      *
      * @return The used SettingsBuilder
      */
-    public SettingsBuilder setDefaultValue(String[] value)
+    SettingsBuilder setDefaultValue(String[] value)
     {
         this.defaultValueList = Arrays.asList(value);
-        return this;
-    }
-
-    /**
-     * This sets the Name of the Setting
-     *
-     * @param name The name of the Setting
-     * @return The used SettingsBuilder
-     */
-    public SettingsBuilder setName(String name)
-    {
-
-        this.settingName = name;
-        return this;
-    }
-
-    /**
-     * This sets the information text of the Setting
-     *
-     * @param info The information text of the Setting
-     * @return The used SettingsBuilder
-     */
-    public SettingsBuilder setInformationText(String info)
-    {
-
-        this.informationText = info;
         return this;
     }
 
@@ -194,7 +164,7 @@ class SettingsBuilder
      * @param internal This sets if this setting is an internal value
      * @return The used SettingsBuilder
      */
-    public SettingsBuilder setInternalValue(boolean internal)
+    SettingsBuilder setInternalValue(boolean internal)
     {
 
         this.internalValue = internal;
@@ -208,7 +178,7 @@ class SettingsBuilder
      * @param add This sets if this setting should haven the ChangeListener.
      * @return The used SettingsBuilder
      */
-    public SettingsBuilder addChangeListener(boolean add)
+    SettingsBuilder addChangeListener(boolean add)
     {
 
         this.changeListener = add;
@@ -221,7 +191,7 @@ class SettingsBuilder
      * @param minimum The minimum value for this Setting.
      * @return The used SettingsBuilder
      */
-    public SettingsBuilder setMinimumValue(int minimum)
+    SettingsBuilder setMinimumValue(int minimum)
     {
 
         this.minimumValue = (double) minimum;
@@ -235,7 +205,7 @@ class SettingsBuilder
      * @param maximum The maximum value for this Setting.
      * @return The used SettingsBuilder
      */
-    public SettingsBuilder setMaximumValue(int maximum)
+    SettingsBuilder setMaximumValue(int maximum)
     {
 
         this.maximumValue = (double) maximum;
@@ -249,7 +219,7 @@ class SettingsBuilder
      * @param minimum The minimum value for this Setting.
      * @return The used SettingsBuilder
      */
-    public SettingsBuilder setMinimumValue(double minimum)
+    SettingsBuilder setMinimumValue(double minimum)
     {
 
         this.minimumValue = minimum;
@@ -263,7 +233,7 @@ class SettingsBuilder
      * @param maximum The maximum value for this Setting.
      * @return The used SettingsBuilder
      */
-    public SettingsBuilder setMaximumValue(double maximum)
+    SettingsBuilder setMaximumValue(double maximum)
     {
 
         this.maximumValue = maximum;
