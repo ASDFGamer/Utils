@@ -25,18 +25,7 @@ public enum TestEnum
     testListEnum(testString,testInt,testDouble),
     @SettingInfo(info = "This is a simple Info.", internalValue = true, maximumValue = 6, minimumValue = -5)
     testIntAnnotation(2),
-    /*qtest("testString"),
-    qtestInt(1),
-    qtestDouble(1.1),
-    qtestBoolean(true),
-    wtest("testString"),
-    wtestInt(1),
-    wtestDouble(1.1),
-    wtestBoolean(true),
-    etest("testString"),
-    etestInt(1),
-    etestDouble(1.1),
-    etestBoolean(true),*/;
+    ;
 
     private final Setting SETTING;
 
@@ -77,7 +66,6 @@ public enum TestEnum
 
     /**
      * Only because it is shorter
-     * @return
      */
     public Setting get()
     {

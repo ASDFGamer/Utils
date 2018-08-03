@@ -19,9 +19,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import static org.asdfgamer.utils.config.internal.SettingUtils.*;
-import static org.asdfgamer.utils.other.Utils.getEnumElement;
-import static org.asdfgamer.utils.other.Utils.isEnumElement;
-import static org.asdfgamer.utils.other.Utils.stackTraceContains;
+import static org.asdfgamer.utils.other.Utils.*;
 
 /**
  * This is the Property in which the setting gets saved.
@@ -112,6 +110,8 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
     /**
      * This is the default constructor, everything uses default values.
+     *
+     * @param info The information object that belongs to the setting.
      */
     Setting(SettingsInformation info)
     {
@@ -128,10 +128,9 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * values of that type afterwards.
      *
      * @param initialValue The default/initial value of the setting.
-     * @param info
-     *
+     * @param info         The information object that belongs to the setting.
      */
-    Setting(String initialValue,  SettingsInformation info)
+    Setting(String initialValue, SettingsInformation info)
     {
         this.info = info;
         info.setSettings(this);
@@ -148,8 +147,9 @@ public class Setting implements WritableStringValue, ObservableStringValue
      *
      * @param initialValue  The default/initial value of the setting.
      * @param internalValue This shows if the Setting is only for internal use.
+     * @param info          The information object that belongs to the setting.
      */
-    Setting(String initialValue, boolean internalValue, SettingsInformation info)
+    Setting(String initialValue, Boolean internalValue, SettingsInformation info)
     {
         this.info = info;
         info.setSettings(this);
@@ -159,7 +159,6 @@ public class Setting implements WritableStringValue, ObservableStringValue
         this.valuesString.addListener(getValueUpdater());
         this.init(initialValue);
         this.internalValue = internalValue;
-        //info.setSettings(this);
     }
 
     /**
@@ -168,13 +167,13 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * values of that type afterwards.
      *
      * @param initialValue The default/initial value of the setting.
+     * @param info         The information object that belongs to the setting.
      */
     Setting(List<String> initialValue, SettingsInformation info)
     {
         this.info = info;
         info.setSettings(this);
         this.init(initialValue);
-        //this.valuesString = FXCollections.observableList(initialValue);
         this.defaultValue = initialValue.get(0);
         this.valueString = new SimpleStringProperty(initialValue.get(0));
         this.valuesString.addListener(getValueUpdater());
@@ -188,13 +187,13 @@ public class Setting implements WritableStringValue, ObservableStringValue
      *
      * @param initialValue  The default/initial value of the setting.
      * @param internalValue This shows if the Setting is only for internal use.
+     * @param info          The information object that belongs to the setting-
      */
-    Setting(List<String> initialValue, boolean internalValue, SettingsInformation info)
+    Setting(List<String> initialValue, Boolean internalValue, SettingsInformation info)
     {
         this.info = info;
         info.setSettings(this);
         this.init(initialValue);
-        //this.valuesString = FXCollections.observableList(initialValue);This should be already done in init()
         this.valueString = new SimpleStringProperty(initialValue.get(0));
         this.defaultValue = initialValue.get(0);
         this.valuesString.addListener(getValueUpdater());
@@ -232,10 +231,11 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
-     * TODO
+     * This returns the String representation of the value at the given index.
      *
-     * @param index
-     * @return
+     * @param index The index of the value that should be returned
+     * @return The String representation of the value.
+     * @throws IndexOutOfBoundsException if the Index it too high/low.
      */
     public String get(int index)
     {
@@ -429,7 +429,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     public Enum getEnum(int index)
     {
-        if (valuesEnum.size()>0 && valuesEnum.get(0)== null)
+        if (valuesEnum.size() > 0 && valuesEnum.get(0) == null)
         {
             addEnumValues();
         }
@@ -446,13 +446,17 @@ public class Setting implements WritableStringValue, ObservableStringValue
     /**
      * This method is used to add the values of the Setting to the valuesEnum list because in the beginning the values are only in string format.
      */
-    private void addEnumValues() {
+    private void addEnumValues()
+    {
         valuesEnum.clear();
-        for (String aValuesString : valuesString) {
-            if (isEnumElement(aValuesString)) {
+        for (String aValuesString : valuesString)
+        {
+            if (isEnumElement(aValuesString))
+            {
 
                 valuesEnum.add(getEnumElement(aValuesString));
-            } else {
+            } else
+            {
                 throw new IllegalStateException(bundle.getString("nonEnumTypeInEnum"));
             }
         }
@@ -522,7 +526,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
         {
             try
             {
-                SettingInfo annotation = SettingUtils.getAnnotation(this);//TODO when this is called to early it returns null, but sometimes it should return null
+                SettingInfo annotation = SettingUtils.getAnnotation(this);// when this is called to early it returns null, but sometimes it should return null <- I think it works now
                 if (annotation != null && annotation.maximumValue() != Double.MAX_VALUE)
                 {
                     maximum = annotation.maximumValue();
@@ -615,7 +619,6 @@ public class Setting implements WritableStringValue, ObservableStringValue
      *
      * @return true, if it is only an internal value, otherwise false.
      */
-    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean isInternalValue()
     {
         if (internalValue == null)
@@ -624,8 +627,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
             if (annotation != null)
             {
                 internalValue = annotation.internalValue();
-            }
-            else
+            } else
             {
                 internalValue = false; //This is the standard value
             }
@@ -765,14 +767,14 @@ public class Setting implements WritableStringValue, ObservableStringValue
             }
         } else if (this.valuesEnum.size() > 0)
         {
-            if (stackTraceContains(Settings.class,null))
+            if (stackTraceContains(Settings.class, null))
             {
-                setOnlyString(newValue,index);
+                setOnlyString(newValue, index);
                 return;
             }
             if (!newValue.contains("."))
             {
-                newValue = defaultValue.substring(0, defaultValue.lastIndexOf("."))+"."+newValue;
+                newValue = defaultValue.substring(0, defaultValue.lastIndexOf(".")) + "." + newValue;
             }
             if (Utils.isEnumElement(newValue))
             {
@@ -897,11 +899,13 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
-     * TODO
+     * This sets the integer value of the setting and updates the String-value at the given index.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as a integer.
      *
-     * @param newValue
-     * @param index
-     * @return
+     * @param newValue The new value.
+     * @param index    the index of the value
+     * @return true, if the value changed, otherwise false.
      */
     public boolean set(Integer newValue, int index)
     {
@@ -955,8 +959,8 @@ public class Setting implements WritableStringValue, ObservableStringValue
             return true;
         } else if (this.valuesDouble.size() > 0)
         {
-            return setDouble(newValue,index);
-        }else
+            return setDouble(newValue, index);
+        } else
         {
             LOG.warning(bundle.getString("noIntegerValue"));
             return false;
@@ -999,16 +1003,19 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
-     * TODO
+     * This sets the double value of the setting and updates the String-value at the given index.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as double
+     * (and not as integer).
      *
-     * @param newValue
-     * @param index
-     * @return
+     * @param newValue The new value.
+     * @param index    The index of the value.
+     * @return true, if the value changed, otherwise false.
      */
     public boolean set(Double newValue, int index)
     {
 
-        return setDouble(newValue,index);
+        return setDouble(newValue, index);
     }
 
     /**
@@ -1101,16 +1108,18 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
-     * TODO
+     * This sets the boolean value of the setting and updates the String-value at the given index.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as boolean.
      *
-     * @param newValue
-     * @param index
-     * @return
+     * @param newValue The new value.
+     * @param index    The index of the setting.
+     * @return true, if the value changed, otherwise false.
      */
     public boolean set(Boolean newValue, int index)
     {
 
-        return setBoolean(newValue,index);
+        return setBoolean(newValue, index);
     }
 
     /**
@@ -1195,16 +1204,18 @@ public class Setting implements WritableStringValue, ObservableStringValue
     }
 
     /**
-     * TODO
+     * This sets the Enum value of the setting and updates the String-value at the given index.
+     * <p>
+     * Note: This is only successful, if the setting got initialized with an value that can be interpreted as an Enum.
      *
-     * @param newValue
-     * @param index
-     * @return
+     * @param newValue The new value.
+     * @param index    The index of the setting
+     * @return true, if the value changed, otherwise false.
      */
     public boolean set(Enum newValue, int index)
     {
 
-        return setEnum(newValue,index);
+        return setEnum(newValue, index);
     }
 
     /**
@@ -1227,7 +1238,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * Note: This is only successful, if the setting got initialized with an value that can be interpreted as an Enum.
      *
      * @param newValue The new value.
-     * @param index    The index of the Setting
+     * @param index    The index of the setting.
      * @return true, if the value changed, otherwise false.
      * @throws IndexOutOfBoundsException This happens if the given index isn't already set or the next free value. TODO should this throw an exception or should it return false?
      */
@@ -1236,11 +1247,11 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (this.valuesEnum.size() > 0)
         {
-            if (this.valuesEnum.get(0)==null)
+            if (this.valuesEnum.get(0) == null)
             {
-                //addEnumValues();
+                addEnumValues();
             }
-            if (!Utils.inSameEnum(newValue,valuesEnum.get(0)))
+            if (!Utils.inSameEnum(newValue, valuesEnum.get(0)))
             {
                 return false;
             }
@@ -1251,7 +1262,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
             {
                 this.valuesEnum.set(index, newValue);
             }
-            setOnlyString(newValue.getDeclaringClass().getName()+"."+newValue.toString(), index);
+            setOnlyString(newValue.getDeclaringClass().getName() + "." + newValue.toString(), index);
 
             return true;
         } else
@@ -1331,7 +1342,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
 
         if (hasDoubleValue() || hasIntegerValue())
         {
-            if (getMinimum()!= null && getMinimum()>maximum)
+            if (getMinimum() != null && getMinimum() > maximum)
             {
                 LOG.info(bundle.getString("maxIsLowerThenMin"));
                 return false;
@@ -1354,7 +1365,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     public boolean setMinimumValue(double minimum)
     {
-        if (getMaximum()!= null && getMaximum()<minimum)
+        if (getMaximum() != null && getMaximum() < minimum)
         {
             LOG.info(bundle.getString("minIsHigherThenMax"));
             return false;
@@ -1629,22 +1640,22 @@ public class Setting implements WritableStringValue, ObservableStringValue
      */
     private void init(String initialValue)
     {
-        if (valuesString.size()==0)
+        if (valuesString.size() == 0)
         {
-            this.valuesString.add( initialValue);
+            this.valuesString.add(initialValue);
         }
         if (Convertible.toBoolean(initialValue, TRUE_VALUES, FALSE_VALUES))
         {
-            this.valuesBoolean.add( Utils.isTrue(initialValue, TRUE_VALUES));
+            this.valuesBoolean.add(Utils.isTrue(initialValue, TRUE_VALUES));
         } else if (Convertible.toInt(initialValue))
         {
-            this.valuesInteger.add( Integer.parseInt(initialValue));
+            this.valuesInteger.add(Integer.parseInt(initialValue));
         } else if (Convertible.toDouble(initialValue))
         {
-            this.valuesDouble.add( Double.parseDouble(initialValue));
+            this.valuesDouble.add(Double.parseDouble(initialValue));
         } else if (Utils.isEnumClass(initialValue))
         {
-            this.valuesEnum.add( null);//This can't add the enum element because there is an chance that the element doesn't exist at that early time of initialisation.
+            this.valuesEnum.add(null);//This can't add the enum element because there is an chance that the element doesn't exist at that early time of initialisation.
         }
     }
 

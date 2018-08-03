@@ -24,7 +24,7 @@ class SettingsBuilder
 
     private String className = "";
 
-    private boolean internalValue = false;
+    private Boolean internalValue = null;
 
     private boolean changeListener = true;
 
@@ -58,10 +58,10 @@ class SettingsBuilder
         SettingsInformation info = new SettingsInformation(className, lineNumber);
         if (defaultValueList != null)
         {
-            setting = new Setting(defaultValueList, info);
+            setting = new Setting(defaultValueList,internalValue, info);
         } else
         {
-            setting = new Setting(defaultValue, info);
+            setting = new Setting(defaultValue,internalValue, info);
         }
         if (maximumValue != null)
         {
