@@ -6,11 +6,10 @@ import org.asdfgamer.utils.config.annotations.SettingInfo;
 import java.lang.annotation.ElementType;
 
 /**
- * This Enum gets Used in the tests
+ * This Enum gets used in the tests
  *
  * @author ASDFGamer
  */
-@SuppressWarnings("unused")
 public enum TestEnum
 {
     @Caption("Testwerte")//TODO add a way to get the caption of a Setting (in a later version)
@@ -20,6 +19,9 @@ public enum TestEnum
     testBoolean(true),
     testEnum(ElementType.ANNOTATION_TYPE),
     testListString("Dies","ist","ein","test"),
+    testListInt(1,2,3),
+    testListDouble(1.1,2.2,3.3),
+    testListEnum(testString,testInt,testDouble),
     /*qtest("testString"),
     qtestInt(1),
     qtestDouble(1.1),

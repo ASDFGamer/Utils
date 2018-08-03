@@ -1,8 +1,11 @@
 package org.asdfgamer.utils.other;
 
+import org.asdfgamer.utils.config.Settings;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Modifier;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -648,7 +651,11 @@ public class Utils
                         String shortName = ((String) enumObject).substring(0, ((String) enumObject).lastIndexOf("."));
                         if(Class.forName(shortName).isEnum() )
                         {
-                            Object[] constants = Class.forName(shortName).getEnumConstants();
+                            Class aClass = Class.forName(shortName);
+                            //Field[] fields = aClass.getFields();
+                            //Enum enumElement = Enum.valueOf(aClass,fields[0].getName());
+                            Object constantsObj = Class.forName(shortName).getMethod("values").invoke(null);//TODO i think here is an problem during initialisation maybe check if stacktrace contains something. It could be that getEnumConstants works then.
+                            Object[] constants = ((Object[]) constantsObj);
                             String element = ((String) enumObject).substring( ((String) enumObject).lastIndexOf(".")+1);
                             for (Object constant : constants)
                             {
@@ -659,7 +666,7 @@ public class Utils
                             }
                         }
                         return false;
-                    } catch (ClassNotFoundException ex)
+                    } catch (ClassNotFoundException | IllegalAccessException | InvocationTargetException | NoSuchMethodException ex)
                     {
                         return false;
                     }

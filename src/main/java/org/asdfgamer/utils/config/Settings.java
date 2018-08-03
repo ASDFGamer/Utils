@@ -650,7 +650,7 @@ public class Settings
             }
             if (settings[i] instanceof Enum)
             {
-                settingStrings[i] = ((Enum) settings[i]).getDeclaringClass().getName() + "." + settings[0].toString();
+                settingStrings[i] = ((Enum) settings[i]).getDeclaringClass().getName() + "." + settings[i].toString();
             }
         }
         return new SettingsBuilder().setDefaultValue(settingStrings);

@@ -1195,7 +1195,7 @@ public class Setting implements WritableStringValue, ObservableStringValue
      * @param newValue The new value.
      * @param index    The index of the Setting
      * @return true, if the value changed, otherwise false.
-     * @throws IndexOutOfBoundsException This happens if the given index isn't already set or the next free value.
+     * @throws IndexOutOfBoundsException This happens if the given index isn't already set or the next free value. TODO should this throw an exception or should it return false?
      */
     public boolean setEnum(Enum newValue, int index) throws IndexOutOfBoundsException
     {
